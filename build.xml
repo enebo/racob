@@ -80,12 +80,12 @@
 	
 	<property name="compiler.x86"            value="${MSDEV_DIR}\bin\cl.exe" />
 	<property name="linker.x86"              value="${MSDEV_DIR}\bin\link.exe" />
-	<property name="manifestool.x86"         value="${MSDEV_DIR}\bin\mt.exe" />
+	<property name="manifestool.x86"         value="${MSSDK_DIR}\Bin\mt.exe" />
 	<property name="include.x86"             value="${MSDEV_DIR}\include" />
 	<property name="include.x86.platformSDK" value="${MSSDK_DIR}\Include" />
 	<property name="include.x86.atl"         value="${MSDEV_DIR}\atlmfc\include" />
 	<property name="library.x86"             value="${MSDEV_DIR}\lib" />
-	<property name="library.x86.platformSDK" value="${MSDEV_DIR}\PlatformSDK\lib" />
+	<property name="library.x86.platformSDK" value="${MSSDK_DIR}\Lib" />
 	<property name="library.x86.atl"         value="${MSDEV_DIR}\atlmfc\lib" />
 	
 	<!-- You have to love the beautiful asymetry of the MS world -->
@@ -95,7 +95,7 @@
 	<property name="manifesttool.x64"		 value="${MSDEV_DIR}\bin\x86_amd64\mt.exe" />
 	<property name="include.x64"  			 value="${MSDEV_DIR}\include" />
 	<property name="library.x64"  		     value="${MSDEV_DIR}\lib\amd64" />
-	<property name="library.x64.platformSDK" value="${MSDEV_DIR}\PlatformSDK\lib\amd64" />
+	<property name="library.x64.platformSDK" value="${MSSDK_DIR}\Lib\x64" />
 	<property name="library.x64.atl"  		 value="${MSDEV_DIR}\atlmfc\lib\amd64" />
 
 
