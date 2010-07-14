@@ -82,7 +82,7 @@
 	<property name="linker.x86"              value="${MSDEV_DIR}\bin\link.exe" />
 	<property name="manifestool.x86"         value="${MSDEV_DIR}\bin\mt.exe" />
 	<property name="include.x86"             value="${MSDEV_DIR}\include" />
-	<property name="include.x86.platformSDK" value="${MSDEV_DIR}\PlatformSDK\Include" />
+	<property name="include.x86.platformSDK" value="${MSSDK_DIR}\Include" />
 	<property name="include.x86.atl"         value="${MSDEV_DIR}\atlmfc\include" />
 	<property name="library.x86"             value="${MSDEV_DIR}\lib" />
 	<property name="library.x86.platformSDK" value="${MSDEV_DIR}\PlatformSDK\lib" />
