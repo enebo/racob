@@ -81,6 +81,14 @@ JNIEXPORT jintArray JNICALL Java_com_jacob_com_Dispatch_getIDsOfNames
 JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
   (JNIEnv *, jclass, jobject, jstring, jint, jint, jint, jobjectArray, jintArray);
 
+/*
+ * Class:     Dispatch
+ * Method:    getTypeInfo
+ * Signature: ()Lcom/jacob/com/TypeInfo;
+ */
+JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_getTypeInfo
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif

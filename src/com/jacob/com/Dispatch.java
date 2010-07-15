@@ -193,6 +193,8 @@ public class Dispatch extends JacobObject {
 	 */
 	public native Dispatch QueryInterface(String iid);
 
+        public native TypeInfo getTypeInfo();
+
 	/**
 	 * Constructor that only gets called from JNI QueryInterface calls JNI code
 	 * that looks up the object for the key passed in. The JNI CODE then creates

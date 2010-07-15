@@ -238,6 +238,46 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_coCreateInstanceNative
   env->SetIntField(_this, jf, (unsigned int)pIDispatch);
 }
 
+JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_getTypeInfo
+  (JNIEnv *env, jobject _this)
+{
+   IDispatch *disp = extractDispatch(env, _this);
+   unsigned int count = 0;
+   HRESULT hr = disp->GetTypeInfoCount(&count);
+   if (!SUCCEEDED(hr)) {
+      ThrowComFail(env, "Cannot acquire type info count", hr);
+      return NULL;
+   }
+
+   if (count != 1) { // No TypeInfo Available
+      return NULL;
+   }
+
+   ITypeInfo* typeInfo = 0;
+   hr = disp->GetTypeInfo(0, GetUserDefaultLCID(), &typeInfo);
+   if (!SUCCEEDED(hr)) {
+      ThrowComFail(env, "GetTypeInfo failed", hr);
+      return NULL;
+   }
+
+   TYPEATTR *typeAttributes = NULL;
+   hr = typeInfo->GetTypeAttr(&typeAttributes);
+   if (!SUCCEEDED(hr)) {
+      ThrowComFail(env, "GetTypeInfo.GetTypeAttr failed", hr);
+      return NULL;
+   }
+
+   jclass autoClass = env->FindClass("com/jacob/com/TypeInfo");
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(IIIII)V");
+   jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeInfo,
+           typeAttributes->typekind, typeAttributes->cFuncs,
+           typeAttributes->cImplTypes, typeAttributes->cVars);
+
+   typeInfo->ReleaseTypeAttr(typeAttributes);
+
+   return newAuto;
+}
+
 /**
  * release method
  */
