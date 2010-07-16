@@ -34,6 +34,14 @@ extern "C" {
 JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getContainingTypeLib
   (JNIEnv *, jobject);
 
+/*
+ * Class:     TypeInfo
+ * Method:    getVarDesc
+ * Signature: ()Lcom/jacob/com/VarDesc;
+ */
+JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getVarDesc
+  (JNIEnv *, jobject, jint);
+
 
 #ifdef __cplusplus
 }

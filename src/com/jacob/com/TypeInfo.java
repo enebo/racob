@@ -59,4 +59,5 @@ public class TypeInfo extends JacobObject {
     }
 
     public native TypeLib getContainingTypeLib();
+    public native VarDesc getVarDesc(int index);
 }

@@ -37,9 +37,8 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
 {
   jclass argClass = env->GetObjectClass(arg);
   jfieldID ajf = env->GetFieldID( argClass, P_TYPEINFO_FLD, "I");
-  jint anum = env->GetIntField(arg, ajf);
   
-  return (ITypeInfo *) anum;
+  return (ITypeInfo *) env->GetIntField(arg, ajf);
 }
 
  JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getContainingTypeLib
@@ -68,4 +67,38 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
    return newAuto;
  }
 
+ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getVarDesc
+  (JNIEnv *env, jobject obj, jint index)
+ {
+   ITypeInfo *typeInfo = extractTypeInfo(env, obj);
+
+   VARDESC *varDesc = NULL;
+   HRESULT hr = typeInfo->GetVarDesc(index, &varDesc);
+    if (!SUCCEEDED(hr)) {
+       ThrowComFail(env, "getVarDesc failed", hr);
+       return NULL;
+    }
+
+   jobject cValue = NULL;
+   // We have a constant so let's save the variant
+   if (varDesc->varkind == VAR_CONST) {
+       jclass variantClass = env->FindClass("com/jacob/com/Variant");
+       jmethodID variantCons = env->GetMethodID(variantClass, "<init>", "()V");
+       cValue = env->NewObject(variantClass, variantCons);
+       VARIANT *v = extractVariant(env, cValue);
+       hr = VariantCopy(v, varDesc->lpvarValue);
+       if (!SUCCEEDED(hr)) {
+          ThrowComFail(env, "getVarDesc failed to copy constant", hr);
+          return NULL;
+       }
+   }
+
+   jclass autoClass = env->FindClass("com/jacob/com/VarDesc");
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILcom/jacob/com/Variant;)V");
+   jobject newAuto = env->NewObject(autoClass, autoCons, varDesc->varkind, cValue);
+
+   typeInfo->ReleaseVarDesc(varDesc);
+
+   return newAuto;
+ }
 }
