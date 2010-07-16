@@ -32,6 +32,9 @@ extern "C" {
 
 #define P_TYPEINFO_FLD "m_pTypeInfo"
 
+ // Total number of names to return from GetNames
+#define MAX_NAMES 50
+
  // extract a ITypeInfo from a jobject
 ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
 {
@@ -67,6 +70,37 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
    return newAuto;
  }
 
+JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_TypeInfo_getNames
+  (JNIEnv *env, jobject obj, jint memid)
+{
+   ITypeInfo *typeInfo = extractTypeInfo(env, obj);
+   BSTR names[MAX_NAMES];
+   unsigned int namesCount;
+   HRESULT hr = typeInfo->GetNames(memid, names, MAX_NAMES, &namesCount);
+   if (!SUCCEEDED(hr)) {
+      ThrowComFail(env, "getNames failed", hr);
+      return NULL;
+   }
+
+   // Make primitive String array for names
+   jclass autoClass = env->FindClass("java/lang/String");
+   jobjectArray array = env->NewObjectArray(namesCount, autoClass, NULL);
+   if (!SUCCEEDED(hr)) {
+      ThrowComFail(env, "getNames failed to make return array", hr);
+      return NULL;
+   }
+
+   // Fill up array
+   for (unsigned int i = 0; i < namesCount; i++) {
+      int len = SysStringLen(names[i]);
+      jstring string = env->NewString((const jchar *) names[i], len);
+      env->SetObjectArrayElement(array, i, string);
+      SysFreeString(names[i]);
+   }
+
+   return array;
+}
+
  JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getVarDesc
   (JNIEnv *env, jobject obj, jint index)
  {
@@ -74,13 +108,13 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
 
    VARDESC *varDesc = NULL;
    HRESULT hr = typeInfo->GetVarDesc(index, &varDesc);
-    if (!SUCCEEDED(hr)) {
-       ThrowComFail(env, "getVarDesc failed", hr);
-       return NULL;
-    }
+   if (!SUCCEEDED(hr)) {
+      ThrowComFail(env, "getVarDesc failed", hr);
+      return NULL;
+   }
 
-   jobject cValue = NULL;
    // We have a constant so let's save the variant
+   jobject cValue = NULL;
    if (varDesc->varkind == VAR_CONST) {
        jclass variantClass = env->FindClass("com/jacob/com/Variant");
        jmethodID variantCons = env->GetMethodID(variantClass, "<init>", "()V");
@@ -94,8 +128,9 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
    }
 
    jclass autoClass = env->FindClass("com/jacob/com/VarDesc");
-   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILcom/jacob/com/Variant;)V");
-   jobject newAuto = env->NewObject(autoClass, autoCons, varDesc->varkind, cValue);
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILcom/jacob/com/Variant;I)V");
+   jobject newAuto = env->NewObject(autoClass, autoCons, varDesc->varkind, 
+           cValue, varDesc->memid);
 
    typeInfo->ReleaseVarDesc(varDesc);
 

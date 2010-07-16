@@ -36,6 +36,14 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getContainingTypeLib
 
 /*
  * Class:     TypeInfo
+ * Method:    getNames
+ * Signature: ()Lcom/jacob/com/VarDesc;
+ */
+JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_TypeInfo_getNames
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     TypeInfo
  * Method:    getVarDesc
  * Signature: ()Lcom/jacob/com/VarDesc;
  */

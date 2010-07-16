@@ -1,9 +1,11 @@
 package com.jacob.com;
 
 /**
- *
+ * Name Note: cVars -> varsCount.  The getCVars looked strange to me so I
+ * broke from convention and gave it a more readable name.
  */
-public class TypeInfo extends JacobObject {
+public class TypeInfo extends JacobObject
+{
     public static final int TYPEKIND_ENUM = 0;
     public static final int TYPEKIND_RECORD = 1;
     public static final int TYPEKIND_MODULE = 2;
@@ -16,48 +18,37 @@ public class TypeInfo extends JacobObject {
 
     public final int m_pTypeInfo;
     private final int typekind;
-    private final int functionCount;
-    private final int implementationCount;
-    private final int variableCount;
+    private final int funcsCount;
+    private final int implTypesCount;
+    private final int varsCount;
 
     public TypeInfo(int m_pType, int typekind, int functionCount,
             int implementationCount, int variableCount)
     {
         this.m_pTypeInfo = m_pType;
         this.typekind = typekind;
-        this.functionCount = functionCount;
-        this.implementationCount = implementationCount;
-        this.variableCount = variableCount;
+        this.funcsCount = functionCount;
+        this.implTypesCount = implementationCount;
+        this.varsCount = variableCount;
     }
 
-    /**
-     * @return the typekind
-     */
     public int getTypekind() {
         return typekind;
     }
 
-    /**
-     * @return the functionCount
-     */
-    public int getFunctionCount() {
-        return functionCount;
+    public int getFuncsCount() {
+        return funcsCount;
     }
 
-    /**
-     * @return the implementationCount
-     */
-    public int getImplementationCount() {
-        return implementationCount;
+    public int getImplTypesCount() {
+        return implTypesCount;
     }
 
-    /**
-     * @return the variableCount
-     */
-    public int getVariableCount() {
-        return variableCount;
+    public int getVarsCount() {
+        return varsCount;
     }
 
     public native TypeLib getContainingTypeLib();
+    public native String[] getNames(int index);
     public native VarDesc getVarDesc(int index);
 }
