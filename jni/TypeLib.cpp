@@ -42,11 +42,36 @@ ITypeLib *extractTypeLib(JNIEnv *env, jobject arg)
   return (ITypeLib *) anum;
 }
 
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
-  (JNIEnv *env, jobject _this, jint index)
-{
-   ITypeLib *typelib = extractTypeLib(env, _this);
+  JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getDocumentation
+  (JNIEnv *env, jobject obj, jint index)
+ {
+   ITypeLib *typeLib = extractTypeLib(env, obj);
+   BSTR name;
+   BSTR docString;
+   BSTR helpFile;
+   HRESULT hr = typeLib->GetDocumentation(index, &name, &docString, NULL,
+           &helpFile);
+   if (!SUCCEEDED(hr)) {
+      freeDocumentationStrings(name, docString, helpFile);
+      ThrowComFail(env, "getDocumentation failed", hr);
+      return NULL;
+   }
 
+   jclass autoClass = env->FindClass("com/jacob/com/Documentation");
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>",
+           "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+   jobject newAuto = env->NewObject(autoClass, autoCons, makeString(env, name),
+           makeString(env, docString), makeString(env, helpFile));
+
+   freeDocumentationStrings(name, docString, helpFile);
+
+   return newAuto;
+ }
+
+JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
+  (JNIEnv *env, jobject obj, jint index)
+{
+   ITypeLib *typelib = extractTypeLib(env, obj);
    ITypeInfo* typeInfo = 0;
    HRESULT hr = typelib->GetTypeInfo(index, &typeInfo);
    if (!SUCCEEDED(hr)) {
@@ -62,14 +87,28 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
    }
 
    jclass autoClass = env->FindClass("com/jacob/com/TypeInfo");
-   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(IIIII)V");
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(IIIIIIII)V");
    jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeInfo,
            typeAttributes->typekind, typeAttributes->cFuncs,
-           typeAttributes->cImplTypes, typeAttributes->cVars);
+           typeAttributes->cImplTypes, typeAttributes->cVars,
+           typeAttributes->wTypeFlags, typeAttributes->wMajorVerNum,
+           typeAttributes->wMinorVerNum);
 
    typeInfo->ReleaseTypeAttr(typeAttributes);
 
    return newAuto;
 }
 
+JNIEXPORT jint JNICALL Java_com_jacob_com_TypeLib_getTypeInfoCount
+  (JNIEnv *env, jobject obj)
+{
+   ITypeLib *typelib = extractTypeLib(env, obj);
+   HRESULT hr = typelib->GetTypeInfoCount();
+   if (hr == E_NOTIMPL) {
+      ThrowComFail(env, "GetTypeInfoCount failed", hr);
+      return NULL;
+   }
+
+   return (jint) hr;
+}
 }

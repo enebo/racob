@@ -19,6 +19,8 @@
  */
 #include <objbase.h>
 extern "C" {
+#define MAX_GUID_LENGTH 80
+    
   VARIANT *extractVariant(JNIEnv *env, jobject arg);
   void ThrowComFail(JNIEnv *env, const char* desc, jint hr);
   void ThrowComFailUnicode(JNIEnv *env, const wchar_t* desc, jint hr);
@@ -26,4 +28,7 @@ extern "C" {
   SAFEARRAY *extractSA(JNIEnv *env, jobject arg);
   void setSA(JNIEnv *env, jobject arg, SAFEARRAY *sa, int copy);
   SAFEARRAY *copySA(SAFEARRAY *psa);
+  void freeDocumentationStrings(BSTR name, BSTR docString, BSTR helpFile);
+  jstring makeString(JNIEnv *env, BSTR value);
+  BSTR makeBStr(JNIEnv *env, jstring value);
 }

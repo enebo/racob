@@ -36,10 +36,42 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getContainingTypeLib
 
 /*
  * Class:     TypeInfo
+ * Method:    getDocumentation
+ * Signature: ()Lcom/jacob/com/Documentation;
+ */
+JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getDocumentation
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     TypeInfo
+ * Method:    getFuncDesc
+ * Signature: ()Lcom/jacob/com/FuncDesc;
+ */
+JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getFuncDesc
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     TypeInfo
  * Method:    getNames
  * Signature: ()Lcom/jacob/com/VarDesc;
  */
 JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_TypeInfo_getNames
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     TypeInfo
+ * Method:    getRefTypeOfImplType
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_com_jacob_com_TypeInfo_getRefTypeOfImplType
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     TypeInfo
+ * Method:    getRefTypeInfo
+ * Signature: ()Lcom/jacob/com/TypeInfo;
+ */
+JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
   (JNIEnv *, jobject, jint);
 
 /*

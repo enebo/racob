@@ -21,19 +21,30 @@ public class TypeInfo extends JacobObject
     private final int funcsCount;
     private final int implTypesCount;
     private final int varsCount;
+    private final int flags;
+    private final int minorVersion;
+    private final int majorVersion;
 
     public TypeInfo(int m_pType, int typekind, int functionCount,
-            int implementationCount, int variableCount)
+            int implementationCount, int variableCount, int flags,
+            int minorVersion, int majorVersion)
     {
         this.m_pTypeInfo = m_pType;
         this.typekind = typekind;
         this.funcsCount = functionCount;
         this.implTypesCount = implementationCount;
         this.varsCount = variableCount;
+        this.flags = flags;
+        this.minorVersion = minorVersion;
+        this.majorVersion = majorVersion;
     }
 
     public int getTypekind() {
         return typekind;
+    }
+
+    public int getFlags() {
+        return flags;
     }
 
     public int getFuncsCount() {
@@ -44,11 +55,23 @@ public class TypeInfo extends JacobObject
         return implTypesCount;
     }
 
+    public int getMinorVersion() {
+        return minorVersion;
+    }
+
+    public int getMajorVersion() {
+        return majorVersion;
+    }
+
     public int getVarsCount() {
         return varsCount;
     }
 
     public native TypeLib getContainingTypeLib();
+    public native Documentation getDocumentation(int index);
+    public native FuncDesc getFuncDesc(int index);
     public native String[] getNames(int index);
+    public native int getRefTypeOfImplType(int index);
+    public native TypeInfo getRefTypeInfo(int index);
     public native VarDesc getVarDesc(int index);
 }

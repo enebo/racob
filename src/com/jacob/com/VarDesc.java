@@ -1,25 +1,30 @@
 package com.jacob.com;
 
-public class VarDesc {
+public class VarDesc
+{
     private final int varkind;
     private final Variant constant;
     private final int memid;
 
-    public VarDesc(int varkind, Variant constant, int memid) {
-        this.varkind = varkind;
+    public VarDesc(int memid, Variant constant, int varkind)
+    {
         this.constant = constant;
         this.memid = memid;
+        this.varkind = varkind;
     }
 
-    public Variant getConstant() {
+    public Variant getConstant()
+    {
         return constant;
     }
     
-    public int getVarkind() {
+    public int getVarkind()
+    {
         return varkind;
     }
 
-    public int getMemid() {
+    public int getMemid()
+    {
         return memid;
     }
 }

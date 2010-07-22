@@ -72,4 +72,29 @@ int CheckEnv(JNIEnv *env1, JNIEnv *env2)
 	return 1;
 }
 
+ void freeDocumentationStrings(BSTR name, BSTR docString, BSTR helpFile)
+ {
+  if (name != NULL) SysFreeString(name);
+  if (docString != NULL) SysFreeString(docString);
+  if (helpFile != NULL) SysFreeString(helpFile);
+ }
+
+ jstring makeString(JNIEnv *env, BSTR value)
+ {
+  int length = SysStringLen(value);
+  return env->NewString((const jchar *) value, length);
+ }
+
+ BSTR makeBStr(JNIEnv *env, jstring value)
+   {
+    const jchar *chars = env->GetStringChars(value, NULL);
+    int length = env->GetStringLength(value);
+    BSTR newBstr = SysAllocStringLen((const OLECHAR *) chars, length);
+
+    env->ReleaseStringChars(value, chars);
+    
+    return newBstr;
+
+ }
+
 }

@@ -18,39 +18,25 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <jni.h>
-/* Header for class TypeLib */
+/* Header for class Automation */
 
-#ifndef _Included_TypeLib
-#define _Included_TypeLib
+#ifndef _Included_Automation
+#define _Included_Automation
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*
- * Class:     TypeLib
- * Method:    getDocumentation
- * Signature: ()Lcom/jacob/com/Documentation;
+ * Class:     Automation
+ * Method:    loadTypeLib
+ * Signature: (Ljava/lang/String;)Lcom/jacob/com/TypeLib;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getDocumentation
-  (JNIEnv *, jobject, jint);
-
-/*
- * Class:     TypeLib
- * Method:    getTypeInfo
- * Signature: (I)Lcom/jacob/com/TypeInfo;
- */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
-  (JNIEnv *, jobject, jint);
-
-/*
- * Class:     TypeLib
- * Method:    getTypeInfoCount
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_com_jacob_com_TypeLib_getTypeInfoCount
-  (JNIEnv *, jobject);
+JNIEXPORT jobject JNICALL Java_com_jacob_com_Automation_loadTypeLib
+  (JNIEnv *, jclass, jstring);
 
 #ifdef __cplusplus
 }
 #endif
 #endif
+
+
