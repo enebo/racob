@@ -2178,6 +2178,9 @@ public class Variant extends JacobObject {
 		try {
 			Object foo = toJavaObject();
 			// rely on java objects to do the right thing
+                        if (foo == null) {
+                            return "{Java null}";
+                        }
 			return foo.toString();
 		} catch (NotImplementedException nie) {
 			// some types do not generate a good description yet
