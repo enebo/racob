@@ -198,7 +198,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
 
    jclass autoClass = env->FindClass("com/jacob/com/TypeInfo");
    jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(IIIIIIII)V");
-   jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeInfo,
+   jobject newAuto = env->NewObject(autoClass, autoCons, (jint) newTypeInfo,
            typeAttributes->typekind, typeAttributes->cFuncs,
            typeAttributes->cImplTypes, typeAttributes->cVars,
            typeAttributes->wTypeFlags, typeAttributes->wMajorVerNum,
