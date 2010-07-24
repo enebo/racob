@@ -15,6 +15,32 @@ public class TypeInfo extends JacobObject
     public static final int TYPEKIND_ALIAS = 6;
     public static final int TYPEKIND_UNION = 7;
     public static final int TYPEKIND_MAX = 8;
+    
+    public static final int TYPEFLAG_NONE = 0;
+    public static final int TYPEFLAG_FAPPOBJECT = 1;
+    public static final int TYPEFLAG_FCANCREATE = 2;
+    public static final int TYPEFLAG_FLICENSED = 4;
+    public static final int TYPEFLAG_FPREDECLID = 8;
+    public static final int TYPEFLAG_FHIDDEN = 16;
+    public static final int TYPEFLAG_FCONTROL = 32;
+    public static final int TYPEFLAG_FDUAL = 64;
+    public static final int TYPEFLAG_FNONEXTENSIBLE = 128;
+    public static final int TYPEFLAG_FOLEAUTOMATION = 256;
+    public static final int TYPEFLAG_FRESTRICTED = 512;
+    public static final int TYPEFLAG_FAGGREGATABLE = 1024;
+    public static final int TYPEFLAG_FREPLACEABLE = 2048;
+    public static final int TYPEFLAG_FDISPATCHABLE = 4096;
+    public static final int TYPEFLAG_FREVERSEBIND = 8192;
+    public static final int TYPEFLAG_FPROXY = 16384;
+    public static final int TYPEFLAG_DEFAULTFILTER = 528;
+    public static final int TYPEFLAG_COCLASSATTRIBUTES = 1599;
+    public static final int TYPEFLAG_INTERFACEATTRIBUTES = 31696;
+    public static final int TYPEFLAG_DISPATCHATTRIBUTES = 23184;
+    public static final int TYPEFLAG_ALIASATTRIBUTES = 528;
+    public static final int TYPEFLAG_MODULEATTRIBUTES = 528;
+    public static final int TYPEFLAG_ENUMATTRIBUTES = 528;
+    public static final int TYPEFLAG_RECORDATTRIBUTES = 528;
+    public static final int TYPEFLAG_UNIONATTRIBUTES = 528;
 
     public final int m_pTypeInfo;
     private final int typekind;
