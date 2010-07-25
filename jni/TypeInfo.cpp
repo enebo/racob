@@ -184,7 +184,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
       return NULL;
    }
 
-   return makeTypeInfo(env, typeInfo);
+   return makeTypeInfo(env, newTypeInfo);
 }
 
  JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getVarDesc

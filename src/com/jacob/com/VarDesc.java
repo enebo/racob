@@ -18,6 +18,11 @@ public class VarDesc
     public static final int VARFLAG_FIMMEDIATEBIND = 4096;
     public static final int VARFLAG_DEFAULTFILTER = 192;
 
+    public static final int VAR_PERINSTANCE = 0;
+    public static final int VAR_STATIC = 1;
+    public static final int VAR_CONST = 2;
+    public static final int VAR_DISPATCH = 3;
+
     private final int varkind;
     private final Variant constant;
     private final int memid;
