@@ -2,6 +2,11 @@ package com.jacob.com;
 
 public class TypeLib
 {
+    public static final int LIBFLAG_FRESTRICTED = 1;
+    public static final int LIBFLAG_FCONTROL = 2;
+    public static final int LIBFLAG_FHIDDEN = 4;
+    public static final int LIBFLAG_FHASDISKIMAGE = 8;
+
     private final int m_pTypeLib;
     private final String guid;
     private final int count;
