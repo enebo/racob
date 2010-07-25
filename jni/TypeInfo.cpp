@@ -213,9 +213,9 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
    }
 
    jclass autoClass = env->FindClass("com/jacob/com/VarDesc");
-   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILcom/jacob/com/Variant;I)V");
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILcom/jacob/com/Variant;II)V");
    jobject newAuto = env->NewObject(autoClass, autoCons, varDesc->memid,
-           cValue, varDesc->varkind);
+           cValue, varDesc->varkind, varDesc->wVarFlags);
 
    typeInfo->ReleaseVarDesc(varDesc);
 

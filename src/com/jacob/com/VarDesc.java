@@ -21,17 +21,24 @@ public class VarDesc
     private final int varkind;
     private final Variant constant;
     private final int memid;
+    private final int flags;
 
-    public VarDesc(int memid, Variant constant, int varkind)
+    public VarDesc(int memid, Variant constant, int varkind, int flags)
     {
         this.constant = constant;
         this.memid = memid;
         this.varkind = varkind;
+        this.flags = flags;
     }
 
     public Variant getConstant()
     {
         return constant;
+    }
+
+    public int getFlags()
+    {
+        return flags;
     }
     
     public int getVarkind()
