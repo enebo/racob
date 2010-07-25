@@ -69,12 +69,7 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
     return NULL;
  }
 
- // GUID as string
- OLECHAR bstr[MAX_GUID_LENGTH];
- int length = StringFromGUID2(libAttr->guid, bstr, sizeof(bstr)/sizeof(OLECHAR));
- BSTR copy = SysAllocString(bstr);
- jstring guid = length > 3 ? makeString(env, copy) : NULL;
-
+ jstring guid = makeGUIDString(env, libAttr->guid);
  jclass autoClass = env->FindClass("com/jacob/com/TypeLib");
  jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILjava/lang/String;IIII)V");
  jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeLib,
@@ -189,24 +184,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
       return NULL;
    }
 
-   TYPEATTR *typeAttributes = NULL;
-   hr = newTypeInfo->GetTypeAttr(&typeAttributes);
-   if (!SUCCEEDED(hr)) {
-      ThrowComFail(env, "GetTypeInfo.GetTypeAttr failed", hr);
-      return NULL;
-   }
-
-   jclass autoClass = env->FindClass("com/jacob/com/TypeInfo");
-   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(IIIIIIII)V");
-   jobject newAuto = env->NewObject(autoClass, autoCons, (jint) newTypeInfo,
-           typeAttributes->typekind, typeAttributes->cFuncs,
-           typeAttributes->cImplTypes, typeAttributes->cVars,
-           typeAttributes->wTypeFlags, typeAttributes->wMajorVerNum,
-           typeAttributes->wMinorVerNum);
-
-   typeInfo->ReleaseTypeAttr(typeAttributes);
-
-   return newAuto;
+   return makeTypeInfo(env, typeInfo);
 }
 
  JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getVarDesc

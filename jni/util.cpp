@@ -85,6 +85,17 @@ int CheckEnv(JNIEnv *env1, JNIEnv *env2)
   return env->NewString((const jchar *) value, length);
  }
 
+ jstring makeGUIDString(JNIEnv *env, GUID guid)
+ {
+  // GUID as string
+  OLECHAR bstr[MAX_GUID_LENGTH];
+  int length = StringFromGUID2(guid, bstr, sizeof(bstr)/sizeof(OLECHAR));
+  BSTR copy = SysAllocString(bstr);
+  jstring guidString = length > 3 ? makeString(env, copy) : NULL;
+
+  return guidString;
+ }
+
  BSTR makeBStr(JNIEnv *env, jstring value)
    {
     const jchar *chars = env->GetStringChars(value, NULL);
@@ -97,4 +108,26 @@ int CheckEnv(JNIEnv *env1, JNIEnv *env2)
 
  }
 
+ jobject makeTypeInfo(JNIEnv *env, ITypeInfo *typeInfo)
+ {
+   TYPEATTR *typeAttributes = NULL;
+   HRESULT hr = typeInfo->GetTypeAttr(&typeAttributes);
+   if (!SUCCEEDED(hr)) {
+      ThrowComFail(env, "GetTypeInfo.GetTypeAttr failed", hr);
+      return NULL;
+   }
+
+   jclass autoClass = env->FindClass("com/jacob/com/TypeInfo");
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILjava/lang/String;IIIIIII)V");
+   jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeInfo,
+           makeGUIDString(env, typeAttributes->guid),
+           typeAttributes->typekind, typeAttributes->cFuncs,
+           typeAttributes->cImplTypes, typeAttributes->cVars,
+           typeAttributes->wTypeFlags, typeAttributes->wMajorVerNum,
+           typeAttributes->wMinorVerNum);
+
+   typeInfo->ReleaseTypeAttr(typeAttributes);
+
+   return newAuto;
+ }
 }

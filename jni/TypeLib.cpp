@@ -79,24 +79,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
       return NULL;
    }
 
-   TYPEATTR *typeAttributes = NULL;
-   hr = typeInfo->GetTypeAttr(&typeAttributes);
-   if (!SUCCEEDED(hr)) {
-      ThrowComFail(env, "GetTypeInfo.GetTypeAttr failed", hr);
-      return NULL;
-   }
-
-   jclass autoClass = env->FindClass("com/jacob/com/TypeInfo");
-   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(IIIIIIII)V");
-   jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeInfo,
-           typeAttributes->typekind, typeAttributes->cFuncs,
-           typeAttributes->cImplTypes, typeAttributes->cVars,
-           typeAttributes->wTypeFlags, typeAttributes->wMajorVerNum,
-           typeAttributes->wMinorVerNum);
-
-   typeInfo->ReleaseTypeAttr(typeAttributes);
-
-   return newAuto;
+   return makeTypeInfo(env, typeInfo);
 }
 
 JNIEXPORT jint JNICALL Java_com_jacob_com_TypeLib_getTypeInfoCount

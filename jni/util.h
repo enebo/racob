@@ -29,6 +29,8 @@ extern "C" {
   void setSA(JNIEnv *env, jobject arg, SAFEARRAY *sa, int copy);
   SAFEARRAY *copySA(SAFEARRAY *psa);
   void freeDocumentationStrings(BSTR name, BSTR docString, BSTR helpFile);
+  jstring makeGUIDString(JNIEnv *env, GUID guid);
   jstring makeString(JNIEnv *env, BSTR value);
   BSTR makeBStr(JNIEnv *env, jstring value);
+  jobject makeTypeInfo(JNIEnv *env, ITypeInfo *typeInfo);
 }

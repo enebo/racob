@@ -44,6 +44,7 @@ public class TypeInfo extends JacobObject
 
     public final int m_pTypeInfo;
     private final int typekind;
+    private final String guid;
     private final int funcsCount;
     private final int implTypesCount;
     private final int varsCount;
@@ -51,11 +52,12 @@ public class TypeInfo extends JacobObject
     private final int minorVersion;
     private final int majorVersion;
 
-    public TypeInfo(int m_pType, int typekind, int functionCount,
+    public TypeInfo(int m_pType, String guid, int typekind, int functionCount,
             int implementationCount, int variableCount, int flags,
             int minorVersion, int majorVersion)
     {
         this.m_pTypeInfo = m_pType;
+        this.guid = guid;
         this.typekind = typekind;
         this.funcsCount = functionCount;
         this.implTypesCount = implementationCount;
@@ -75,6 +77,10 @@ public class TypeInfo extends JacobObject
 
     public int getFuncsCount() {
         return funcsCount;
+    }
+
+    public String getGUID() {
+        return guid;
     }
 
     public int getImplTypesCount() {
