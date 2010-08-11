@@ -242,6 +242,9 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_getTypeInfo
   (JNIEnv *env, jobject _this)
 {
    IDispatch *disp = extractDispatch(env, _this);
+   if (!disp) {
+      return NULL;
+   }
    unsigned int count = 0;
    HRESULT hr = disp->GetTypeInfoCount(&count);
    if (!SUCCEEDED(hr)) {
