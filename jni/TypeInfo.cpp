@@ -87,8 +87,9 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
    ITypeInfo *typeInfo = extractTypeInfo(env, obj);
    BSTR name;
    BSTR docString;
+   unsigned long helpContext;
    BSTR helpFile;
-   HRESULT hr = typeInfo->GetDocumentation(index, &name, &docString, NULL,
+   HRESULT hr = typeInfo->GetDocumentation(index, &name, &docString, &helpContext,
            &helpFile);
    if (!SUCCEEDED(hr)) {
       freeDocumentationStrings(name, docString, helpFile);
@@ -98,9 +99,9 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
 
    jclass autoClass = env->FindClass("com/jacob/com/Documentation");
    jmethodID autoCons = env->GetMethodID(autoClass, "<init>",
-           "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+           "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
    jobject newAuto = env->NewObject(autoClass, autoCons, makeString(env, name),
-           makeString(env, docString), makeString(env, helpFile));
+           makeString(env, docString), makeString(env, helpFile), helpContext);
 
    freeDocumentationStrings(name, docString, helpFile);
 
@@ -111,6 +112,9 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
   (JNIEnv *env, jobject obj, jint index)
  {
    ITypeInfo *typeInfo = extractTypeInfo(env, obj);
+   if (!typeInfo) {
+      return NULL;
+   }
 
    FUNCDESC *funcDesc = NULL;
    HRESULT hr = typeInfo->GetFuncDesc(index, &funcDesc);
