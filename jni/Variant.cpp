@@ -393,8 +393,9 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_toVariantDispatch
 {
   VARIANT *v = extractVariant(env, _this);
   if (v) {
-    HRESULT hr;
-    if (FAILED(hr = VariantChangeType(v, v, 0, VT_DISPATCH))) {
+    HRESULT hr = VariantChangeType(v, v, 0, VT_DISPATCH);
+
+    if (FAILED(hr)) {
       ThrowComFail(env, "VariantChangeType failed", hr);
       return NULL;
     }
@@ -404,7 +405,11 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_toVariantDispatch
     // construct a Dispatch object to return
     IDispatch *disp = V_DISPATCH(v);
     // I am copying the pointer to java
-    if (disp) disp->AddRef();
+    if (!disp) {
+       return NULL; // nothing to dispatch too
+    } else {
+       disp->AddRef();
+    }
     jobject newAuto = env->NewObject(autoClass, autoCons, disp);
     return newAuto;
   }
