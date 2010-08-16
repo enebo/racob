@@ -439,15 +439,28 @@ static wchar_t* CreateErrorMsgFromInfo(HRESULT inResult, EXCEPINFO* ioInfo,
 
 #define SETNOPARAMS(dp) SETDISPPARAMS(dp, 0, NULL, 0, NULL)
 
+
 JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
   (JNIEnv *env, jclass clazz,
   jobject disp, jstring name, jint dispid,
   jint lcid, jint wFlags, jobjectArray vArg, jintArray uArgErr)
 {
+    IDispatch *pIDispatch = extractDispatch(env, disp);
+    if (!pIDispatch) return NULL;
+    
+    return Java_com_jacob_com_Dispatch_invokev2(env, clazz, (jint) pIDispatch,
+            name, dispid, lcid, wFlags, vArg, uArgErr);
+}
+
+JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev2
+  (JNIEnv *env, jclass clazz,
+  jint dispPointer, jstring name, jint dispid,
+  jint lcid, jint wFlags, jobjectArray vArg, jintArray uArgErr)
+{
   DISPPARAMS  dispparams;
   EXCEPINFO   excepInfo;
 
-  IDispatch *pIDispatch = extractDispatch(env, disp);
+  IDispatch *pIDispatch = (IDispatch *) dispPointer;
   if (!pIDispatch) return NULL;
 
   int dispID = dispid;

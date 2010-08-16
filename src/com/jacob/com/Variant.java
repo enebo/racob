@@ -315,7 +315,7 @@ public class Variant extends JacobObject {
 	 */
 	public boolean getBoolean() {
 		if (this.getvt() == VariantBoolean) {
-			return getVariantBoolean();
+			return getVariantBoolean(m_pVariant);
 		} else {
 			throw new IllegalStateException(
 					"getBoolean() only legal on Variants of type VariantBoolean, not "
@@ -799,7 +799,7 @@ public class Variant extends JacobObject {
 	 */
 	public String getString() {
 		if (getvt() == Variant.VariantString) {
-			return getVariantString();
+			return getVariantString(m_pVariant);
 		} else {
 			throw new IllegalStateException(
 					"getString() only legal on Variants of type VariantString, not "
@@ -885,7 +885,7 @@ public class Variant extends JacobObject {
 	 * 
 	 * @return the value in this Variant as a boolean, null if not a boolean
 	 */
-	private native boolean getVariantBoolean();
+	private native boolean getVariantBoolean(int pointer);
 
 	private native boolean getVariantBooleanRef();
 
@@ -994,7 +994,7 @@ public class Variant extends JacobObject {
 	 * 
 	 * @return
 	 */
-	private native String getVariantString();
+	private native String getVariantString(int pointer);
 
 	/**
 	 * @return String the content of this variant as a string

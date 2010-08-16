@@ -205,10 +205,10 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDate
 /*
  * Class:     com_jacob_com_Variant
  * Method:    getVariantBoolean
- * Signature: ()Z
+ * Signature: (I)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_jacob_com_Variant_getVariantBoolean
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_jacob_com_Variant
@@ -380,10 +380,10 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantByteRef
 /*
  * Class:     com_jacob_com_Variant
  * Method:    getString
- * Signature: ()Ljava/lang/String;
+ * Signature: (I)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_com_jacob_com_Variant_getVariantString
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_jacob_com_Variant

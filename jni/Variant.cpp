@@ -485,9 +485,9 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDate
  * Otherwise it will return null (no conversion done)
  */
 JNIEXPORT jboolean JNICALL Java_com_jacob_com_Variant_getVariantBoolean
-  (JNIEnv *env, jobject _this)
+  (JNIEnv *env, jobject _this, jint pointer)
 {
-  VARIANT *v = extractVariant(env, _this);
+  VARIANT *v = (VARIANT *) pointer;
   if (v) {
     if (V_VT(v) !=  (VT_BOOL)) {
       return NULL;
@@ -772,9 +772,9 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantByteRef
  * Otherwise it will return null (no conversion done)
  */
 JNIEXPORT jstring JNICALL Java_com_jacob_com_Variant_getVariantString
-  (JNIEnv *env, jobject _this)
+  (JNIEnv *env, jobject _this, jint pointer)
 {
-  VARIANT *v = extractVariant(env, _this);
+  VARIANT *v = (VARIANT *) pointer;
   if (v) {
     if (V_VT(v) !=  VT_BSTR) {
       return NULL;

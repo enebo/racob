@@ -330,7 +330,7 @@ public class Dispatch extends JacobObject {
 	public static void invokeSubv(Dispatch dispatchTarget, String name,
 			int dispID, int lcid, int wFlags, Variant[] vArg, int[] uArgErr) {
 		throwIfUnattachedDispatch(dispatchTarget);
-		invokev(dispatchTarget, name, dispID, lcid, wFlags, vArg, uArgErr);
+		invokev2(dispatchTarget.m_pDispatch, name, dispID, lcid, wFlags, vArg, uArgErr);
 	}
 
 	/**
@@ -343,7 +343,7 @@ public class Dispatch extends JacobObject {
 	public static void invokeSubv(Dispatch dispatchTarget, String name,
 			int wFlags, Variant[] vArg, int[] uArgErr) {
 		throwIfUnattachedDispatch(dispatchTarget);
-		invokev(dispatchTarget, name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
+		invokev2(dispatchTarget.m_pDispatch, name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
 				wFlags, vArg, uArgErr);
 	}
 
@@ -357,7 +357,7 @@ public class Dispatch extends JacobObject {
 	public static void invokeSubv(Dispatch dispatchTarget, int dispID,
 			int wFlags, Variant[] vArg, int[] uArgErr) {
 		throwIfUnattachedDispatch(dispatchTarget);
-		invokev(dispatchTarget, null, dispID, Dispatch.LOCALE_SYSTEM_DEFAULT,
+		invokev2(dispatchTarget.m_pDispatch, null, dispID, Dispatch.LOCALE_SYSTEM_DEFAULT,
 				wFlags, vArg, uArgErr);
 	}
 
@@ -486,7 +486,7 @@ public class Dispatch extends JacobObject {
 	public static Variant invoke(Dispatch dispatchTarget, String name,
 			int dispID, int lcid, int wFlags, Object[] oArg, int[] uArgErr) {
 		throwIfUnattachedDispatch(dispatchTarget);
-		return invokev(dispatchTarget, name, dispID, lcid, wFlags,
+		return invokev2(dispatchTarget.m_pDispatch, name, dispID, lcid, wFlags,
 				VariantUtilities.objectsToVariants(oArg), uArgErr);
 	}
 
@@ -846,6 +846,8 @@ public class Dispatch extends JacobObject {
 	public static native Variant invokev(Dispatch dispatchTarget, String name,
 			int dispID, int lcid, int wFlags, Variant[] vArg, int[] uArgErr);
 
+        private static native Variant invokev2(int dispatchPointer, String name,
+			int dispID, int lcid, int wFlags, Variant[] vArg, int[] uArgErr);
 	/**
 	 * @param dispatchTarget
 	 * @param name
@@ -857,7 +859,7 @@ public class Dispatch extends JacobObject {
 	public static Variant invokev(Dispatch dispatchTarget, String name,
 			int wFlags, Variant[] vArg, int[] uArgErr) {
 		throwIfUnattachedDispatch(dispatchTarget);
-		return invokev(dispatchTarget, name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
+		return invokev2(dispatchTarget.m_pDispatch, name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
 				wFlags, vArg, uArgErr);
 	}
 
@@ -874,7 +876,7 @@ public class Dispatch extends JacobObject {
 			int wFlags, Variant[] vArg, int[] uArgErr, int wFlagsEx) {
 		throwIfUnattachedDispatch(dispatchTarget);
 		// do not implement IDispatchEx for now
-		return invokev(dispatchTarget, name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
+		return invokev2(dispatchTarget.m_pDispatch, name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
 				wFlags, vArg, uArgErr);
 	}
 
@@ -889,7 +891,7 @@ public class Dispatch extends JacobObject {
 	public static Variant invokev(Dispatch dispatchTarget, int dispID,
 			int wFlags, Variant[] vArg, int[] uArgErr) {
 		throwIfUnattachedDispatch(dispatchTarget);
-		return invokev(dispatchTarget, null, dispID,
+		return invokev2(dispatchTarget.m_pDispatch, null, dispID,
 				Dispatch.LOCALE_SYSTEM_DEFAULT, wFlags, vArg, uArgErr);
 	}
 

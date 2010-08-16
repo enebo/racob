@@ -83,6 +83,14 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
 
 /*
  * Class:     Dispatch
+ * Method:    invokev2
+ * Signature: (ILjava/lang/String;III[LVariant;[I)LVariant;
+ */
+JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev2
+  (JNIEnv *, jclass, jint, jstring, jint, jint, jint, jobjectArray, jintArray);
+
+/*
+ * Class:     Dispatch
  * Method:    getTypeInfo
  * Signature: ()Lcom/jacob/com/TypeInfo;
  */
