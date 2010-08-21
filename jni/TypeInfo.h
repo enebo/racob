@@ -28,59 +28,59 @@ extern "C" {
 
 /*
  * Class:     TypeInfo
- * Method:    getContainingTypeLib
- * Signature: ()Lcom/jacob/com/TypeLib;
+ * Method:    getContainingTypeLibNative
+ * Signature: (I)Lcom/jacob/com/TypeLib;
  */
 JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getContainingTypeLib
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     TypeInfo
- * Method:    getDocumentation
- * Signature: ()Lcom/jacob/com/Documentation;
+ * Method:    getDocumentationNative
+ * Signature: (II)Lcom/jacob/com/Documentation;
  */
 JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getDocumentation
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     TypeInfo
  * Method:    getFuncDesc
- * Signature: ()Lcom/jacob/com/FuncDesc;
+ * Signature: (II)Lcom/jacob/com/FuncDesc;
  */
 JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getFuncDesc
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     TypeInfo
  * Method:    getNames
- * Signature: ()Lcom/jacob/com/VarDesc;
+ * Signature: (II)Lcom/jacob/com/VarDesc;
  */
 JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_TypeInfo_getNames
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     TypeInfo
  * Method:    getRefTypeOfImplType
- * Signature: (I)I
+ * Signature: (II)I
  */
 JNIEXPORT jint JNICALL Java_com_jacob_com_TypeInfo_getRefTypeOfImplType
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     TypeInfo
  * Method:    getRefTypeInfo
- * Signature: ()Lcom/jacob/com/TypeInfo;
+ * Signature: (II)Lcom/jacob/com/TypeInfo;
  */
 JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     TypeInfo
  * Method:    getVarDesc
- * Signature: ()Lcom/jacob/com/VarDesc;
+ * Signature: (II)Lcom/jacob/com/VarDesc;
  */
 JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getVarDesc
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jint, jint);
 
 
 #ifdef __cplusplus

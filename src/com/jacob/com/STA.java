@@ -42,6 +42,7 @@ public class STA extends Thread {
 	 * 
 	 * @see java.lang.Thread#run()
 	 */
+    @Override
 	public void run() {
 		// init COM
 		ComThread.InitSTA();
@@ -78,7 +79,7 @@ public class STA extends Thread {
 	 * calls quitMessagePump
 	 */
 	public void quit() {
-		quitMessagePump();
+		quitMessagePump(threadID);
 	}
 
 	/**
@@ -89,7 +90,7 @@ public class STA extends Thread {
 	/**
 	 * quit message pump for the main STA
 	 */
-	public native void quitMessagePump();
+	public native void quitMessagePump(int threadID);
 
 	/**
 	 * STA isn't a subclass of JacobObject so a reference to it doesn't load the

@@ -28,18 +28,18 @@ extern "C" {
 /*
  * Class:     com_jacob_com_DispatchProxy
  * Method:    MarshalIntoStream
- * Signature: (Lcom/jacob/com/Dispatch;)V
+ * Signature: (I)I
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_DispatchProxy_MarshalIntoStream
-  (JNIEnv *, jobject, jobject);
+JNIEXPORT jint JNICALL Java_com_jacob_com_DispatchProxy_MarshalIntoStream
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_jacob_com_DispatchProxy
  * Method:    MarshalFromStream
- * Signature: ()Lcom/jacob/com/Dispatch;
+ * Signature: (I)Lcom/jacob/com/Dispatch;
  */
 JNIEXPORT jobject JNICALL Java_com_jacob_com_DispatchProxy_MarshalFromStream
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_jacob_com_DispatchProxy

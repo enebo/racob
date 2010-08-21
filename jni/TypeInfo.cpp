@@ -30,24 +30,12 @@
 
 extern "C" {
 
-#define P_TYPEINFO_FLD "m_pTypeInfo"
-
  // Total number of names to return from GetNames
 #define MAX_NAMES 50
 
- // extract a ITypeInfo from a jobject
-ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
-{
-  jclass argClass = env->GetObjectClass(arg);
-  jfieldID ajf = env->GetFieldID( argClass, P_TYPEINFO_FLD, "I");
-  
-  return (ITypeInfo *) env->GetIntField(arg, ajf);
-}
-
  JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getContainingTypeLib
-  (JNIEnv *env, jobject obj)
- {
-   ITypeInfo *typeInfo = extractTypeInfo(env, obj);
+  (JNIEnv *env, jobject obj, jint pointer) {
+   ITypeInfo *typeInfo = (ITypeInfo *) pointer;
    ITypeLib* typeLib = NULL;
    unsigned int index = 0;
    HRESULT hr = typeInfo->GetContainingTypeLib(&typeLib, &index);
@@ -82,9 +70,8 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
  }
 
   JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getDocumentation
-  (JNIEnv *env, jobject obj, jint index)
- {
-   ITypeInfo *typeInfo = extractTypeInfo(env, obj);
+  (JNIEnv *env, jobject obj, jint pointer, jint index) {
+   ITypeInfo *typeInfo = (ITypeInfo *) pointer;
    BSTR name;
    BSTR docString;
    unsigned long helpContext;
@@ -109,12 +96,9 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
  }
 
  JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getFuncDesc
-  (JNIEnv *env, jobject obj, jint index)
- {
-   ITypeInfo *typeInfo = extractTypeInfo(env, obj);
-   if (!typeInfo) {
-      return NULL;
-   }
+  (JNIEnv *env, jobject obj, jint pointer, jint index) {
+   ITypeInfo *typeInfo = (ITypeInfo *) pointer;
+   if (!typeInfo) return NULL;
 
    FUNCDESC *funcDesc = NULL;
    HRESULT hr = typeInfo->GetFuncDesc(index, &funcDesc);
@@ -133,9 +117,8 @@ ITypeInfo *extractTypeInfo(JNIEnv *env, jobject arg)
  }
 
 JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_TypeInfo_getNames
-  (JNIEnv *env, jobject obj, jint memid)
-{
-   ITypeInfo *typeInfo = extractTypeInfo(env, obj);
+  (JNIEnv *env, jobject obj, jint pointer, jint memid) {
+   ITypeInfo *typeInfo = (ITypeInfo *) pointer;
    BSTR names[MAX_NAMES];
    unsigned int namesCount;
    HRESULT hr = typeInfo->GetNames(memid, names, MAX_NAMES, &namesCount);
@@ -164,9 +147,8 @@ JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_TypeInfo_getNames
 }
 
 JNIEXPORT jint JNICALL Java_com_jacob_com_TypeInfo_getRefTypeOfImplType
-  (JNIEnv *env, jobject obj, jint index)
-{
-  ITypeInfo *typeInfo = extractTypeInfo(env, obj);
+  (JNIEnv *env, jobject obj, jint pointer, jint index) {
+  ITypeInfo *typeInfo = (ITypeInfo *) pointer;
   HREFTYPE href;
   HRESULT hr = typeInfo->GetRefTypeOfImplType(index, &href);
   if (!SUCCEEDED(hr)) {
@@ -178,9 +160,8 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_TypeInfo_getRefTypeOfImplType
 }
 
 JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
-  (JNIEnv *env, jobject obj, jint reftype)
-{
-   ITypeInfo *typeInfo = extractTypeInfo(env, obj);
+  (JNIEnv *env, jobject obj, jint pointer, jint reftype) {
+   ITypeInfo *typeInfo = (ITypeInfo *) pointer;
    ITypeInfo *newTypeInfo = NULL;
    HRESULT hr = typeInfo->GetRefTypeInfo(reftype, &newTypeInfo);
    if (!SUCCEEDED(hr)) {
@@ -192,9 +173,9 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
 }
 
  JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getVarDesc
-  (JNIEnv *env, jobject obj, jint index)
+  (JNIEnv *env, jobject obj, jint pointer, jint index)
  {
-   ITypeInfo *typeInfo = extractTypeInfo(env, obj);
+   ITypeInfo *typeInfo = (ITypeInfo *) pointer;
    VARDESC *varDesc = NULL;
    HRESULT hr = typeInfo->GetVarDesc(index, &varDesc);
    if (!SUCCEEDED(hr)) {
@@ -203,19 +184,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
    }
 
    // We have a constant so let's save the variant
-   jobject cValue = NULL;
-   if (varDesc->varkind == VAR_CONST) {
-       jclass variantClass = env->FindClass("com/jacob/com/Variant");
-       jmethodID variantCons = env->GetMethodID(variantClass, "<init>", "()V");
-       cValue = env->NewObject(variantClass, variantCons);
-       VARIANT *v = extractVariant(env, cValue);
-       hr = VariantCopy(v, varDesc->lpvarValue);
-       if (!SUCCEEDED(hr)) {
-          ThrowComFail(env, "getVarDesc failed to copy constant", hr);
-          return NULL;
-       }
-   }
-
+   jobject cValue = varDesc->varkind == VAR_CONST ? createVariant(env, varDesc->lpvarValue) : NULL;
    jclass autoClass = env->FindClass("com/jacob/com/VarDesc");
    jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILcom/jacob/com/Variant;II)V");
    jobject newAuto = env->NewObject(autoClass, autoCons, varDesc->memid,

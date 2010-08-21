@@ -48,7 +48,6 @@ private:
   CComBSTR *MethName;   // Array of method names
   DISPID   *MethID;     // Array of method ids, used to match invokations to method names
   JavaVM   *jvm;        // The java vm we are running
-  void convertJavaVariant(VARIANT *java, VARIANT *com);
   void Connect(JNIEnv *env);
   void Disconnect();
 public:

@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import com.jacob.com.InvocationProxy;
 import com.jacob.com.NotImplementedException;
 import com.jacob.com.Variant;
+import com.jacob.com.VariantUtilities;
 
 /**
  * RELEASE 1.12 EXPERIMENTAL.
@@ -93,7 +94,7 @@ public class ActiveXInvocationProxy extends InvocationProxy {
 				if (mReturnedByInvocation == null) {
 					mVariantToBeReturned = null;
 				} else if (!(mReturnedByInvocation instanceof Variant)) {
-					mVariantToBeReturned = new Variant(mReturnedByInvocation);
+					mVariantToBeReturned = VariantUtilities.objectToVariant(mReturnedByInvocation);
 				} else {
 					mVariantToBeReturned = (Variant) mReturnedByInvocation;
 				}

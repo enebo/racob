@@ -30,22 +30,9 @@
 
 extern "C" {
 
-#define P_TYPELIB_FLD "m_pTypeLib"
-
-// extract a ITypeLib from a jobject
-ITypeLib *extractTypeLib(JNIEnv *env, jobject arg)
-{
-  jclass argClass = env->GetObjectClass(arg);
-  jfieldID ajf = env->GetFieldID( argClass, P_TYPELIB_FLD, "I");
-  jint anum = env->GetIntField(arg, ajf);
-
-  return (ITypeLib *) anum;
-}
-
   JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getDocumentation
-  (JNIEnv *env, jobject obj, jint index)
- {
-   ITypeLib *typeLib = extractTypeLib(env, obj);
+  (JNIEnv *env, jobject obj, jint pointer, jint index) {
+   ITypeLib *typeLib = (ITypeLib *) pointer;
    BSTR name;
    BSTR docString;
    unsigned long helpContext;
@@ -70,9 +57,8 @@ ITypeLib *extractTypeLib(JNIEnv *env, jobject arg)
  }
 
 JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
-  (JNIEnv *env, jobject obj, jint index)
-{
-   ITypeLib *typelib = extractTypeLib(env, obj);
+  (JNIEnv *env, jobject obj, jint pointer, jint index) {
+   ITypeLib *typelib = (ITypeLib *) pointer;
    ITypeInfo* typeInfo = 0;
    HRESULT hr = typelib->GetTypeInfo(index, &typeInfo);
    if (!SUCCEEDED(hr)) {
@@ -84,9 +70,8 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
 }
 
 JNIEXPORT jint JNICALL Java_com_jacob_com_TypeLib_getTypeInfoCount
-  (JNIEnv *env, jobject obj)
-{
-   ITypeLib *typelib = extractTypeLib(env, obj);
+  (JNIEnv *env, jobject obj, jint pointer) {
+   ITypeLib *typelib = (ITypeLib *) pointer;
    HRESULT hr = typelib->GetTypeInfoCount();
    if (hr == E_NOTIMPL) {
       ThrowComFail(env, "GetTypeInfoCount failed", hr);
@@ -94,5 +79,15 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_TypeLib_getTypeInfoCount
    }
 
    return (jint) hr;
+}
+
+/**
+ * release method
+ */
+JNIEXPORT void JNICALL Java_com_jacob_com_TypeLib_release
+  (JNIEnv *env, jobject _this, jint pointer) {
+  ITypeLib *typelib = (ITypeLib *) pointer;
+
+  if (typelib) typelib->Release();
 }
 }

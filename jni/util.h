@@ -20,11 +20,23 @@
 #include <objbase.h>
 extern "C" {
 #define MAX_GUID_LENGTH 80
-    
+
+  /* Initialized by initializeNative in variant.cpp */
+  extern jclass VARIANT_CLASS;
+  extern jmethodID VARIANT_CONSTRUCTOR;
+  extern jclass DISPATCH_CLASS;
+  extern jfieldID DISPATCH_FIELD;
+  extern jfieldID POINTER_FIELD;
+
+
+  /* Defined in variant.cpp */
+  jobject createVariant(JNIEnv *env, VARIANT* variant);
+  void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* variant);
   VARIANT *extractVariant(JNIEnv *env, jobject arg);
+  void *extractPointer(JNIEnv *env, jobject arg);
+
   void ThrowComFail(JNIEnv *env, const char* desc, jint hr);
   void ThrowComFailUnicode(JNIEnv *env, const wchar_t* desc, jint hr);
-  IDispatch *extractDispatch(JNIEnv *env, jobject arg);
   SAFEARRAY *extractSA(JNIEnv *env, jobject arg);
   void setSA(JNIEnv *env, jobject arg, SAFEARRAY *sa, int copy);
   SAFEARRAY *copySA(SAFEARRAY *psa);

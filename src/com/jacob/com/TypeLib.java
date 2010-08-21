@@ -1,13 +1,11 @@
 package com.jacob.com;
 
-public class TypeLib
-{
+public class TypeLib extends JacobObject {
     public static final int LIBFLAG_FRESTRICTED = 1;
     public static final int LIBFLAG_FCONTROL = 2;
     public static final int LIBFLAG_FHIDDEN = 4;
     public static final int LIBFLAG_FHASDISKIMAGE = 8;
 
-    private final int m_pTypeLib;
     private final String guid;
     private final int count;
     private final int flags;
@@ -15,9 +13,8 @@ public class TypeLib
     private final int minorVersion;
 
     public TypeLib(int pointer, String guid, int count, int flags,
-            int majorVersion, int minorVersion)
-    {
-        this.m_pTypeLib = pointer;
+            int majorVersion, int minorVersion) {
+        this.pointer = pointer;
         this.guid = guid;
         this.flags = flags;
         this.count = count;
@@ -25,8 +22,7 @@ public class TypeLib
         this.minorVersion = majorVersion;
     }
 
-    public TypeInfo[] getTypeInfo() 
-    {
+    public TypeInfo[] getTypeInfo() {
         TypeInfo[] list = new TypeInfo[count];
         
         for (int i = 0; i < count; i++) {
@@ -52,7 +48,21 @@ public class TypeLib
         return minorVersion;
     }
 
-    public native Documentation getDocumentation(int index);
-    public native TypeInfo getTypeInfo(int index);
-    public native int getTypeInfoCount();
+    private native Documentation getDocumentation(int pointer, int index);
+    private native TypeInfo getTypeInfo(int pointer, int index);
+    private native int getTypeInfoCount(int pointer);
+
+    public Documentation getDocumentation(int index) {
+        return getDocumentation(pointer, index);
+    }
+
+    public TypeInfo getTypeInfo(int index) {
+        return getTypeInfo(pointer, index);
+    }
+
+    public int getTypeInfoCount() {
+        return getTypeInfoCount(pointer);
+    }
+
+    protected native void release(int pointer);
 }

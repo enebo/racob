@@ -18,47 +18,33 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <jni.h>
-/* Header for class TypeLib */
+/* Header for class IUnknown */
 
-#ifndef _Included_TypeLib
-#define _Included_TypeLib
+#ifndef _Included_IUnknown
+#define _Included_IUnknown
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*
- * Class:     TypeLib
- * Method:    getDocumentation
- * Signature: (II)Lcom/jacob/com/Documentation;
+ * Class:     IUnknown
+ * Method:    toEnumVariant
+ * Signature: (I)I;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getDocumentation
-  (JNIEnv *, jobject, jint, jint);
-
-/*
- * Class:     TypeLib
- * Method:    getTypeInfo
- * Signature: (II)Lcom/jacob/com/TypeInfo;
- */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
-  (JNIEnv *, jobject, jint, jint);
-
-/*
- * Class:     TypeLib
- * Method:    getTypeInfoCount
- * Signature: (I)I
- */
-JNIEXPORT jint JNICALL Java_com_jacob_com_TypeLib_getTypeInfoCount
+JNIEXPORT jint JNICALL Java_com_jacob_com_Automation_toEnumVariant
   (JNIEnv *, jobject, jint);
 
 /*
- * Class:     TypeLib
+ * Class:     IUnknown
  * Method:    release
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_TypeLib_release
+JNIEXPORT void JNICALL Java_com_jacob_com_Automation_release
   (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
 }
 #endif
 #endif
+
+

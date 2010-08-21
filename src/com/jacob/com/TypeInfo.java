@@ -4,9 +4,7 @@ package com.jacob.com;
  * Name Note: cVars -> varsCount.  The getCVars looked strange to me so I
  * broke from convention and gave it a more readable name.
  */
-public class TypeInfo extends JacobObject
-{
-
+public class TypeInfo extends JacobObject {
     public static final int FUNCFLAG_NONE = 0;
     public static final int FUNCFLAG_FRESTRICTED = 1;
     public static final int FUNCFLAG_FSOURCE = 2;
@@ -59,7 +57,6 @@ public class TypeInfo extends JacobObject
     public static final int TYPEFLAG_RECORDATTRIBUTES = 528;
     public static final int TYPEFLAG_UNIONATTRIBUTES = 528;
 
-    public final int m_pTypeInfo;
     private final int typekind;
     private final String guid;
     private final int funcsCount;
@@ -69,11 +66,10 @@ public class TypeInfo extends JacobObject
     private final int minorVersion;
     private final int majorVersion;
 
-    public TypeInfo(int m_pType, String guid, int typekind, int functionCount,
+    public TypeInfo(int pointer, String guid, int typekind, int functionCount,
             int implementationCount, int variableCount, int flags,
-            int minorVersion, int majorVersion)
-    {
-        this.m_pTypeInfo = m_pType;
+            int minorVersion, int majorVersion) {
+        this.pointer = pointer;
         this.guid = guid;
         this.typekind = typekind;
         this.funcsCount = functionCount;
@@ -116,11 +112,41 @@ public class TypeInfo extends JacobObject
         return varsCount;
     }
 
-    public native TypeLib getContainingTypeLib();
-    public native Documentation getDocumentation(int index);
-    public native FuncDesc getFuncDesc(int index);
-    public native String[] getNames(int index);
-    public native int getRefTypeOfImplType(int index);
-    public native TypeInfo getRefTypeInfo(int index);
-    public native VarDesc getVarDesc(int index);
+    private native TypeLib getContainingTypeLib(int pointer);
+    private native Documentation getDocumentation(int pointer, int index);
+    private native FuncDesc getFuncDesc(int pointer, int index);
+    private native String[] getNames(int pointer, int index);
+    private native int getRefTypeOfImplType(int pointer, int index);
+    private native TypeInfo getRefTypeInfo(int pointer, int index);
+    private native VarDesc getVarDesc(int pointer, int index);
+
+    public TypeLib getContainingTypeLib() {
+        return getContainingTypeLib(pointer);
+    }
+    
+    public Documentation getDocumentation(int index) {
+        return getDocumentation(pointer, index);
+    }
+
+    public FuncDesc getFuncDesc(int index) {
+        return getFuncDesc(pointer, index);
+    }
+
+    public String[] getNames(int index) {
+        return getNames(pointer, index);
+    }
+
+    public int getRefTypeOfImplType(int index) {
+        return getRefTypeOfImplType(pointer, index);
+    }
+
+    public TypeInfo getRefTypeInfo(int index) {
+        return getRefTypeInfo(pointer, index);
+    }
+
+    public VarDesc getVarDesc(int index) {
+        return getVarDesc(pointer, index);
+    }
+
+    protected native void release(int pointer);
 }

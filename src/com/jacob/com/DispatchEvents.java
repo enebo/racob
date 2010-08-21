@@ -39,181 +39,155 @@ package com.jacob.com;
  * 
  */
 public class DispatchEvents extends JacobObject {
+    /**
+     * the wrapper for the event sink. This object is the one that will be sent
+     * a message when an event occurs in the MS layer. Normally, the
+     * InvocationProxy will forward the messages to a wrapped object that it
+     * contains.
+     */
+    InvocationProxy mInvocationProxy = null;
 
-	/**
-	 * pointer to an MS data struct. The COM layer knows the name of this
-	 * variable and puts the windows memory pointer here.
-	 */
-	int m_pConnPtProxy = 0;
+    /**
+     * This is the most commonly used constructor.
+     * <p>
+     * Creates the event callback linkage between the the MS program represented
+     * by the Dispatch object and the Java object that will receive the
+     * callback.
+     * <p>
+     * Can be used on any object that implements IProvideClassInfo.
+     *
+     * @param sourceOfEvent
+     *            Dispatch object who's MS app will generate callbacks
+     * @param eventSink
+     *            Java object that wants to receive the events
+     */
+    public DispatchEvents(Dispatch sourceOfEvent, Object eventSink) {
+        this(sourceOfEvent, eventSink, null);
+    }
 
-	/**
-	 * the wrapper for the event sink. This object is the one that will be sent
-	 * a message when an event occurs in the MS layer. Normally, the
-	 * InvocationProxy will forward the messages to a wrapped object that it
-	 * contains.
-	 */
-	InvocationProxy mInvocationProxy = null;
+    /**
+     * None of the samples use this constructor.
+     * <p>
+     * Creates the event callback linkage between the the MS program represented
+     * by the Dispatch object and the Java object that will receive the
+     * callback.
+     * <p>
+     * Used when the program doesn't implement IProvideClassInfo. It provides a
+     * way to find the TypeLib in the registry based on the programId. The
+     * TypeLib is looked up in the registry on the path
+     * HKEY_LOCAL_MACHINE/SOFTWARE/Classes/CLSID/(CLID drived from
+     * progid)/ProgID/Typelib
+     *
+     * @param sourceOfEvent
+     *            Dispatch object who's MS app will generate callbacks
+     * @param eventSink
+     *            Java object that wants to receive the events
+     * @param progId
+     *            program id in the registry that has a TypeLib subkey. The
+     *            progrId is mapped to a CLSID that is they used to look up the
+     *            key to the Typelib
+     */
+    public DispatchEvents(Dispatch sourceOfEvent, Object eventSink,
+            String progId) {
+        this(sourceOfEvent, eventSink, progId, null);
+    }
 
-	/**
-	 * This is the most commonly used constructor.
-	 * <p>
-	 * Creates the event callback linkage between the the MS program represented
-	 * by the Dispatch object and the Java object that will receive the
-	 * callback.
-	 * <p>
-	 * Can be used on any object that implements IProvideClassInfo.
-	 * 
-	 * @param sourceOfEvent
-	 *            Dispatch object who's MS app will generate callbacks
-	 * @param eventSink
-	 *            Java object that wants to receive the events
-	 */
-	public DispatchEvents(Dispatch sourceOfEvent, Object eventSink) {
-		this(sourceOfEvent, eventSink, null);
-	}
+    /**
+     * Creates the event callback linkage between the the MS program represented
+     * by the Dispatch object and the Java object that will receive the
+     * callback.
+     * <p>
+     * This method was added because Excel doesn't implement IProvideClassInfo
+     * and the registry entry for Excel.Application doesn't include a typelib
+     * key.
+     *
+     * <pre>
+     * DispatchEvents de = new DispatchEvents(someDispatch, someEventHAndler,
+     * 		&quot;Excel.Application&quot;,
+     * 		&quot;C:\\Program Files\\Microsoft Office\\OFFICE11\\EXCEL.EXE&quot;);
+     * </pre>
+     *
+     * @param sourceOfEvent
+     *            Dispatch object who's MS app will generate callbacks
+     * @param eventSink
+     *            Java object that wants to receive the events
+     * @param progId ,
+     *            mandatory if the typelib is specified
+     * @param typeLib
+     *            The location of the typelib to use
+     */
+    public DispatchEvents(Dispatch sourceOfEvent, Object eventSink,
+            String progId, String typeLib) {
+        if (JacobObject.isDebugEnabled()) {
+            System.out.println("DispatchEvents: Registering " + eventSink + "for events ");
+        }
+        if (eventSink instanceof InvocationProxy) {
+            mInvocationProxy = (InvocationProxy) eventSink;
+        } else {
+            mInvocationProxy = getInvocationProxy(eventSink);
+        }
+        if (mInvocationProxy != null) {
+            pointer = init3(sourceOfEvent.pointer, mInvocationProxy, progId, typeLib);
+        } else {
+            if (JacobObject.isDebugEnabled()) {
+                JacobObject.debug("Cannot register null event sink for events");
+            }
+            throw new IllegalArgumentException(
+                    "Cannot register null event sink for events");
+        }
+    }
 
-	/**
-	 * None of the samples use this constructor.
-	 * <p>
-	 * Creates the event callback linkage between the the MS program represented
-	 * by the Dispatch object and the Java object that will receive the
-	 * callback.
-	 * <p>
-	 * Used when the program doesn't implement IProvideClassInfo. It provides a
-	 * way to find the TypeLib in the registry based on the programId. The
-	 * TypeLib is looked up in the registry on the path
-	 * HKEY_LOCAL_MACHINE/SOFTWARE/Classes/CLSID/(CLID drived from
-	 * progid)/ProgID/Typelib
-	 * 
-	 * @param sourceOfEvent
-	 *            Dispatch object who's MS app will generate callbacks
-	 * @param eventSink
-	 *            Java object that wants to receive the events
-	 * @param progId
-	 *            program id in the registry that has a TypeLib subkey. The
-	 *            progrId is mapped to a CLSID that is they used to look up the
-	 *            key to the Typelib
-	 */
-	public DispatchEvents(Dispatch sourceOfEvent, Object eventSink,
-			String progId) {
-		this(sourceOfEvent, eventSink, progId, null);
-	}
+    /**
+     * Returns an instance of the proxy configured with pTargetObject as its
+     * target
+     *
+     * @param pTargetObject
+     * @return InvocationProxy an instance of the proxy this DispatchEvents will
+     *         send to the COM layer
+     */
+    protected InvocationProxy getInvocationProxy(Object pTargetObject) {
+        InvocationProxy newProxy = new InvocationProxyAllVariants();
+        newProxy.setTarget(pTargetObject);
+        return newProxy;
+    }
 
-	/**
-	 * Creates the event callback linkage between the the MS program represented
-	 * by the Dispatch object and the Java object that will receive the
-	 * callback.
-	 * <p>
-	 * This method was added because Excel doesn't implement IProvideClassInfo
-	 * and the registry entry for Excel.Application doesn't include a typelib
-	 * key.
-	 * 
-	 * <pre>
-	 * DispatchEvents de = new DispatchEvents(someDispatch, someEventHAndler,
-	 * 		&quot;Excel.Application&quot;,
-	 * 		&quot;C:\\Program Files\\Microsoft Office\\OFFICE11\\EXCEL.EXE&quot;);
-	 * </pre>
-	 * 
-	 * @param sourceOfEvent
-	 *            Dispatch object who's MS app will generate callbacks
-	 * @param eventSink
-	 *            Java object that wants to receive the events
-	 * @param progId ,
-	 *            mandatory if the typelib is specified
-	 * @param typeLib
-	 *            The location of the typelib to use
-	 */
-	public DispatchEvents(Dispatch sourceOfEvent, Object eventSink,
-			String progId, String typeLib) {
-		if (JacobObject.isDebugEnabled()) {
-			System.out.println("DispatchEvents: Registering " + eventSink
-					+ "for events ");
-		}
-		if (eventSink instanceof InvocationProxy) {
-			mInvocationProxy = (InvocationProxy) eventSink;
-		} else {
-			mInvocationProxy = getInvocationProxy(eventSink);
-		}
-		if (mInvocationProxy != null) {
-			init3(sourceOfEvent, mInvocationProxy, progId, typeLib);
-		} else {
-			if (JacobObject.isDebugEnabled()) {
-				JacobObject.debug("Cannot register null event sink for events");
-			}
-			throw new IllegalArgumentException(
-					"Cannot register null event sink for events");
-		}
-	}
+    /**
+     * hooks up a connection point proxy by progId event methods on the sink
+     * object will be called by name with a signature of <name>(Variant[] args)
+     *
+     * You must specify the location of the typeLib.
+     *
+     * @param src
+     *            dispatch that is the source of the messages
+     * @param sink
+     *            the object that will receive the messages
+     * @param progId
+     *            optional program id. most folks don't need this either
+     * @param typeLib
+     *            optional parameter for those programs that don't register
+     *            their type libs (like Excel)
+     */
+    private native int init3(int pointer, Object sink, String progId,
+            String typeLib);
 
-	/**
-	 * Returns an instance of the proxy configured with pTargetObject as its
-	 * target
-	 * 
-	 * @param pTargetObject
-	 * @return InvocationProxy an instance of the proxy this DispatchEvents will
-	 *         send to the COM layer
-	 */
-	protected InvocationProxy getInvocationProxy(Object pTargetObject) {
-		InvocationProxy newProxy = new InvocationProxyAllVariants();
-		newProxy.setTarget(pTargetObject);
-		return newProxy;
-	}
+    /**
+     * now private so only this object can asccess was: call this to explicitly
+     * release the com object before gc
+     *
+     */
+    protected native void release(int pointer);
 
-	/**
-	 * hooks up a connection point proxy by progId event methods on the sink
-	 * object will be called by name with a signature of <name>(Variant[] args)
-	 * 
-	 * You must specify the location of the typeLib.
-	 * 
-	 * @param src
-	 *            dispatch that is the source of the messages
-	 * @param sink
-	 *            the object that will receive the messages
-	 * @param progId
-	 *            optional program id. most folks don't need this either
-	 * @param typeLib
-	 *            optional parameter for those programs that don't register
-	 *            their type libs (like Excel)
-	 */
-	private native void init3(Dispatch src, Object sink, String progId,
-			String typeLib);
-
-	/**
-	 * now private so only this object can asccess was: call this to explicitly
-	 * release the com object before gc
-	 * 
-	 */
-	private native void release();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#finalize()
-	 */
-	protected void finalize() {
-		safeRelease();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.jacob.com.JacobObject#safeRelease()
-	 */
-	public void safeRelease() {
-		if (mInvocationProxy != null) {
-			mInvocationProxy.setTarget(null);
-		}
-		mInvocationProxy = null;
-		super.safeRelease();
-		if (m_pConnPtProxy != 0) {
-			release();
-			m_pConnPtProxy = 0;
-		} else {
-			// looks like a double release
-			if (isDebugEnabled()) {
-				debug("DispatchEvents:" + this.hashCode() + " double release");
-			}
-		}
-	}
-
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.jacob.com.JacobObject#safeRelease()
+     */
+    @Override
+    public void safeRelease() {
+        if (mInvocationProxy != null) {
+            mInvocationProxy.setTarget(null);
+            mInvocationProxy = null;
+        }
+        super.safeRelease();
+    }
 }

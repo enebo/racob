@@ -32,80 +32,78 @@ package com.jacob.com;
  * it to the finalizer it will call the release from another thread, which may
  * result in a segmentation violation.
  */
-public class JacobObject {
+public abstract class JacobObject {
+    protected int pointer;
 
-	/**
-	 * Standard constructor that adds this JacobObject to the memory management
-	 * pool.
-	 */
-	public JacobObject() {
-		ROT.addObject(this);
-	}
+    /**
+     * Standard constructor that adds this JacobObject to the memory management
+     * pool.
+     */
+    public JacobObject() {
+        ROT.addObject(this);
+    }
 
-	/**
-	 * Finalizers call this method. This method should release any COM data
-	 * structures in a way that it can be called multiple times. This can happen
-	 * if someone manually calls this and then a finalizer calls it.
-	 */
-	public void safeRelease() {
-		// currently does nothing - subclasses may do something
-		if (isDebugEnabled()) {
-			// this used to do a toString() but that is bad for SafeArray
-			debug("SafeRelease: " + this.getClass().getName());
-		}
-	}
+    protected abstract void release(int pointer);
 
-	/**
-	 * When things go wrong, it is useful to be able to debug the ROT.
-	 */
-	private static final boolean DEBUG =
-	// true;
-	"true".equalsIgnoreCase(System.getProperty("com.jacob.debug"));
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#finalize()
+     */
+    @Override
+    protected void finalize() {
+        safeRelease();
+    }
+    
+    public boolean isAlive() {
+        return pointer != 0;
+    }
 
-	protected static boolean isDebugEnabled() {
-		// return true;
-		return DEBUG;
-	}
+    /**
+     * Finalizers call this method. This method should release any COM data
+     * structures in a way that it can be called multiple times. This can happen
+     * if someone manually calls this and then a finalizer calls it.
+     */
+    public void safeRelease() {
+        if (isAlive()) {
+            release(pointer);
+            pointer = 0;
+        } else if (isDebugEnabled()) { // looks like a double release
+            debug(getClass().getName() + ":" + hashCode() + " double release");
+        }
+        
+        // currently does nothing - subclasses may do something
+        if (isDebugEnabled()) {
+            // this used to do a toString() but that is bad for SafeArray
+            debug("SafeRelease: " + this.getClass().getName());
+        }
+    }
 
-	/**
-	 * Loads JacobVersion.Properties and returns the value of version in it
-	 * 
-	 * @deprecated use JacobReleaseInfo.getBuildDate() instead.
-	 * @return String value of version in JacobVersion.Properties or "" if none
-	 */
-	@Deprecated
-	public static String getBuildDate() {
-		return JacobReleaseInfo.getBuildDate();
-	}
+    /**
+     * When things go wrong, it is useful to be able to debug the ROT.
+     */
+    private static final boolean DEBUG = "true".equalsIgnoreCase(System.getProperty("com.jacob.debug"));
 
-	/**
-	 * Loads JacobVersion.Properties and returns the value of version in it
-	 * 
-	 * @deprecated use JacobReleaseInfo.getBuildVersion() instead.
-	 * @return String value of version in JacobVersion.Properties or "" if none
-	 */
-	@Deprecated
-	public static String getBuildVersion() {
-		return JacobReleaseInfo.getBuildVersion();
-	}
+    protected static boolean isDebugEnabled() {
+        return DEBUG;
+    }
 
-	/**
-	 * Very basic debugging function.
-	 * 
-	 * @param istrMessage
-	 */
-	protected static void debug(String istrMessage) {
-		if (isDebugEnabled()) {
-			System.out.println(Thread.currentThread().getName() + ": "
-					+ istrMessage);
-		}
-	}
+    /**
+     * Very basic debugging function.
+     *
+     * @param istrMessage
+     */
+    protected static void debug(String istrMessage) {
+        if (isDebugEnabled()) {
+            System.out.println(Thread.currentThread().getName() + ": " + istrMessage);
+        }
+    }
 
-	/**
-	 * force the jacob DLL to be loaded whenever this class is referenced
-	 */
-	static {
-		LibraryLoader.loadJacobLibrary();
-	}
+    /**
+     * force the jacob DLL to be loaded whenever this class is referenced
+     */
+    static {
+        LibraryLoader.loadJacobLibrary();
+    }
 
 }

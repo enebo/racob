@@ -28,25 +28,25 @@ extern "C" {
 /*
  * Class:     com_jacob_com_Dispatch
  * Method:    QueryInterface
- * Signature: (Ljava/lang/String;)Lcom/jacob/com/Dispatch;
+ * Signature: (ILjava/lang/String;)Lcom/jacob/com/Dispatch;
  */
 JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_QueryInterface
-  (JNIEnv *, jobject, jstring);
+  (JNIEnv *, jobject, jint, jstring);
 
 /*
  * Class:     Dispatch
  * Method:    createInstance
- * Signature: (Ljava/lang/String;)V
+ * Signature: (Ljava/lang/String;)I
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_createInstanceNative
+JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_createInstanceNative
   (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     Dispatch
  * Method:    getActiveInstance
- * Signature: (Ljava/lang/String;)V
+ * Signature: (Ljava/lang/String;)I
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_getActiveInstanceNative
+JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_getActiveInstanceNative
   (JNIEnv *, jobject, jstring);
 
 /*
@@ -54,48 +54,40 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_getActiveInstanceNative
  * Method:    coCreateInstance
  * Signature: (Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_coCreateInstanceNative
+JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_coCreateInstanceNative
   (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     Dispatch
  * Method:    release
- * Signature: ()V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_release
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     Dispatch
  * Method:    getIDsOfNames
- * Signature: (Ljava/lang/Object;I[Ljava/lang/String;)[I
+ * Signature: (ILjava/lang/Object;I[Ljava/lang/String;)[I
  */
 JNIEXPORT jintArray JNICALL Java_com_jacob_com_Dispatch_getIDsOfNames
-  (JNIEnv *, jclass, jobject, jint, jobjectArray);
+  (JNIEnv *, jclass, jint, jobject, jint, jobjectArray);
 
 /*
  * Class:     Dispatch
  * Method:    invokev
- * Signature: (Ljava/lang/Object;Ljava/lang/String;III[LVariant;[I)LVariant;
+ * Signature: (IILjava/lang/String;III[LVariant;[I)LVariant;
  */
 JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
-  (JNIEnv *, jclass, jobject, jstring, jint, jint, jint, jobjectArray, jintArray);
-
-/*
- * Class:     Dispatch
- * Method:    invokev2
- * Signature: (ILjava/lang/String;III[LVariant;[I)LVariant;
- */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev2
   (JNIEnv *, jclass, jint, jstring, jint, jint, jint, jobjectArray, jintArray);
 
 /*
  * Class:     Dispatch
  * Method:    getTypeInfo
- * Signature: ()Lcom/jacob/com/TypeInfo;
+ * Signature: (I)Lcom/jacob/com/TypeInfo;
  */
 JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_getTypeInfo
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
 }

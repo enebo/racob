@@ -97,6 +97,7 @@ public class ActiveXDispatchEvents extends DispatchEvents {
 	 * 
 	 * @see com.jacob.com.DispatchEvents#getInvocationProxy(java.lang.Object)
 	 */
+    @Override
 	protected InvocationProxy getInvocationProxy(Object pTargetObject) {
 		InvocationProxy newProxy = new ActiveXInvocationProxy();
 		newProxy.setTarget(pTargetObject);

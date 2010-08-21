@@ -19,138 +19,69 @@
  */
 package com.jacob.com;
 
+import java.util.Enumeration;
+
 /**
  * An implementation of IEnumVariant based on code submitted by Thomas Hallgren
  * (mailto:Thomas.Hallgren@eoncompany.com)
  */
-public class EnumVariant extends JacobObject implements
-		java.util.Enumeration<Variant> {
-	private int m_pIEnumVARIANT;
+public class EnumVariant extends JacobObject implements Enumeration<Variant> {
+    private Variant value;
 
-	private final Variant[] m_recBuf = new Variant[1];
+    // this only gets called from JNI
+    //
+    protected EnumVariant(int pointer) {
+        this.pointer = pointer;
+    }
 
-	// this only gets called from JNI
-	//
-	protected EnumVariant(int pIEnumVARIANT) {
-		m_pIEnumVARIANT = pIEnumVARIANT;
-	}
+    /**
+     * Implements java.util.Enumeration
+     *
+     * @return boolean true if there are more elements in this enumeration
+     */
+    public boolean hasMoreElements() {
+        if (value == null) value = Next(pointer);
 
-	/**
-	 * @param disp
-	 */
-	public EnumVariant(Dispatch disp) {
-		int[] hres = new int[1];
-		Variant evv = Dispatch.invokev(disp, DispatchIdentifier.DISPID_NEWENUM,
-				Dispatch.Get, new Variant[0], hres);
-		if (evv.getvt() != Variant.VariantObject)
-			//
-			// The DISPID_NEWENUM did not result in a valid object
-			//
-			throw new ComFailException("Can't obtain EnumVARIANT");
+        return value != null;
+    }
 
-		EnumVariant tmp = evv.toEnumVariant();
-		m_pIEnumVARIANT = tmp.m_pIEnumVARIANT;
-		tmp.m_pIEnumVARIANT = 0;
-	}
+    /**
+     * Implements java.util.Enumeration
+     *
+     * @return next element in the enumeration
+     */
+    public Variant nextElement() {
+        if (hasMoreElements()) return value;
 
-	/**
-	 * Implements java.util.Enumeration
-	 * 
-	 * @return boolean true if there are more elements in this enumeration
-	 */
-	public boolean hasMoreElements() {
-		{
-			if (m_recBuf[0] == null) {
-				if (this.Next(m_recBuf) <= 0)
-					return false;
-			}
-			return true;
-		}
-	}
+        throw new java.util.NoSuchElementException();
+    }
 
-	/**
-	 * Implements java.util.Enumeration
-	 * 
-	 * @return next element in the enumeration
-	 */
-	public Variant nextElement() {
-		Variant last = m_recBuf[0];
-		if (last == null) {
-			if (this.Next(m_recBuf) <= 0)
-				throw new java.util.NoSuchElementException();
-			last = m_recBuf[0];
-		}
-		m_recBuf[0] = null;
-		return last;
-	}
+    /**
+     * This should be private and wrapped to protect JNI layer.
+     *
+     * @param receiverArray
+     * @return Returns the next variant object pointer as an int from windows
+     *         layer
+     */
+    public native Variant Next(int pointer);
 
-	/**
-	 * Get next element in collection or null if at end
-	 * 
-	 * @return Variant that is next in the collection
-	 * @deprecated use nextElement() instead
-	 */
-	@Deprecated
-	public Variant Next() {
-		if (hasMoreElements())
-			return nextElement();
-		return null;
-	}
+    /**
+     * This should be private and wrapped to protect JNI layer.
+     *
+     * @param count
+     *            number to skip
+     */
+    public native void Skip(int pointer, int count);
 
-	/**
-	 * This should be private and wrapped to protect JNI layer.
-	 * 
-	 * @param receiverArray
-	 * @return Returns the next variant object pointer as an int from windows
-	 *         layer
-	 */
-	public native int Next(Variant[] receiverArray);
+    /**
+     * This should be private and wrapped to protect JNI layer
+     */
+    public native void Reset(int pointer);
 
-	/**
-	 * This should be private and wrapped to protect JNI layer.
-	 * 
-	 * @param count
-	 *            number to skip
-	 */
-	public native void Skip(int count);
-
-	/**
-	 * This should be private and wrapped to protect JNI layer
-	 */
-	public native void Reset();
-
-	/**
-	 * now private so only this object can access was: call this to explicitly
-	 * release the com object before gc
-	 * 
-	 */
-	private native void release();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#finalize()
-	 */
-	protected void finalize() {
-		safeRelease();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.jacob.com.JacobObject#safeRelease()
-	 */
-	public void safeRelease() {
-		super.safeRelease();
-		if (m_pIEnumVARIANT != 0) {
-			this.release();
-			m_pIEnumVARIANT = 0;
-		} else {
-			// looks like a double release
-			if (isDebugEnabled()) {
-				debug(this.getClass().getName() + ":" + this.hashCode()
-						+ " double release");
-			}
-		}
-	}
+    /**
+     * now private so only this object can access was: call this to explicitly
+     * release the com object before gc
+     *
+     */
+    protected native void release(int pointer);
 }

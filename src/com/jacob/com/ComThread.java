@@ -112,10 +112,6 @@ public abstract class ComThread {
 		if (JacobObject.isDebugEnabled()) {
 			JacobObject.debug("ComThread: after Init: " + mode);
 		}
-		ROT.addThread();
-		if (JacobObject.isDebugEnabled()) {
-			JacobObject.debug("ComThread: after ROT.addThread: " + mode);
-		}
 	}
 
 	/**

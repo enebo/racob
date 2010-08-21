@@ -28,34 +28,34 @@ extern "C" {
 /*
  * Class:     com_jacob_com_EnumVariant
  * Method:    Next
- * Signature: ([Lcom/jacob/com/Variant;)I
+ * Signature: (I)Lcom/jacob/com/Variant;
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_EnumVariant_Next
-  (JNIEnv *, jobject, jobjectArray);
+JNIEXPORT jobject JNICALL Java_com_jacob_com_EnumVariant_Next
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_jacob_com_EnumVariant
  * Method:    Release
- * Signature: ()V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_com_jacob_com_EnumVariant_release
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_jacob_com_EnumVariant
  * Method:    Reset
- * Signature: ()V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_com_jacob_com_EnumVariant_Reset
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_jacob_com_EnumVariant
  * Method:    Skip
- * Signature: (I)V
+ * Signature: (II)V
  */
 JNIEXPORT void JNICALL Java_com_jacob_com_EnumVariant_Skip
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jint, jint);
 
 #ifdef __cplusplus
 }

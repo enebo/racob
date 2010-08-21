@@ -36,10 +36,10 @@ JNIEXPORT void JNICALL Java_com_jacob_com_STA_doMessagePump
 /*
  * Class:     com_jacob_com_STA
  * Method:    quitMessagePump
- * Signature: ()V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_com_jacob_com_STA_quitMessagePump
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
 }

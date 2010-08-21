@@ -32,54 +32,25 @@
 extern "C"
 {
 
-#define PROXY_FLD "m_pConnPtProxy"
-
 // defined below
 BOOL GetEventIID(IUnknown*, IID*, CComBSTR **, DISPID **, int *,LPOLESTR);
 BOOL GetEventIIDForTypeLib(BSTR, IID*, CComBSTR **, DISPID **, int *,LPOLESTR);
 BOOL getClassInfoFromProgId(LPOLESTR bsProgId,LPTYPEINFO *pClassInfo);
 BOOL MapEventIIDs(IID*, CComBSTR **, DISPID **, int *, LPOLESTR , LPTYPEINFO );
 
-// extract a EventProxy* from a jobject
-EventProxy *extractProxy(JNIEnv *env, jobject arg)
-{
-  jclass argClass = env->GetObjectClass(arg);
-  jfieldID ajf = env->GetFieldID( argClass, PROXY_FLD, "I");
-  jint anum = env->GetIntField(arg, ajf);
-  EventProxy *v = (EventProxy *)anum;
-  return v;
-}
-
-/*
- * pushes the EventProxy (*ep) into tje jobject in the PROXY_FLD location
- */
-void putProxy(JNIEnv *env, jobject arg, EventProxy *ep)
-{
-  jclass argClass = env->GetObjectClass(arg);
-  jfieldID ajf = env->GetFieldID( argClass, PROXY_FLD, "I");
-  jint anum = env->GetIntField(arg, ajf);
-  env->SetIntField(arg, ajf, (jint)ep);
-}
-
-
 /*
  * Class:     com_jacob_com_DispatchEvents
  * Method:    init3
- * Signature: (Lcom/jacob/com/Dispatch;Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V
+ * Signature: (ILjava/lang/Object;Ljava/lang/String;Ljava/lang/String;)I
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_DispatchEvents_init3
-   (JNIEnv *env,
-    jobject _this, jobject src,
-    jobject sink, 
-    jstring _progid, 
-    jstring _typelib)
-{
+JNIEXPORT jint JNICALL Java_com_jacob_com_DispatchEvents_init3
+   (JNIEnv *env, jobject _this, jint pointer, jobject sink, jstring _progid, jstring _typelib) {
 	USES_CONVERSION;
 
   if (_typelib != NULL && _progid == NULL){
   	// both are required if typelib exists
   	ThrowComFail(env,"TypeLib was specified but no program id was",-1);
-  	return;
+  	return 0;
   }
   
   BSTR typeLib = NULL;
@@ -103,7 +74,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_DispatchEvents_init3
   }
   
   // get the IDispatch for the source object
-  IDispatch *pDisp = extractDispatch(env, src);
+  IDispatch *pDisp = (IDispatch *) pointer;
   CComQIPtr<IUnknown, &IID_IUnknown> pUnk(pDisp);
   // see if it implements connection points
   CComQIPtr<IConnectionPointContainer, &IID_IConnectionPointContainer> pCPC(pUnk);
@@ -111,7 +82,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_DispatchEvents_init3
   {
     // no events, throw something
     ThrowComFail(env, "Can't find IConnectionPointContainer", -1);
-    return;
+    return 0;
   }
    
   IID eventIID;
@@ -121,41 +92,34 @@ JNIEXPORT void JNICALL Java_com_jacob_com_DispatchEvents_init3
   if (_typelib == NULL){
 	  if (!GetEventIID(pUnk, &eventIID, &mNames, &mIDs, &n_EventMethods,bsProgId)) {
     	ThrowComFail(env, "Can't find event iid", -1);
-	    return;
+	    return 0;
 	  }
   } else {
 	  if (!GetEventIIDForTypeLib(typeLib, &eventIID, &mNames, &mIDs, &n_EventMethods,bsProgId)) {
     	ThrowComFail(env, "Can't find event iid for type lib", -1);
-	    return;
+	    return 0;
 	  }
   }
 
   // hook up to the default source iid
   CComPtr<IConnectionPoint> pCP;
   HRESULT hr = pCPC->FindConnectionPoint(eventIID, &pCP);
-  if (SUCCEEDED(hr))
-  {
-    EventProxy *ep = new EventProxy(env, sink, pCP, eventIID, mNames, mIDs, n_EventMethods);
-    // need to store ep on _this, in case it gets collected
-    putProxy(env, _this, ep);
-  } else {
-    ThrowComFail(env, "Can't FindConnectionPoint", hr);
-  }
+  if (!SUCCEEDED(hr)) ThrowComFail(env, "Can't FindConnectionPoint", hr);
+  return (jint) new EventProxy(env, sink, pCP, eventIID, mNames, mIDs, n_EventMethods);
 }
 
 /*
  * Class:     DispatchEvents
  * Method:    release
- * Signature: ()V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_com_jacob_com_DispatchEvents_release
-  (JNIEnv *env, jobject _this)
+  (JNIEnv *env, jobject _this, jint pointer)
 {
-  EventProxy *ep = extractProxy(env, _this);
+  EventProxy *ep = (EventProxy *) pointer;
   if (ep) {
   	// this is the line that blows up in IETest
     ep->Release();
-    putProxy(env, _this, NULL);
   }
 }
 

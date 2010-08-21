@@ -3,15 +3,12 @@
     <type>org.netbeans.modules.java.j2seproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
-            <name>Jacob</name>
+            <name>jacob</name>
             <source-roots>
-                <root id="src.jni.dir"/>
-                <root id="src.samples.dir"/>
                 <root id="src.dir"/>
+                <root id="jni.dir"/>
             </source-roots>
-            <test-roots>
-                <root id="test.src.dir"/>
-            </test-roots>
+            <test-roots/>
         </data>
     </configuration>
 </project>

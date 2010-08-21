@@ -31,54 +31,35 @@
 extern "C" 
 {
 
-// extract a IStream from a jobject
-IStream *extractStream(JNIEnv *env, jobject arg)
+JNIEXPORT int JNICALL Java_com_jacob_com_DispatchProxy_MarshalIntoStream
+  (JNIEnv *env, jobject _this, jint pointer)
 {
-  jclass argClass = env->GetObjectClass(arg);
-  jfieldID ajf = env->GetFieldID( argClass, "m_pStream", "I");
-  jint anum = env->GetIntField(arg, ajf);
-  IStream *v = (IStream *)anum;
-  return v;
-}
-
-JNIEXPORT void JNICALL Java_com_jacob_com_DispatchProxy_MarshalIntoStream
-  (JNIEnv *env, jobject _this, jobject disp)
-{
-  IDispatch *pIDispatch = extractDispatch(env, disp);
-  if (!pIDispatch) return;
+  IDispatch *pIDispatch = (IDispatch *) pointer;
+  if (!pIDispatch) return 0;
+  
   IStream *ps; // this is the stream we will marshall into
-  HRESULT hr = CoMarshalInterThreadInterfaceInStream(
-                 IID_IDispatch, pIDispatch, &ps);
-  if (!SUCCEEDED(hr))
-  {
+  HRESULT hr = CoMarshalInterThreadInterfaceInStream(IID_IDispatch, pIDispatch, &ps);
+  if (!SUCCEEDED(hr)) {
     ThrowComFail(env, "Could not Marshal Dispatch into IStream", hr);
-    return;
+    return 0;
   }
-  // store the stream pointer on the object
-  jclass argClass = env->GetObjectClass(_this);
-  jfieldID ajf = env->GetFieldID( argClass, "m_pStream", "I");
-  env->SetIntField(_this, ajf, (jint)ps);
+
+  return (jint) ps;
 }
 
 JNIEXPORT jobject JNICALL Java_com_jacob_com_DispatchProxy_MarshalFromStream
-  (JNIEnv *env, jobject _this)
+  (JNIEnv *env, jobject _this, jint pointer)
 {
-  IStream *ps = extractStream(env, _this);
-  if (!ps) 
-  {
+  IStream *ps = (IStream *) pointer;
+  if (!ps) {
     ThrowComFail(env, "Could not get IStream from DispatchProxy", -1);
     return NULL;
   }
+  
   IDispatch *pD;
   HRESULT hr = CoGetInterfaceAndReleaseStream(ps, IID_IDispatch, (void **)&pD);
-  // zero out the stream pointer on the object
-  // since the stream can only be read once
-  jclass argClass = env->GetObjectClass(_this);
-  jfieldID ajf = env->GetFieldID( argClass, "m_pStream", "I");
-  env->SetIntField(_this, ajf, (unsigned int)0);
 
-  if (!SUCCEEDED(hr))
-  {
+  if (!SUCCEEDED(hr)) {
     ThrowComFail(env, "Could not Marshal Dispatch from IStream", hr);
     return NULL;
   }
@@ -92,15 +73,9 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_DispatchProxy_MarshalFromStream
 }
 
 JNIEXPORT void JNICALL Java_com_jacob_com_DispatchProxy_release
-  (JNIEnv *env, jobject _this)
-{
-  IStream *ps =  extractStream(env, _this);
-  if (ps) {
-    ps->Release();
-		jclass argClass = env->GetObjectClass(_this);
-    jfieldID ajf = env->GetFieldID( argClass, "m_pStream", "I");
-    env->SetIntField(_this, ajf, (unsigned int)0);
-  }
+  (JNIEnv *env, jobject _this, jint pointer) {
+  IStream *ps =  (IStream *) pointer;
+  if (ps) ps->Release();
 }
 
 }

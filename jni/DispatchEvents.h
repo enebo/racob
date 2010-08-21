@@ -29,18 +29,18 @@ extern "C" {
 /*
  * Class:     com_jacob_com_DispatchEvents
  * Method:    init3
- * Signature: (Lcom/jacob/com/Dispatch;Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V
+ * Signature: (ILjava/lang/Object;Ljava/lang/String;Ljava/lang/String;)I
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_DispatchEvents_init3
-  (JNIEnv *, jobject, jobject, jobject, jstring, jstring);
+JNIEXPORT jint JNICALL Java_com_jacob_com_DispatchEvents_init3
+  (JNIEnv *, jobject, jint, jobject, jstring, jstring);
 
 /*
  * Class:     DispatchEvents
  * Method:    release
- * Signature: ()V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_com_jacob_com_DispatchEvents_release
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
 }

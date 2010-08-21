@@ -150,6 +150,7 @@ public class ActiveXComponent extends Dispatch {
 	/**
 	 * @see com.jacob.com.Dispatch#finalize()
 	 */
+    @Override
 	protected void finalize() {
 		super.finalize();
 	}
@@ -178,9 +179,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return Dispatch representing the object under the property name
 	 */
 	public ActiveXComponent getPropertyAsComponent(String propertyName) {
-		return new ActiveXComponent(Dispatch.get(this, propertyName)
-				.toDispatch());
-
+		return new ActiveXComponent(Dispatch.get(this, propertyName).getDispatch());
 	}
 
 	/**
@@ -339,7 +338,7 @@ public class ActiveXComponent extends Dispatch {
 					// do the boolean thing
 					if ((argType & Variant.VariantByref) == Variant.VariantByref) {
 						// boolean by ref
-						argString += args[i].getBooleanRef();
+						argString += args[i].getBoolean();
 					} else {
 						// boolean by value
 						argString += args[i].getBoolean();
@@ -348,7 +347,7 @@ public class ActiveXComponent extends Dispatch {
 					// do the string thing
 					if ((argType & Variant.VariantByref) == Variant.VariantByref) {
 						// string by ref
-						argString += args[i].getStringRef();
+						argString += args[i].getString();
 					} else {
 						// string by value
 						argString += args[i].getString();
@@ -375,7 +374,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return ActiveXComponent representing the results of the call
 	 */
 	public ActiveXComponent invokeGetComponent(String callAction) {
-		return new ActiveXComponent(invoke(callAction).toDispatch());
+		return new ActiveXComponent(invoke(callAction).getDispatch());
 	}
 
 	/**
@@ -387,7 +386,7 @@ public class ActiveXComponent extends Dispatch {
 	 */
 	public ActiveXComponent invokeGetComponent(String callAction,
 			Variant parameter) {
-		return new ActiveXComponent(invoke(callAction, parameter).toDispatch());
+		return new ActiveXComponent(invoke(callAction, parameter).getDispatch());
 	}
 
 	/**
@@ -400,8 +399,7 @@ public class ActiveXComponent extends Dispatch {
 	 */
 	public ActiveXComponent invokeGetComponent(String callAction,
 			Variant parameter1, Variant parameter2) {
-		return new ActiveXComponent(invoke(callAction, parameter1, parameter2)
-				.toDispatch());
+		return new ActiveXComponent(invoke(callAction, parameter1, parameter2).getDispatch());
 	}
 
 	/**
@@ -416,7 +414,7 @@ public class ActiveXComponent extends Dispatch {
 	public ActiveXComponent invokeGetComponent(String callAction,
 			Variant parameter1, Variant parameter2, Variant parameter3) {
 		return new ActiveXComponent(invoke(callAction, parameter1, parameter2,
-				parameter3).toDispatch());
+				parameter3).getDispatch());
 	}
 
 	/**
@@ -433,7 +431,7 @@ public class ActiveXComponent extends Dispatch {
 			Variant parameter1, Variant parameter2, Variant parameter3,
 			Variant parameter4) {
 		return new ActiveXComponent(invoke(callAction, parameter1, parameter2,
-				parameter3, parameter4).toDispatch());
+				parameter3, parameter4).getDispatch());
 	}
 
 	/**

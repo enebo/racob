@@ -20,6 +20,8 @@
 #include "EventProxy.h"
 #include "Variant.h"
 
+#define EVENT_PROXY_DEBUG 0
+
 // hook myself up as a listener for delegate
 EventProxy::EventProxy(JNIEnv *env, 
 		jobject aSinkObj, 
@@ -129,742 +131,72 @@ STDMETHODIMP EventProxy::GetIDsOfNames(REFIID riid,
 // The actual callback from the connection point arrives here
 STDMETHODIMP EventProxy::Invoke(DISPID dispID, REFIID riid,
     LCID lcid, unsigned short wFlags, DISPPARAMS *pDispParams,
-    VARIANT *pVarResult, EXCEPINFO *pExcepInfo, UINT *puArgErr)
-{
-  	const char 	*eventMethodName = NULL; //Sourceforge report 1394001 
-  	JNIEnv      *env = NULL;
+    VARIANT *pVarResult, EXCEPINFO *pExcepInfo, UINT *puArgErr) {
+ const char *eventMethodName = NULL; //Sourceforge report 1394001
+ JNIEnv *env = NULL;
 
-  // map dispID to jmethodID
-  for(int i=0;i<MethNum;i++) 
-  {
-    if (MethID[i] == dispID) { 
-		USES_CONVERSION;
-		eventMethodName = W2A((OLECHAR *)MethName[i]);
-    	}
-  }
-  // added 1.12
-  if (!eventMethodName) {
-  	// just bail if can't find signature.  no need to attach
-	// printf("Invoke: didn't find method name for dispatch id %d\n",dispID);
-   	return S_OK;
-  }
-  if (DISPATCH_METHOD & wFlags) 
-  {
-        
+ if (EVENT_PROXY_DEBUG) fprintf(stderr, "In invoke\n");
+ // map dispID to jmethodID
+ for (int i = 0; i < MethNum; i++) {
+    if (MethID[i] == dispID) {
+       USES_CONVERSION;
+       eventMethodName = W2A((OLECHAR *) MethName[i]);
+    }
+ }
+
+ // added 1.12 - Just bail if can't find signature.  no need to attach
+ if (!eventMethodName) return S_OK;
+ if (EVENT_PROXY_DEBUG) fprintf(stderr, "In invoke of %s\n", eventMethodName);
+
+ if (DISPATCH_METHOD & wFlags) {
     // attach to the current running thread
-	//printf("Invoke: Attaching to current thread using JNI Version 1.2\n");
-		JavaVMAttachArgs attachmentArgs; 
-        attachmentArgs.version = JNI_VERSION_1_2;  
-        attachmentArgs.name = NULL; 
-        attachmentArgs.group = NULL; 
-        jvm->AttachCurrentThread((void **)&env, &attachmentArgs); 
-		if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
+    JavaVMAttachArgs attachmentArgs;
+    attachmentArgs.version = JNI_VERSION_1_2;
+    attachmentArgs.name = NULL;
+    attachmentArgs.group = NULL;
 
-	if (!eventMethodName) 
-  	{
-	    // could not find this signature in list
-  		// printf("Invoke: didn't find method name for dispatch id %d\n",dispID);
-  		// this probably leaves a native thread attached to the vm when we don't want it
-  		ThrowComFail(env, "Event method received was not defined as part of callback interface", -1);
-  		
-  		// should we detatch before returning?? We probably never get here if we ThrowComFail()
-	    // jvm->DetachCurrentThread();
-    	return S_OK;
-	  }
+    jvm->AttachCurrentThread((void **) &env, &attachmentArgs);
+    if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
 
-	// find the class of the InvocationHandler
-   	jclass javaSinkClass = env->GetObjectClass(javaSinkObj);
-		if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
-	//printf("Invoke: Got sink class\n");
-    jmethodID invokeMethod;
-    invokeMethod = env->GetMethodID(javaSinkClass, "invoke", "(Ljava/lang/String;[Lcom/jacob/com/Variant;)Lcom/jacob/com/Variant;");
-		if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
+    // find the class of the InvocationHandler
+    jclass javaSinkClass = env->GetObjectClass(javaSinkObj);
+    if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
+
+    jmethodID invokeMethod = env->GetMethodID(javaSinkClass, "invoke", "(Ljava/lang/String;[Lcom/jacob/com/Variant;)Lcom/jacob/com/Variant;");
+    if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
+
     jstring eventMethodNameAsString = env->NewStringUTF(eventMethodName);
-	//printf("Invoke: Got method name\n");
-	// now do what we need for the variant
-    jmethodID getVariantMethod = env->GetMethodID(javaSinkClass, "getVariant", "()Lcom/jacob/com/Variant;");
-		if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
-	//printf("Invoke: Found way too getVariant\n");
-    jobject aVariantObj = env->CallObjectMethod(javaSinkObj, getVariantMethod); 
-		if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
-	//printf("Invoke: Made Variant\n");
-   	jclass variantClass = env->GetObjectClass(aVariantObj);
-		if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
 
-	// create the variant parameter array
+    // create the variant parameter array
     // how many params
     int numVariantParams = pDispParams->cArgs;
+    if (EVENT_PROXY_DEBUG) fprintf(stderr, "Setup parm list for event %s(%d)\n", eventMethodName, numVariantParams);
     // make an array of them
-    jobjectArray varr = env->NewObjectArray(numVariantParams, variantClass, 0);
-		if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
-	//printf("Invoke: Created Array\n");
-    int i,j;
-    for(i=numVariantParams-1,j=0;i>=0;i--,j++) 
-    {
-      // construct a java variant holder
-	  jobject arg = env->CallObjectMethod(javaSinkObj, getVariantMethod); 
-		if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
-      // get the empty variant from it
-      VARIANT *va = extractVariant(env, arg);
-      // copy the value
-      VariantCopy(va, &pDispParams->rgvarg[i]);
-      // put it in the array
-      env->SetObjectArrayElement(varr, j, arg);
-	  env->DeleteLocalRef(arg);
-		if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
-    }
-	//printf("Invoke: Filled Array\n");
-    // Set up the return value
-    jobject ret;
+    jobjectArray varr = env->NewObjectArray(numVariantParams, VARIANT_CLASS, 0);
+    if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
 
-    ret = env->CallObjectMethod(javaSinkObj, invokeMethod, 
-		eventMethodNameAsString, varr); 
-	//printf("Invoke: Invoked callback\n");
-    if (!env->ExceptionOccurred() && ret != NULL) {
-        VariantCopy(pVarResult, extractVariant(env,ret));
+    int i,j;
+    for (i=numVariantParams-1,j=0; i>=0; i--,j++) {
+       env->SetObjectArrayElement(varr, j, createVariant(env, &pDispParams->rgvarg[i]));
+       if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
     }
-		if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
-	// don't need the first variant we created to get the class
-	// SF 1689061 change not accepted but put in as comment for later reminder
-    //Java_com_jacob_com_Variant_release(env, aVariantObj);
-	env->DeleteLocalRef(aVariantObj);
-		if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
+
+    // Set up the return value
+    jobject ret = env->CallObjectMethod(javaSinkObj, invokeMethod, eventMethodNameAsString, varr);
+    if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
+    if (ret != NULL) populateVariant(env, ret, pVarResult);
 
     // Begin code from Jiffie team that copies parameters back from java to COM
-    for(i=numVariantParams-1,j=0;i>=0;i--,j++) 
-    {
-		jobject arg = env->GetObjectArrayElement(varr, j);
-		VARIANT *java = extractVariant(env, arg);
-		VARIANT *com = &pDispParams->rgvarg[i];
-		convertJavaVariant(java, com);
-		// SF 1689061 change not accepted but put in as comment for later reminder
-		//Java_com_jacob_com_Variant_release(env, arg);
-		zeroVariant(env, arg);
-		env->DeleteLocalRef(arg);
+    for(i=numVariantParams-1,j=0;i>=0;i--,j++) {
+       jobject arg = env->GetObjectArrayElement(varr, j);
+       populateVariant(env, arg, &pDispParams->rgvarg[i]);
+       env->DeleteLocalRef(arg);
     }
     // End code from Jiffie team that copies parameters back from java to COM
-    // detach from thread
-	//printf("Invoke: Detatching\n");
-	jvm->DetachCurrentThread();
-  	//fflush(stdout);
+    
+    jvm->DetachCurrentThread();     // detach from thread
+    
     return S_OK;
   }
   return E_NOINTERFACE;
-}
-
-void EventProxy::convertJavaVariant(VARIANT *java, VARIANT *com) {
-
-	  switch (com->vt)
-	  {	  
-		case VT_DISPATCH:
-		{
-			switch (java->vt)
-			{
-				case VT_DISPATCH:
-				{
-					V_DISPATCH(com) = V_DISPATCH(java);
-					break;
-				}
-
-				case VT_DISPATCH | VT_BYREF:
-				{
-					V_DISPATCH(com) = *V_DISPATCHREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_DISPATCH | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_DISPATCH:
-				{
-					*V_DISPATCHREF(com) = V_DISPATCH(java);
-					break;
-				}
-
-				case VT_DISPATCH | VT_BYREF:
-				{
-					*V_DISPATCHREF(com) = *V_DISPATCHREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_BOOL:
-		{
-			switch (java->vt)
-			{
-				case VT_BOOL:
-				{
-					V_BOOL(com) = V_BOOL(java);
-					break;
-				}
-
-				case VT_BOOL | VT_BYREF:
-				{
-					V_BOOL(com) = *V_BOOLREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_BOOL | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_BOOL:
-				{
-					*V_BOOLREF(com) = V_BOOL(java);
-					break;
-				}
-
-				case VT_BOOL | VT_BYREF:
-				{
-					*V_BOOLREF(com) = *V_BOOLREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_UI1:
-		{
-			switch (java->vt)
-			{
-				case VT_UI1:
-				{
-					V_UI1(com) = V_UI1(java);
-					break;
-				}
-
-				case VT_UI1 | VT_BYREF:
-				{
-					V_UI1(com) = *V_UI1REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_UI1 | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_UI1:
-				{
-					*V_UI1REF(com) = V_UI1(java);
-					break;
-				}
-
-				case VT_UI1 | VT_BYREF:
-				{
-					*V_UI1REF(com) = *V_UI1REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-
-		case VT_I2:
-		{
-			switch (java->vt)
-			{
-				case VT_I2:
-				{
-					V_I2(com) = V_I2(java);
-					break;
-				}
-
-				case VT_I2 | VT_BYREF:
-				{
-					V_I2(com) = *V_I2REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_I2 | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_I2:
-				{
-					*V_I2REF(com) = V_I2(java);
-					break;
-				}
-
-				case VT_I2 | VT_BYREF:
-				{
-					*V_I2REF(com) = *V_I2REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_I4:
-		{
-			switch (java->vt)
-			{
-				case VT_I4:
-				{
-					V_I4(com) = V_I4(java);
-					break;
-				}
-
-				case VT_I4 | VT_BYREF:
-				{
-					V_I4(com) = *V_I4REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_I4 | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_I4:
-				{
-					*V_I4REF(com) = V_I4(java);
-					break;
-				}
-
-				case VT_I4 | VT_BYREF:
-				{
-					*V_I4REF(com) = *V_I4REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_R4:
-		{
-			switch (java->vt)
-			{
-				case VT_R4:
-				{
-					V_R4(com) = V_R4(java);
-					break;
-				}
-
-				case VT_R4 | VT_BYREF:
-				{
-					V_R4(com) = *V_R4REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_R4 | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_R4:
-				{
-					*V_R4REF(com) = V_R4(java);
-					break;
-				}
-
-				case VT_R4 | VT_BYREF:
-				{
-					*V_R4REF(com) = *V_R4REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_R8:
-		{
-			switch (java->vt)
-			{
-				case VT_R8:
-				{
-					V_R8(com) = V_R8(java);
-					break;
-				}
-
-				case VT_R8 | VT_BYREF:
-				{
-					V_R8(com) = *V_R8REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_R8 | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_R8:
-				{
-					*V_R8REF(com) = V_R8(java);
-					break;
-				}
-
-				case VT_R8 | VT_BYREF:
-				{
-					*V_R8REF(com) = *V_R8REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-				case VT_I1:
-		{
-			switch (java->vt)
-			{
-				case VT_I1:
-				{
-					V_I1(com) = V_I1(java);
-					break;
-				}
-
-				case VT_I1 | VT_BYREF:
-				{
-					V_I1(com) = *V_I1REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_I1 | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_I1:
-				{
-					*V_I1REF(com) = V_I1(java);
-					break;
-				}
-
-				case VT_I1 | VT_BYREF:
-				{
-					*V_I1REF(com) = *V_I1REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-				case VT_UI2:
-		{
-			switch (java->vt)
-			{
-				case VT_UI2:
-				{
-					V_UI2(com) = V_UI2(java);
-					break;
-				}
-
-				case VT_UI2 | VT_BYREF:
-				{
-					V_UI2(com) = *V_UI2REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_UI2 | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_UI2:
-				{
-					*V_UI2REF(com) = V_UI2(java);
-					break;
-				}
-
-				case VT_UI2 | VT_BYREF:
-				{
-					*V_UI2REF(com) = *V_UI2REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-				case VT_UI4:
-		{
-			switch (java->vt)
-			{
-				case VT_UI4:
-				{
-					V_UI4(com) = V_UI4(java);
-					break;
-				}
-
-				case VT_UI4 | VT_BYREF:
-				{
-					V_UI4(com) = *V_UI4REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_UI4 | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_UI4:
-				{
-					*V_UI4REF(com) = V_UI4(java);
-					break;
-				}
-
-				case VT_UI4 | VT_BYREF:
-				{
-					*V_UI4REF(com) = *V_UI4REF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-				case VT_INT:
-		{
-			switch (java->vt)
-			{
-				case VT_INT:
-				{
-					V_INT(com) = V_INT(java);
-					break;
-				}
-
-				case VT_INT | VT_BYREF:
-				{
-					V_INT(com) = *V_INTREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_INT | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_INT:
-				{
-					*V_INTREF(com) = V_INT(java);
-					break;
-				}
-
-				case VT_INT | VT_BYREF:
-				{
-					*V_INTREF(com) = *V_INTREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-				case VT_UINT:
-		{
-			switch (java->vt)
-			{
-				case VT_UINT:
-				{
-					V_UINT(com) = V_UINT(java);
-					break;
-				}
-
-				case VT_UINT | VT_BYREF:
-				{
-					V_UINT(com) = *V_UINTREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_UINT | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_UINT:
-				{
-					*V_UINTREF(com) = V_UINT(java);
-					break;
-				}
-
-				case VT_UINT | VT_BYREF:
-				{
-					*V_UINTREF(com) = *V_UINTREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-				case VT_CY:
-		{
-			switch (java->vt)
-			{
-				case VT_CY:
-				{
-					V_CY(com) = V_CY(java);
-					break;
-				}
-
-				case VT_CY | VT_BYREF:
-				{
-					V_CY(com) = *V_CYREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_CY | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_CY:
-				{
-					*V_CYREF(com) = V_CY(java);
-					break;
-				}
-
-				case VT_CY | VT_BYREF:
-				{
-					*V_CYREF(com) = *V_CYREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-				case VT_DATE:
-		{
-			switch (java->vt)
-			{
-				case VT_DATE:
-				{
-					V_DATE(com) = V_DATE(java);
-					break;
-				}
-
-				case VT_DATE | VT_BYREF:
-				{
-					V_DATE(com) = *V_DATEREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_DATE | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_DATE:
-				{
-					*V_DATEREF(com) = V_DATE(java);
-					break;
-				}
-
-				case VT_DATE | VT_BYREF:
-				{
-					*V_DATEREF(com) = *V_DATEREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-				case VT_BSTR:
-		{
-			switch (java->vt)
-			{
-				case VT_BSTR:
-				{
-					V_BSTR(com) = V_BSTR(java);
-					break;
-				}
-
-				case VT_BSTR | VT_BYREF:
-				{
-					V_BSTR(com) = *V_BSTRREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_BSTR | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_BSTR:
-				{
-					*V_BSTRREF(com) = V_BSTR(java);
-					break;
-				}
-
-				case VT_BSTR | VT_BYREF:
-				{
-					*V_BSTRREF(com) = *V_BSTRREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-				case VT_DECIMAL:
-		{
-			switch (java->vt)
-			{
-				case VT_DECIMAL:
-				{
-					V_DECIMAL(com) = V_DECIMAL(java);
-					break;
-				}
-
-				case VT_DECIMAL | VT_BYREF:
-				{
-					V_DECIMAL(com) = *V_DECIMALREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-		case VT_DECIMAL | VT_BYREF:
-		{
-			switch (java->vt)
-			{
-				case VT_DECIMAL:
-				{
-					*V_DECIMALREF(com) = V_DECIMAL(java);
-					break;
-				}
-
-				case VT_DECIMAL | VT_BYREF:
-				{
-					*V_DECIMALREF(com) = *V_DECIMALREF(java);
-					break;
-				}
-			}
-			break;
-		}
-
-
-    }
 }

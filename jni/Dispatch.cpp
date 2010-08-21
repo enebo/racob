@@ -31,18 +31,6 @@
 extern "C" 
 {
 
-#define DISP_FLD "m_pDispatch"
-
-// extract a IDispatch from a jobject
-IDispatch *extractDispatch(JNIEnv *env, jobject arg)
-{
-  jclass argClass = env->GetObjectClass(arg);
-  jfieldID ajf = env->GetFieldID( argClass, DISP_FLD, "I");
-  jint anum = env->GetIntField(arg, ajf);
-  IDispatch *v = (IDispatch *)anum;
-  return v;
-}
-
 /**
  * This method finds an interface rooted on the passed in dispatch object.
  * This creates a new Dispatch object so it is NOT reliable 
@@ -50,10 +38,10 @@ IDispatch *extractDispatch(JNIEnv *env, jobject arg)
  * does not have com.jacob.com.Dispatch in its classpath
  */
 JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_QueryInterface
-  (JNIEnv *env, jobject _this, jstring _iid)
+  (JNIEnv *env, jobject _this, jint pointer, jstring _iid)
 {
   // get the current IDispatch
-  IDispatch *pIDispatch = extractDispatch(env, _this);
+  IDispatch *pIDispatch = (IDispatch *) pointer;
   if (!pIDispatch) return NULL;
   // if we used env->GetStringChars() would that let us drop the conversion?
   const char *siid = env->GetStringUTFChars(_iid, NULL);
@@ -90,11 +78,8 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_QueryInterface
  * and connects to it.  does special code if the progid 
  * is of the alternate format (with ":")
  **/
-JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_createInstanceNative
-  (JNIEnv *env, jobject _this, jstring _progid)
-{
-  jclass clazz = env->GetObjectClass(_this);
-  jfieldID jf = env->GetFieldID( clazz, DISP_FLD, "I");
+JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_createInstanceNative
+  (JNIEnv *env, jobject _this, jstring _progid) {
 
   // if we used env->GetStringChars() would that let us drop the conversion?
   const char *progid = env->GetStringUTFChars(_progid, NULL);
@@ -111,7 +96,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_createInstanceNative
      hr = CoGetObject(bsProgId, NULL, IID_IUnknown, (LPVOID *)&punk);
      if (FAILED(hr)) {
        ThrowComFail(env, "Can't find moniker", hr);
-       return;
+       return 0;
      }
      IClassFactory *pIClass;
      // if it was a clsid moniker, I may have a class factory
@@ -122,7 +107,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_createInstanceNative
      hr = pIClass->CreateInstance(NULL, IID_IUnknown, (void **)&punk);
      if (FAILED(hr)) {
        ThrowComFail(env, "Can't create moniker class instance", hr);
-       return;
+       return 0;
      }
      pIClass->Release();
      goto doDisp;
@@ -132,13 +117,13 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_createInstanceNative
   hr = CLSIDFromProgID(bsProgId, &clsid);
   if (FAILED(hr)) {
     ThrowComFail(env, "Can't get object clsid from progid", hr);
-    return;
+    return 0;
   }
   // standard creation
   hr = CoCreateInstance(clsid,NULL,CLSCTX_LOCAL_SERVER|CLSCTX_INPROC_SERVER,IID_IUnknown, (void **)&punk);
   if (!SUCCEEDED(hr)) {
      ThrowComFail(env, "Can't co-create object", hr);
-     return;
+     return 0;
   }
 doDisp:
 
@@ -146,23 +131,20 @@ doDisp:
   hr = punk->QueryInterface(IID_IDispatch, (void **)&pIDispatch);
   if (!SUCCEEDED(hr)) {
     ThrowComFail(env, "Can't QI object for IDispatch", hr);
-    return;
+    return 0;
   }
   // CoCreateInstance called AddRef
   punk->Release();
-  env->SetIntField(_this, jf, (unsigned int)pIDispatch);
+  return (jint) pIDispatch;
 }
 
 /**
  * attempts to connect to an running instance of the requested program
  * This exists solely for the factory method connectToActiveInstance.
  **/
-JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_getActiveInstanceNative
+JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_getActiveInstanceNative
   (JNIEnv *env, jobject _this, jstring _progid)
 {
-  jclass clazz = env->GetObjectClass(_this);
-  jfieldID jf = env->GetFieldID( clazz, DISP_FLD, "I");
-
   // if we used env->GetStringChars() would that let us drop the conversion?
   const char *progid = env->GetStringUTFChars(_progid, NULL);
   CLSID clsid;
@@ -176,36 +158,32 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_getActiveInstanceNative
   hr = CLSIDFromProgID(bsProgId, &clsid);
   if (FAILED(hr)) {
     ThrowComFail(env, "Can't get object clsid from progid", hr);
-    return;
+    return 0;
   }
   // standard connection
   //printf("trying to connect to running %ls\n",bsProgId);
   hr = GetActiveObject(clsid,NULL, &punk);
   if (!SUCCEEDED(hr)) {
      ThrowComFail(env, "Can't get active object", hr);
-     return;
+     return 0;
   }
   // now get an IDispatch pointer from the IUnknown
   hr = punk->QueryInterface(IID_IDispatch, (void **)&pIDispatch);
   if (!SUCCEEDED(hr)) {
     ThrowComFail(env, "Can't QI object for IDispatch", hr);
-    return;
+    return 0;
   }
   // GetActiveObject called AddRef
   punk->Release();
-  env->SetIntField(_this, jf, (unsigned int)pIDispatch);
+  return (jint) pIDispatch;
 }
 
 /**
  * starts up a new instance of the requested program (progId).  
  * This exists solely for the factory method connectToActiveInstance.
  **/
-JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_coCreateInstanceNative
-  (JNIEnv *env, jobject _this, jstring _progid)
-{
-  jclass clazz = env->GetObjectClass(_this);
-  jfieldID jf = env->GetFieldID( clazz, DISP_FLD, "I");
-
+JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_coCreateInstanceNative
+  (JNIEnv *env, jobject _this, jstring _progid) {
   // if we used env->GetStringChars() would that let us drop the conversion?
   const char *progid = env->GetStringUTFChars(_progid, NULL);
   CLSID clsid;
@@ -219,32 +197,30 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_coCreateInstanceNative
   hr = CLSIDFromProgID(bsProgId, &clsid);
   if (FAILED(hr)) {
     ThrowComFail(env, "Can't get object clsid from progid", hr);
-    return;
+    return 0;
   }
   // standard creation
   hr = CoCreateInstance(clsid,NULL,CLSCTX_LOCAL_SERVER|CLSCTX_INPROC_SERVER,IID_IUnknown, (void **)&punk);
   if (!SUCCEEDED(hr)) {
      ThrowComFail(env, "Can't co-create object", hr);
-     return;
+     return 0;
   }
   // now get an IDispatch pointer from the IUnknown
   hr = punk->QueryInterface(IID_IDispatch, (void **)&pIDispatch);
   if (!SUCCEEDED(hr)) {
     ThrowComFail(env, "Can't QI object for IDispatch", hr);
-    return;
+    return 0;
   }
   // CoCreateInstance called AddRef
   punk->Release();
-  env->SetIntField(_this, jf, (unsigned int)pIDispatch);
+  return (jint) pIDispatch;
 }
 
 JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_getTypeInfo
-  (JNIEnv *env, jobject _this)
-{
-   IDispatch *disp = extractDispatch(env, _this);
-   if (!disp) {
-      return NULL;
-   }
+  (JNIEnv *env, jobject _this, jint pointer) {
+   IDispatch *disp = (IDispatch *) pointer;
+   if (!disp) return NULL;
+
    unsigned int count = 0;
    HRESULT hr = disp->GetTypeInfoCount(&count);
    if (!SUCCEEDED(hr)) {
@@ -252,9 +228,8 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_getTypeInfo
       return NULL;
    }
 
-   if (count != 1) { // No TypeInfo Available
-      return NULL;
-   }
+   // No TypeInfo Available
+   if (count != 1) return NULL;
 
    ITypeInfo* typeInfo = 0;
    hr = disp->GetTypeInfo(0, GetUserDefaultLCID(), &typeInfo);
@@ -270,17 +245,10 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_getTypeInfo
  * release method
  */
 JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_release
-  (JNIEnv *env, jobject _this)
-{
-  jclass clazz = env->GetObjectClass(_this);
-  jfieldID jf = env->GetFieldID( clazz, DISP_FLD, "I");
-  jint num = env->GetIntField(_this, jf);
+  (JNIEnv *env, jobject _this, jint pointer) {
+  IDispatch *disp = (IDispatch *) pointer;
 
-  IDispatch *disp = (IDispatch *)num;
-  if (disp) {
-    disp->Release();
-    env->SetIntField(_this, jf, (unsigned int)0);
-  }
+  if (disp) disp->Release();
 }
 
 static HRESULT
@@ -294,9 +262,9 @@ name2ID(IDispatch *pIDispatch, const char *prop, DISPID *dispid, long lcid)
 }
 
 JNIEXPORT jintArray JNICALL Java_com_jacob_com_Dispatch_getIDsOfNames
-  (JNIEnv *env, jclass clazz, jobject disp, jint lcid, jobjectArray names)
+  (JNIEnv *env, jclass clazz, jint pointer, jobject disp, jint lcid, jobjectArray names)
 {
-  IDispatch *pIDispatch = extractDispatch(env, disp);
+  IDispatch *pIDispatch = (IDispatch *) pointer;
   if (!pIDispatch) return NULL;
 
   int l = env->GetArrayLength(names);
@@ -340,31 +308,25 @@ JNIEXPORT jintArray JNICALL Java_com_jacob_com_Dispatch_getIDsOfNames
   return iarr;
 }
 
-static char* BasicToCharString(const BSTR inBasicString)
-{
+static char* BasicToCharString(const BSTR inBasicString) {
     char* charString = NULL;
     const size_t charStrSize = ::SysStringLen(inBasicString) + 1;
-    if (charStrSize > 1)
-    {
+    if (charStrSize > 1) {
         charString = new char[charStrSize];
 		size_t convertedSize;
 		::wcstombs_s(&convertedSize, charString, charStrSize, inBasicString, charStrSize);
-    }
-    else 
-    {
+    } else {
         charString = ::_strdup("");
     }
     return charString;
 }
 
-static wchar_t* CreateErrorMsgFromResult(HRESULT inResult)
-{
+static wchar_t* CreateErrorMsgFromResult(HRESULT inResult) {
   wchar_t* msg = NULL;
   ::FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER |
       FORMAT_MESSAGE_FROM_SYSTEM, NULL, inResult,MAKELANGID(LANG_NEUTRAL,
       SUBLANG_DEFAULT), (LPWSTR) &msg, 0, NULL);
-  if (msg == NULL)
-  {
+  if (msg == NULL) {
     const wchar_t* message_text = L"An unknown COM error has occured.";
     size_t bufferLength = (wcslen(message_text) + 1) * sizeof(wchar_t);
     msg = (wchar_t*) ::LocalAlloc(LPTR, bufferLength);
@@ -375,8 +337,7 @@ static wchar_t* CreateErrorMsgFromResult(HRESULT inResult)
 }
 
 static wchar_t* CreateErrorMsgFromInfo(HRESULT inResult, EXCEPINFO* ioInfo,
- const char* methName)
-{
+ const char* methName) {
   wchar_t* msg = NULL;
   size_t methNameWSize = 0;
 
@@ -389,8 +350,7 @@ static wchar_t* CreateErrorMsgFromInfo(HRESULT inResult, EXCEPINFO* ioInfo,
   // If this is a dispatch exception (triggered by an Invoke message),
   // then we have to take some additional steps to process the error
   // message.
-  if  (inResult == DISP_E_EXCEPTION)
-  {
+  if  (inResult == DISP_E_EXCEPTION) {
     // Check to see if the server deferred filling in the exception
     // information.  If so, make the call to populate the structure.
     if (ioInfo->pfnDeferredFillIn != NULL)
@@ -408,9 +368,7 @@ static wchar_t* CreateErrorMsgFromInfo(HRESULT inResult, EXCEPINFO* ioInfo,
     ::wcsncat_s(msg, MSG_LEN, L"\nDescription: ", wcslen(L"\nDescription: "));
     ::wcsncat_s(msg, MSG_LEN, ioInfo->bstrDescription, descLen);
     ::wcsncat_s(msg, MSG_LEN, L"\n", wcslen(L"\n"));
-  }
-  else
-  {
+  } else {
     wchar_t* msg2 = CreateErrorMsgFromResult(inResult);
     const size_t MSG_LEN = ::wcslen(methNameW) + ::wcslen(msg2) + 256;
     msg = new wchar_t[MSG_LEN];
@@ -439,20 +397,7 @@ static wchar_t* CreateErrorMsgFromInfo(HRESULT inResult, EXCEPINFO* ioInfo,
 
 #define SETNOPARAMS(dp) SETDISPPARAMS(dp, 0, NULL, 0, NULL)
 
-
 JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
-  (JNIEnv *env, jclass clazz,
-  jobject disp, jstring name, jint dispid,
-  jint lcid, jint wFlags, jobjectArray vArg, jintArray uArgErr)
-{
-    IDispatch *pIDispatch = extractDispatch(env, disp);
-    if (!pIDispatch) return NULL;
-    
-    return Java_com_jacob_com_Dispatch_invokev2(env, clazz, (jint) pIDispatch,
-            name, dispid, lcid, wFlags, vArg, uArgErr);
-}
-
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev2
   (JNIEnv *env, jclass clazz,
   jint dispPointer, jstring name, jint dispid,
   jint lcid, jint wFlags, jobjectArray vArg, jintArray uArgErr)
@@ -488,68 +433,51 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev2
     {
       VariantInit(&varr[j]);
       jobject arg = env->GetObjectArrayElement(vArg, i);
-      VARIANT *v = extractVariant(env, arg);
-      // no escape from copy?
-      VariantCopy(&varr[j], v);
+      populateVariant(env, arg, &varr[j]);
       env->DeleteLocalRef(arg);
     }
+
+    fflush(stdout);
   }
-  // prepare a new return value
-  jclass variantClass = env->FindClass("com/jacob/com/Variant");
-  jmethodID variantCons = 
-      env->GetMethodID(variantClass, "<init>", "()V");
-  // construct a variant to return
-  jobject newVariant = env->NewObject(variantClass, variantCons);
-  // get the VARIANT from the newVariant
-  VARIANT *v = extractVariant(env, newVariant);
+
+  VARIANT returnValue;
   DISPID  dispidPropertyPut = DISPID_PROPERTYPUT;
+  VariantInit(&returnValue);
 
   // determine how to dispatch
-  switch (wFlags) 
-  {
+  switch (wFlags) {
     case DISPATCH_PROPERTYGET: // GET
     case DISPATCH_METHOD: // METHOD
-    case DISPATCH_METHOD|DISPATCH_PROPERTYGET:
-      {
-        SETDISPPARAMS(dispparams, num_args, varr, 0, NULL);
-        break;
-      }
+    case DISPATCH_METHOD|DISPATCH_PROPERTYGET: {
+      SETDISPPARAMS(dispparams, num_args, varr, 0, NULL);
+      break;
+    }
     case DISPATCH_PROPERTYPUT:
-    case DISPATCH_PROPERTYPUTREF: // jacob-msg 1075 - SF 1053872
-      {
-        SETDISPPARAMS(dispparams, num_args, varr, 1, &dispidPropertyPut);
-        break;
-      }
+    case DISPATCH_PROPERTYPUTREF: { // jacob-msg 1075 - SF 1053872
+      SETDISPPARAMS(dispparams, num_args, varr, 1, &dispidPropertyPut);
+      break;
+    }
   }
 
   HRESULT hr = 0;
   jint count = env->GetArrayLength(uArgErr);
-  if ( count != 0 )
-  {
-	  jint *uAE = env->GetIntArrayElements(uArgErr, NULL);
-	  hr = pIDispatch->Invoke(dispID,IID_NULL,
-		lcid,(WORD)wFlags,&dispparams,v,&excepInfo,(unsigned int *)uAE); // SF 1689061
-	  env->ReleaseIntArrayElements(uArgErr, uAE, 0);
+  if ( count != 0 ) {
+       jint *uAE = env->GetIntArrayElements(uArgErr, NULL);
+       hr = pIDispatch->Invoke(dispID, IID_NULL,
+               lcid, (WORD) wFlags, &dispparams, &returnValue, &excepInfo, (unsigned int *) uAE); // SF 1689061
+       env->ReleaseIntArrayElements(uArgErr, uAE, 0);
+  } else {
+       hr = pIDispatch->Invoke(dispID, IID_NULL,
+               lcid, (WORD) wFlags, &dispparams, &returnValue, &excepInfo, NULL); // SF 1689061
   }
-  else
-  {
-	  hr = pIDispatch->Invoke(dispID,IID_NULL,
-		lcid,(WORD)wFlags,&dispparams,v,&excepInfo, NULL); // SF 1689061
-  }
-  if (num_args) 
-  {
+
+  if (num_args) {
     // to account for inouts, I need to copy the inputs back to
     // the java array after the method returns
     // this occurs, for example, in the ADO wrappers
-    for(i=num_args-1,j=0;0<=i;i--,j++) 
-    {
-      jobject arg = env->GetObjectArrayElement(vArg, i);
-      VARIANT *v = extractVariant(env, arg);
-      // reverse copy
-      VariantCopy(v, &varr[j]);
-      // clear out the temporary variant
-      VariantClear(&varr[j]);
-      env->DeleteLocalRef(arg);
+    for(i=num_args-1,j=0;0<=i;i--,j++) {
+       env->SetObjectArrayElement(vArg, i, createVariant(env, &varr[j]));
+       VariantClear(&varr[j]); // clear out the temporary variant
     }
   }
 
@@ -593,7 +521,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev2
     return NULL;
   }
 
-  return newVariant;
+  return createVariant(env, &returnValue);
 }
 
 }
