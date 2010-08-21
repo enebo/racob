@@ -113,7 +113,7 @@ public final class VariantUtilities {
             // rely on createVariant to throw an exception if its an
             // invalid type
             Variant variant = createVariant(value, false);
-            System.out.println("VARIANT: " + variant.toDebugString() + " for value " + value + " of type " + value.getClass().getSimpleName());
+//            System.out.println("VARIANT: " + variant.toDebugString() + " for value " + value + " of type " + value.getClass().getSimpleName());
             return variant;
         }
     }

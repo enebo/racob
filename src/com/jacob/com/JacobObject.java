@@ -44,16 +44,6 @@ public abstract class JacobObject {
     }
 
     protected abstract void release(int pointer);
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#finalize()
-     */
-    @Override
-    protected void finalize() {
-        safeRelease();
-    }
     
     public boolean isAlive() {
         return pointer != 0;
