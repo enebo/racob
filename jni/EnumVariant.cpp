@@ -34,24 +34,36 @@
  */
 extern "C" {
 
-JNIEXPORT jobject JNICALL
-Java_com_jacob_com_EnumVariant_Next(JNIEnv* env, jobject _this, jint pointer) {
+ #define MAX_VALUES 10
+
+JNIEXPORT jint JNICALL
+Java_com_jacob_com_EnumVariant_Next(JNIEnv* env, jobject _this, jint pointer, jobjectArray values, jint valuesSize) {
   IEnumVARIANT* enumVariant = (IEnumVARIANT *) pointer;
   if (enumVariant == NULL) return NULL;
 
-  VARIANT sink;
-  ULONG fetchCount = 0;
-
-  VariantInit(&sink);
-  HRESULT hr = enumVariant->Next(1, &sink, &fetchCount);
-  if (FAILED(hr)) {
-    ThrowComFail(env, "IEnumVARIANT::Next", hr);
-    return NULL;
+  if (valuesSize > MAX_VALUES) {
+     ThrowComFail(env, "IEnumVariant::Next -- too many values requested", -1);
+     return 0;
   }
 
-  if (fetchCount == 0) return NULL;
-  
-  return createVariant(env, &sink);
+  VARIANT sink[MAX_VALUES];
+  ULONG fetchCount = 0;
+
+  for (int i = 0; i < valuesSize; i++) VariantInit(&sink[i]);
+
+  HRESULT hr = enumVariant->Next(valuesSize, sink, &fetchCount);
+  if (FAILED(hr)) {
+    ThrowComFail(env, "IEnumVARIANT::Next", hr);
+    return 0;
+  }
+
+  if (fetchCount == 0) return 0; // Nothing retrieved.
+
+  for (int i = 0; i < fetchCount; i++) {
+     env->SetObjectArrayElement(values, fetchCount - i - 1, createVariant(env, &sink[i]));
+  }
+
+  return fetchCount;
 }
 
 JNIEXPORT void JNICALL

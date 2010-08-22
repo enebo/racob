@@ -26,12 +26,16 @@ import java.util.Enumeration;
  * (mailto:Thomas.Hallgren@eoncompany.com)
  */
 public class EnumVariant extends JacobObject implements Enumeration<Variant> {
-    private Variant value;
+    private Variant[] values;
+    int i = -1;
 
-    // this only gets called from JNI
-    //
     protected EnumVariant(int pointer) {
+        this(pointer, 5);
+    }
+
+    protected EnumVariant(int pointer, int size) {
         this.pointer = pointer;
+        values = new Variant[size];
     }
 
     /**
@@ -40,9 +44,9 @@ public class EnumVariant extends JacobObject implements Enumeration<Variant> {
      * @return boolean true if there are more elements in this enumeration
      */
     public boolean hasMoreElements() {
-        if (value == null) value = Next(pointer);
+        if (i == -1) i = Next(pointer, values, values.length) - 1;
 
-        return value != null;
+        return i > -1;
     }
 
     /**
@@ -52,22 +56,19 @@ public class EnumVariant extends JacobObject implements Enumeration<Variant> {
      */
     public Variant nextElement() {
         if (hasMoreElements()) {
-            Variant tempValue = value;
-            value = null;
-            return tempValue;
+            Variant returnValue = values[i];
+
+            i--;
+            
+            return returnValue;
         }
 
         throw new java.util.NoSuchElementException();
     }
 
     /**
-     * This should be private and wrapped to protect JNI layer.
-     *
-     * @param receiverArray
-     * @return Returns the next variant object pointer as an int from windows
-     *         layer
      */
-    public native Variant Next(int pointer);
+    public native int Next(int pointer, Variant[] values, int size);
 
     /**
      * This should be private and wrapped to protect JNI layer.
