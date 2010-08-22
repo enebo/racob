@@ -295,6 +295,10 @@ public class Variant {
         return value;
     }
 
+    public static Variant createDispatchVariant(int pointer) {
+        return new Variant(new Dispatch(pointer));
+    }
+
     /**
      * Cover for native method so we can cover it.
      * <p>
