@@ -51,7 +51,11 @@ public class EnumVariant extends JacobObject implements Enumeration<Variant> {
      * @return next element in the enumeration
      */
     public Variant nextElement() {
-        if (hasMoreElements()) return value;
+        if (hasMoreElements()) {
+            Variant tempValue = value;
+            value = null;
+            return tempValue;
+        }
 
         throw new java.util.NoSuchElementException();
     }

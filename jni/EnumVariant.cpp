@@ -49,6 +49,8 @@ Java_com_jacob_com_EnumVariant_Next(JNIEnv* env, jobject _this, jint pointer) {
     return NULL;
   }
 
+  if (fetchCount == 0) return NULL;
+  
   return createVariant(env, &sink);
 }
 
