@@ -94,7 +94,7 @@ jobject createDispatchVariant(JNIEnv *env, IDispatch* pointer) {
 }
 
 jobject createBooleanVariant(JNIEnv *env, jboolean value) {
- return value == JNI_TRUE ? TRUE_VARIANT : FALSE_VARIANT;
+ return value == 0 ? FALSE_VARIANT : TRUE_VARIANT;
 }
 
 jobject createBoxedByte(JNIEnv *env, jbyte value) {

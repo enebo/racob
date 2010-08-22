@@ -40,13 +40,13 @@ import java.util.Date;
  */
 public class Variant {    
     /** Use this constant for optional parameters */
-    public final static com.jacob.com.Variant DEFAULT;
+    public final static Variant DEFAULT;
     /** Same than {@link #DEFAULT} */
-    public final static com.jacob.com.Variant VT_MISSING;
+    public final static Variant VT_MISSING;
     /** Use for true/false variant parameters */
-    public final static com.jacob.com.Variant VT_TRUE = new Variant(true, false);
+    public final static Variant VT_TRUE = new Variant(true, false);
     /** Use for true/false variant parameters */
-    public final static com.jacob.com.Variant VT_FALSE = new Variant(false, false);
+    public final static Variant VT_FALSE = new Variant(false, false);
     /** variant's type is empty : equivalent to VB Nothing and VT_EMPTY */
     public final static short VariantEmpty = 0;
     /** variant's type is null : equivalent to VB Null and VT_NULL */
