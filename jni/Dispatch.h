@@ -35,6 +35,14 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_QueryInterface
 
 /*
  * Class:     Dispatch
+ * Method:    toEnumVariant
+ * Signature: (I)I;
+ */
+JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_toEnumVariant
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     Dispatch
  * Method:    createInstance
  * Signature: (Ljava/lang/String;)I
  */

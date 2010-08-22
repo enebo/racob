@@ -187,6 +187,12 @@ public class Dispatch extends JacobObject {
 
     private native Dispatch QueryInterface(int pointer, String iid);
 
+    private native int toEnumVariant(int pointer);
+
+    public EnumVariant toEnumVariant() {
+        return new EnumVariant(toEnumVariant(pointer));
+    }
+
     public TypeInfo getTypeInfo() {
         return getTypeInfo(pointer);
     }
