@@ -32,14 +32,12 @@ extern "C"
 {
 
 /* Initialized by initializeNative */
-jclass BOOLEAN_CLASS = 0;
 jclass DISPATCH_CLASS = 0;
 jclass VARIANT_CLASS = 0;
 
 jfieldID POINTER_FIELD = 0;
 jfieldID VARIANT_TYPE = 0;
 
-jmethodID BOOLEAN_CONSTRUCTOR = 0;
 jmethodID DISPATCH_CONSTRUCTOR = 0;
 jmethodID VARIANT_CONSTRUCTOR = 0;
 jmethodID VARIANT_GETSTRING = 0;
@@ -53,18 +51,23 @@ jmethodID VARIANT_GETCURRENCYASLONG = 0;
 jmethodID VARIANT_GETBOOLEAN = 0;
 jmethodID VARIANT_GETBYTE = 0;
 jmethodID VARIANT_GETVARIANT = 0;
+jmethodID VARIANT_CREATEDISPATCH = 0;
+jobject TRUE_VARIANT = 0;
+jobject FALSE_VARIANT = 0;
 
 JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_initializeNative
   (JNIEnv *env, jclass clazz) {
     // prepare a new return value
     VARIANT_CLASS = (jclass) env->NewGlobalRef(env->FindClass("com/jacob/com/Variant"));
     DISPATCH_CLASS = (jclass) env->NewGlobalRef(env->FindClass("com/jacob/com/Dispatch"));
-    BOOLEAN_CLASS = (jclass) env->NewGlobalRef(env->FindClass("java/lang/Boolean"));
     jclass c = (jclass) env->FindClass("com/jacob/com/JacobObject");
 
     POINTER_FIELD = env->GetFieldID(c, "pointer", "I");
     
-    BOOLEAN_CONSTRUCTOR = env->GetMethodID(clazz, "<init>", "(Z)V");
+    jfieldID trueField = env->GetStaticFieldID(VARIANT_CLASS, "VT_TRUE", "Lcom/jacob/com/Variant;");
+    jfieldID falseField = env->GetStaticFieldID(VARIANT_CLASS, "VT_FALSE", "Lcom/jacob/com/Variant;");
+    TRUE_VARIANT =  env->NewGlobalRef(env->GetStaticObjectField(VARIANT_CLASS, trueField));
+    FALSE_VARIANT = env->NewGlobalRef(env->GetStaticObjectField(VARIANT_CLASS, falseField));
 
     DISPATCH_CONSTRUCTOR = env->GetMethodID(DISPATCH_CLASS, "<init>", "(I)V");
     VARIANT_CONSTRUCTOR = env->GetMethodID(VARIANT_CLASS, "<init>", "(Ljava/lang/Object;S)V");
@@ -81,11 +84,17 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_initializeNative
     VARIANT_GETBYTE = env->GetMethodID(clazz, "getByte", "()B");
     VARIANT_GETVARIANT = env->GetMethodID(clazz, "getVariant", "()Lcom/jacob/com/Variant;");
 
+    VARIANT_CREATEDISPATCH = env->GetStaticMethodID(clazz, "createDispatchVariant", "(I)Lcom/jacob/com/Variant;");
+
     return NULL;
  }
 
-jobject createBoxedBoolean(JNIEnv *env, jboolean value) {
-  return env->NewObject(BOOLEAN_CLASS, BOOLEAN_CONSTRUCTOR, value);
+jobject createDispatchVariant(JNIEnv *env, IDispatch* pointer) {
+  return env->CallStaticObjectMethod(VARIANT_CLASS, VARIANT_CREATEDISPATCH, (jint) pointer);
+}
+
+jobject createBooleanVariant(JNIEnv *env, jboolean value) {
+ return value == JNI_TRUE ? TRUE_VARIANT : FALSE_VARIANT;
 }
 
 jobject createBoxedByte(JNIEnv *env, jbyte value) {
@@ -180,10 +189,6 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
         return createString(env, (BSTR) V_BSTR(v));
      case VT_BSTR|VT_BYREF:
         return createString(env, (BSTR) *V_BSTRREF(v));
-     case VT_BOOL:
-        return createBoxedBoolean(env, (jboolean) V_BOOL(v));
-     case VT_BOOL|VT_BYREF:
-        return createBoxedBoolean(env, (jboolean) *V_BOOLREF(v));
      case VT_DISPATCH:
         return createDispatch(env, (IDispatch *) V_DISPATCH(v));
      case VT_DISPATCH|VT_BYREF:
@@ -214,8 +219,19 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
 }
 
 jobject createVariant(JNIEnv *env, VARIANT* v) {
- jobject object = variantToObject(env, v);
- return env->NewObject(VARIANT_CLASS, VARIANT_CONSTRUCTOR, object, V_VT(v));
+    switch (V_VT(v)) {
+       case VT_BOOL:
+         return createBooleanVariant(env, (jboolean) V_BOOL(v));
+      case VT_BOOL|VT_BYREF:
+         return createBooleanVariant(env, (jboolean) *V_BOOLREF(v));
+      case VT_DISPATCH:
+          return createDispatchVariant(env, V_DISPATCH(v));
+      case VT_DISPATCH|VT_BYREF:
+          return createDispatchVariant(env, *V_DISPATCHREF(v));
+    }
+
+    jobject object = variantToObject(env, v);
+    return env->NewObject(VARIANT_CLASS, VARIANT_CONSTRUCTOR, object, V_VT(v));
 }
 
 jint getVariantType(JNIEnv *env, jobject obj){
