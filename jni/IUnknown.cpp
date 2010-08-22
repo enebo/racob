@@ -30,7 +30,7 @@
 
 extern "C" {
 
-JNIEXPORT jint JNICALL Java_com_jacob_com_Automation_toEnumVariant
+JNIEXPORT jint JNICALL Java_com_jacob_com_IUnknown_toEnumVariant
   (JNIEnv *env, jobject obj, jint pointer) {
     IDispatch *dispatch = (IDispatch *) pointer;
     LCID lcid = 2048; // <--- heh
@@ -75,7 +75,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_Automation_toEnumVariant
  * Method:    release
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Automation_release
+JNIEXPORT void JNICALL Java_com_jacob_com_IUnKnown_release
   (JNIEnv *env, jobject obj, jint pointer) {
   IUnknown* self = (IUnknown *) pointer;
   if(self != NULL) self->Release();
