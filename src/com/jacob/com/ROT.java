@@ -62,7 +62,7 @@ public abstract class ROT {
         // walk the values
         for (WeakReference<JacobObject> reference : objects) {
             JacobObject value = reference.get();
-            System.out.println("Clearing live reference");
+            // System.out.println("Clearing live reference");
 
             if (value != null) {
                 value.safeRelease();
@@ -89,20 +89,21 @@ public abstract class ROT {
         ReferenceQueue<JacobObject> deadObjects = deadPool.get();
 
         if (objects == null) {
-            System.out.println("Creating new Thread: " + Thread.currentThread().getName());
+            // System.out.println("Creating new Thread: " + Thread.currentThread().getName());
             ComThread.InitMTA(false);
             objects = new ArrayList<WeakReference<JacobObject>>();
             objectTable.set(objects);
         }
 
+        /*
         Thread[] threads = new Thread[Thread.activeCount()];
         Thread.enumerate(threads);
         System.out.println("LIVE THREADS: " + threads.length);
         for (int i = 0; i < threads.length; i++) {
             System.out.println("T: " + threads[i].getName());
-        }
+        }*/
 
-        System.out.println("Adding new Object");
+        // System.out.println("Adding new Object");
         objects.add(new WeakReference<JacobObject>(o, deadObjects));
 
         cullDeadPool(deadObjects);
@@ -116,7 +117,7 @@ public abstract class ROT {
     protected static void cullDeadPool(ReferenceQueue<JacobObject> deadObjects) {
         Reference<? extends JacobObject> deadReference;
         while ((deadReference = deadObjects.poll()) != null) {
-            System.out.println("Clearing dead reference");
+            // System.out.println("Clearing dead reference");
             JacobObject deadObject = deadReference.get();
             if (deadObject != null) deadObject.safeRelease();
         }
@@ -129,5 +130,4 @@ public abstract class ROT {
     static {
         LibraryLoader.loadJacobLibrary();
     }
-
 }
