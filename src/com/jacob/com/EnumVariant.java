@@ -30,7 +30,7 @@ public class EnumVariant extends JacobObject implements Enumeration<Variant> {
     int i = -1;
 
     protected EnumVariant(int pointer) {
-        this(pointer, 5);
+        this(pointer, 30);
     }
 
     protected EnumVariant(int pointer, int size) {

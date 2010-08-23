@@ -34,7 +34,7 @@
  */
 extern "C" {
 
- #define MAX_VALUES 10
+ #define MAX_VALUES 50
 
 JNIEXPORT jint JNICALL
 Java_com_jacob_com_EnumVariant_Next(JNIEnv* env, jobject _this, jint pointer, jobjectArray values, jint valuesSize) {

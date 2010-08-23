@@ -52,6 +52,7 @@ jmethodID VARIANT_GETBOOLEAN = 0;
 jmethodID VARIANT_GETBYTE = 0;
 jmethodID VARIANT_GETVARIANT = 0;
 jmethodID VARIANT_CREATEDISPATCH = 0;
+jmethodID VARIANT_CREATEDATE = 0;
 jobject TRUE_VARIANT = 0;
 jobject FALSE_VARIANT = 0;
 
@@ -78,16 +79,21 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_initializeNative
     VARIANT_GETFLOAT = env->GetMethodID(clazz, "getFloat", "()F");
     VARIANT_GETDOUBLE = env->GetMethodID(clazz, "getDouble", "()D");
     VARIANT_GETDISPATCH = env->GetMethodID(clazz, "getDispatch", "()Lcom/jacob/com/Dispatch;");
-    VARIANT_GETDOUBLE = env->GetMethodID(clazz, "getDateAsDouble", "()D");
+    VARIANT_GETDATEASDOUBLE = env->GetMethodID(clazz, "getDateAsDouble", "()D");
     VARIANT_GETCURRENCYASLONG = env->GetMethodID(clazz, "getCurrencyAsLong", "()J");
     VARIANT_GETBOOLEAN = env->GetMethodID(clazz, "getBoolean", "()Z");
     VARIANT_GETBYTE = env->GetMethodID(clazz, "getByte", "()B");
     VARIANT_GETVARIANT = env->GetMethodID(clazz, "getVariant", "()Lcom/jacob/com/Variant;");
 
     VARIANT_CREATEDISPATCH = env->GetStaticMethodID(clazz, "createDispatchVariant", "(I)Lcom/jacob/com/Variant;");
+    VARIANT_CREATEDATE = env->GetStaticMethodID(clazz, "createDateVariant", "(D)Lcom/jacob/com/Variant;");
 
     return NULL;
  }
+
+jobject createDateVariant(JNIEnv *env, jdouble value) {
+  return env->CallStaticObjectMethod(VARIANT_CLASS, VARIANT_CREATEDATE, value);
+}
 
 jobject createDispatchVariant(JNIEnv *env, IDispatch* pointer) {
   return env->CallStaticObjectMethod(VARIANT_CLASS, VARIANT_CREATEDISPATCH, (jint) pointer);
@@ -135,12 +141,6 @@ jobject createCurrency(JNIEnv *env, CY cy) {
   return env->NewObject(clazz, constructor, jl);
 }
 
-jobject createDate(JNIEnv *env, jlong value) {
-  jclass clazz = env->FindClass("com/jacob/com/DateUtilities");
-  jmethodID method = env->GetMethodID(clazz, "convertWindowsTimeToDate", "(J)Ljava/util/Date;");
-  return env->CallStaticObjectMethod(clazz, method, value);
-}
-
 jobject createDispatch(JNIEnv *env, IDispatch* value) {
   value->AddRef();
   return env->NewObject(DISPATCH_CLASS, DISPATCH_CONSTRUCTOR, (jint) value);
@@ -159,6 +159,7 @@ jobject createUnknown(JNIEnv *env, IUnknown *value) {
 /* Creates a Java object which represents the variant. */
 jobject variantToObject(JNIEnv *env, VARIANT* v) {
   if (!v) return NULL;
+ //printf("variantToObject: %d\n", V_VT(v)); fflush(stdout);
 
   switch (V_VT(v)) {
      case VT_I2:
@@ -181,10 +182,6 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
         return createCurrency(env, V_CY(v));
      case VT_CY|VT_BYREF:
        return createCurrency(env, *V_CYREF(v));
-     case VT_DATE:
-        return createDate(env, (jlong) V_DATE(v));
-     case VT_DATE|VT_BYREF:
-        return createDate(env, (jlong) *V_DATEREF(v));
      case VT_BSTR:
         return createString(env, (BSTR) V_BSTR(v));
      case VT_BSTR|VT_BYREF:
@@ -214,16 +211,21 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
      default:
         char mess[1024];
         sprintf(mess, "variantToObject: unhandled VT %d\n", V_VT(v));
+        printf("variantToObject: unhandled VT %d\n", V_VT(v)); fflush(stdout);
         ThrowComFail(env, mess, -1);
   }
 }
 
 jobject createVariant(JNIEnv *env, VARIANT* v) {
     switch (V_VT(v)) {
-       case VT_BOOL:
+      case VT_BOOL:
          return createBooleanVariant(env, (jboolean) V_BOOL(v));
       case VT_BOOL|VT_BYREF:
          return createBooleanVariant(env, (jboolean) *V_BOOLREF(v));
+      case VT_DATE:
+          return createDateVariant(env, (jdouble) V_DATE(v));
+      case VT_DATE|VT_BYREF:
+          return createDateVariant(env, (jdouble) *V_DATEREF(v));
       case VT_DISPATCH:
           return createDispatchVariant(env, V_DISPATCH(v));
       case VT_DISPATCH|VT_BYREF:
@@ -250,8 +252,8 @@ jlong getValueAsCurrency(JNIEnv *env, jobject obj) {
   return env->CallLongMethod(obj, VARIANT_GETCURRENCYASLONG);
 }
 
-double getValueAsDate(JNIEnv *env, jobject obj) {
-  return (double) env->CallDoubleMethod(obj, VARIANT_GETDATEASDOUBLE);
+jdouble getValueAsDate(JNIEnv *env, jobject obj) {
+  return (jdouble) env->CallDoubleMethod(obj, VARIANT_GETDATEASDOUBLE);
 }
 
 jobject getValueAsDispatch(JNIEnv *env, jobject obj) {
@@ -285,6 +287,7 @@ jobject getValueAsVariant(JNIEnv *env, jobject obj) {
 void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* v) {
   jint variantType = getVariantType(env, javaVariant);
 
+  // printf("populateVariant: %d\n", variantType); fflush(stdout);
   // Add byRef logic
   VariantClear(v);
   V_VT(v) = (VARTYPE) variantType;
@@ -303,6 +306,7 @@ void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* v) {
           V_CY(v) = pf;
           break;
      case VT_DATE:
+        printf("VT_DATE\n");
           V_DATE(v) = getValueAsDate(env, javaVariant); break;
      case VT_BSTR: {
           jstring s = getValueAsString(env, javaVariant);
@@ -342,7 +346,11 @@ void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* v) {
           V_VARIANTREF(v) = inner;
      }
      break;
+     case VT_EMPTY:
+     case VT_NULL:
+        break;
      default:
+        printf("DEFAULTING ON POPULATE VARIANT: %d\n", V_VT(v)); fflush(stdout);
           break;
   }
 }

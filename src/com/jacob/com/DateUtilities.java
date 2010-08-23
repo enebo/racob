@@ -37,7 +37,7 @@ public class DateUtilities {
 	 * @return Date object representing the windows time as specified in comTime
 	 */
 	static public Date convertWindowsTimeToDate(double comTime) {
-		return new Date(convertWindowsTimeToMilliseconds(comTime));
+            return new Date(convertWindowsTimeToMilliseconds(comTime));
 	}
 
 	/**

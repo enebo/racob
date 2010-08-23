@@ -299,6 +299,10 @@ public class Variant {
         return new Variant(new Dispatch(pointer));
     }
 
+    public static Variant createDateVariant(double comDateValue) {
+        return new Variant(DateUtilities.convertWindowsTimeToDate(comDateValue));
+    }
+
     /**
      * Cover for native method so we can cover it.
      * <p>
