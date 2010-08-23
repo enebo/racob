@@ -68,6 +68,7 @@ class IETestActiveProxyThread extends Thread {
 		super();
 	}
 
+    @Override
 	public void run() {
 		// this used to be 5 seconds but sourceforge is slow
 		int delay = 5000; // msec
@@ -89,8 +90,7 @@ class IETestActiveProxyThread extends Thread {
 			System.out
 					.println("IETestActiveProxyThread: Did hookup event listener");
 			// / why is this here? Was there some other code here in the past?
-			Variant optional = new Variant();
-			optional.putNoParam();
+			Variant optional = Variant.DEFAULT;
 
 			System.out
 					.println("IETestActiveProxyThread: About to call navigate to sourceforge");

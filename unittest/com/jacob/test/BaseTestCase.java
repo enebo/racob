@@ -1,5 +1,6 @@
 package com.jacob.test;
 
+import com.jacob.com.Dispatch;
 import java.net.URL;
 
 import junit.framework.TestCase;
@@ -23,10 +24,11 @@ import com.jacob.com.JacobObject;
  */
 public class BaseTestCase extends TestCase {
 
+    @Override
 	protected void setUp() {
 		// verify we have run with the dll in the lib path
 		try {
-			JacobObject foo = new JacobObject();
+			JacobObject foo = new Dispatch(0);
 			if (foo == null) {
 				fail("Failed basic sanity test: Can't create JacobObject (-D<java.library.path=xxx>)");
 			}
@@ -39,7 +41,7 @@ public class BaseTestCase extends TestCase {
 	 * this test exists just to test the setup.
 	 */
 	public void testSetup() {
-		JacobObject foo = new JacobObject();
+		JacobObject foo = new Dispatch(0);
 		assertNotNull(foo);
 	}
 

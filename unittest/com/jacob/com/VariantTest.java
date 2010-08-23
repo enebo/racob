@@ -245,10 +245,8 @@ public class VariantTest extends BaseTestCase {
 	 * verify decimal works right
 	 */
 	public void testDecimalConversion() {
-		Variant v = new Variant();
-		v.changeType(Variant.VariantDecimal);
 		for (int i = 10; i >= -10; i--) {
-			v.putDecimal(new BigDecimal(i));
+			Variant v = new Variant(new BigDecimal(i));
 			// first see if we can get it back as decimal
 			assertEquals("conversion back to decimal failed " + i,
 					new BigDecimal(i), v.getDecimal());
@@ -295,31 +293,28 @@ public class VariantTest extends BaseTestCase {
 		}
 		// lets try something different. we can call putVariant with rounding
 		// enabled
-		testVariant = new Variant();
-		testVariant.changeType(Variant.VariantDecimal);
 		try {
-			testVariant.putDecimal(endDecimal.setScale(30));
-			fail("Should have thrown exception with scale of 30 and no rounding");
+                    testVariant = new Variant(endDecimal.setScale(30));
+                    fail("Should have thrown exception with scale of 30 and no rounding");
 		} catch (IllegalArgumentException iae) {
 			// should have caught this exception
 		}
 		// now we test with a negative scale. Note that you can't do with
 		// without some magic, in this case scientific notation
 		try {
-			testVariant.putDecimal(new BigDecimal("700E24"));
+			testVariant = new Variant(new BigDecimal("700E24"));
 			assertTrue(new BigDecimal("700E24").compareTo(testVariant
 					.getDecimal()) == 0);
 		} catch (IllegalArgumentException iae) {
 			// should have caught this exception
 		}
 
-		testVariant.putDecimal(VariantUtilities
-				.roundToMSDecimal(new BigDecimal("700E24")));
+		testVariant = new Variant(VariantUtilities.roundToMSDecimal(new BigDecimal("700E24")));
 		// use compareTo because it takes into account varying scales
 		assertTrue(new BigDecimal("700E24").compareTo(testVariant.getDecimal()) == 0);
 
 		// This passes because the number is within range.
-		testVariant.putDecimal(endDecimal);
+		testVariant = new Variant(endDecimal);
 
 		// this should pass because we have rounding turned on
 		// it turns out the max number gets more digits when
@@ -338,7 +333,7 @@ public class VariantTest extends BaseTestCase {
 						modifiedDecimal.setScale(30)).unscaledValue().toString(
 						16) + " scale=: " + modifiedDecimal.scale());
 		try {
-			testVariant.putDecimal(VariantUtilities
+			testVariant = new Variant(VariantUtilities
 					.roundToMSDecimal(modifiedDecimal.setScale(30)));
 			fail("should have thrown an exception for a number whose scale "
 					+ "change created too many digits to be represented.");
@@ -360,7 +355,7 @@ public class VariantTest extends BaseTestCase {
 				+ VariantUtilities.roundToMSDecimal(
 						modifiedDecimal.setScale(30)).unscaledValue().toString(
 						16) + " scale=: " + modifiedDecimal.scale());
-		testVariant.putDecimal(VariantUtilities
+		testVariant = new Variant(VariantUtilities
 				.roundToMSDecimal(modifiedDecimal.setScale(30)));
 		System.out.println("");
 	}
@@ -437,6 +432,7 @@ public class VariantTest extends BaseTestCase {
 		 * 
 		 * @see java.lang.Runnable#run()
 		 */
+        @Override
 		public void run() {
 			for (int variantIndex = 0; variantIndex < initialRunSize; variantIndex++) {
 				try {

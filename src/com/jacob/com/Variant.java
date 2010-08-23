@@ -318,6 +318,7 @@ public class Variant {
      */
     public Variant changeType(short in) {
         this.type = in;
+        // FIXME:  This needs some round tripping to make sure it is valid
         return this;
     }
 
