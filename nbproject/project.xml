@@ -6,6 +6,7 @@
             <name>jacob</name>
             <source-roots>
                 <root id="src.dir"/>
+                <root id="src.samples.dir"/>
                 <root id="jni.dir"/>
             </source-roots>
             <test-roots/>
