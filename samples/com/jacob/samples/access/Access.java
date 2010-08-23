@@ -129,9 +129,8 @@ class Access {
 		Dispatch flds = Dispatch.get(recset, "Fields").toDispatch();
 		int n_flds = Dispatch.get(flds, "Count").getInt();
 		String[] s = new String[n_flds];
-		Variant vi = new Variant();
 		for (int i = 0; i < n_flds; i++) {
-			vi.putInt(i);
+			Variant vi = new Variant(i);
 			// must use the invoke method because this is a method call
 			// that wants to have a Dispatch.Get flag...
 			Dispatch fld = Dispatch.invoke(recset, "Fields", Dispatch.Get,

@@ -37,7 +37,7 @@ public class SystemMonitor {
 		Variant vCollection = wmiconnect
 				.invoke("ExecQuery", new Variant(query));
 
-		EnumVariant enumVariant = new EnumVariant(vCollection.toDispatch());
+		EnumVariant enumVariant = vCollection.getDispatch().toEnumVariant();
 
 		String resultString = "";
 		Dispatch item = null;
