@@ -9,7 +9,9 @@
                 <root id="src.samples.dir"/>
                 <root id="jni.dir"/>
             </source-roots>
-            <test-roots/>
+            <test-roots>
+                <root id="test.unittest.dir"/>
+            </test-roots>
         </data>
     </configuration>
 </project>
