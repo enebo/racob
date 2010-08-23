@@ -147,14 +147,6 @@ public class ActiveXComponent extends Dispatch {
 		return mCreatedDispatch;
 	}
 
-	/**
-	 * @see com.jacob.com.Dispatch#finalize()
-	 */
-    @Override
-	protected void finalize() {
-		super.finalize();
-	}
-
 	/*
 	 * ============================================================
 	 * 
