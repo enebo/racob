@@ -155,6 +155,8 @@ public final class VariantUtilities {
      *             result of error
      */
     protected static Object variantToObject(Variant sourceData) {
+        if (sourceData == null) return null;
+        
         short type = sourceData.getType();
         
         if ((type & Variant.VariantArray) == Variant.VariantArray) { // array

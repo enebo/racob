@@ -56,6 +56,7 @@ public abstract class JacobObject {
      */
     public void safeRelease() {
         if (isAlive()) {
+            System.out.println("RELEASING: " + this);
             release(pointer);
             pointer = 0;
         } else if (isDebugEnabled()) { // looks like a double release

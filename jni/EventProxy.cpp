@@ -20,7 +20,7 @@
 #include "EventProxy.h"
 #include "Variant.h"
 
-#define EVENT_PROXY_DEBUG 0
+#define EVENT_PROXY_DEBUG 1
 
 #define HANDLE_EXCEPTION if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
 
@@ -174,6 +174,7 @@ STDMETHODIMP EventProxy::Invoke(DISPID dispID, REFIID riid,
     if (ret != NULL) { populateVariant(env, ret, pVarResult); }
     if (EVENT_PROXY_DEBUG) { printf("Right after return variant populate of %s\n", eventMethodName); fflush(stdout); }
 
+    /*
     // Begin code from Jiffie team that copies parameters back from java to COM
     for(i=numVariantParams-1,j=0;i>=0;i--,j++) {
        if (EVENT_PROXY_DEBUG) { printf("In invoke of %s (parm swapback %d) start\n", eventMethodName, i); fflush(stdout); }
@@ -183,6 +184,7 @@ STDMETHODIMP EventProxy::Invoke(DISPID dispID, REFIID riid,
        if (EVENT_PROXY_DEBUG) { printf("In invoke of %s (parm swapback %d) end\n", eventMethodName, i); fflush(stdout); }
     }
     // End code from Jiffie team that copies parameters back from java to COM
+     * */
     
     if (EVENT_PROXY_DEBUG) { printf("Done with invoke of %s\n", eventMethodName); fflush(stdout); }
     jvm->DetachCurrentThread();     // detach from thread

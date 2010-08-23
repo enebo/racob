@@ -86,6 +86,7 @@ public class Dispatch extends JacobObject {
      *             <p>
      */
     public Dispatch(String requestedProgramId) {
+        super();
         programId = requestedProgramId;
         if (programId != null && !"".equals(programId)) {
             pointer = createInstanceNative(requestedProgramId);

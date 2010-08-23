@@ -296,6 +296,9 @@ public class Variant {
     }
 
     public static Variant createDispatchVariant(int pointer) {
+        // No point making a variant that has an invalid pointer
+        if (pointer == 0) return null;
+
         return new Variant(new Dispatch(pointer));
     }
 
@@ -392,6 +395,16 @@ public class Variant {
     public Dispatch getDispatch() {
         if (!isA(VariantDispatch)) illegal("getDispatch", "VariantDispatch");
         return (Dispatch) value;
+    }
+
+    @Deprecated
+    public Dispatch toDispatch() {
+        return getDispatch();
+    }
+
+    @Deprecated
+    public SafeArray toSafeArray() {
+        throw new RuntimeException("CURRENTLY BROKEN");
     }
 
     /**
