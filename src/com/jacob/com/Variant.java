@@ -477,6 +477,16 @@ public class Variant {
         return ((Long) value).longValue();
     }
 
+    public SafeArray getSafeArray() {
+        return (SafeArray) value;
+    }
+
+    // FIXME: Figure out what boolean field is for.
+    @Deprecated
+    public SafeArray toSafeArray(boolean something) {
+        return getSafeArray();
+    }
+
     /**
      * @return the short value
      * @throws IllegalStateException if variant is not of the requested type

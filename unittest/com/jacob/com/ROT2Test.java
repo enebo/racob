@@ -54,6 +54,7 @@ public class ROT2Test extends BaseTestCase {
 		 * 
 		 * @see java.lang.Runnable#run()
 		 */
+        @Override
 		public void run() {
 			// something that keeps object references around
 			// so the gc can't collect them
@@ -115,6 +116,7 @@ public class ROT2Test extends BaseTestCase {
 		 * 
 		 * @see java.lang.Object#toString()
 		 */
+        @Override
 		public String toString() {
 			return super.toString();
 		}

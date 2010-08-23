@@ -24,15 +24,13 @@ public class ROTTest extends BaseTestCase {
 		// class to load and any pre-defined Variants (FALSE and TRUE) to be
 		// created immediately
 		VariantViaEvent.class.getName();
-		if (ROT.getThreadObjects(true).entrySet().size() < 1) {
+		if (ROT.getThreadObjects(true).size() < 1) {
 			debug("Failure: ROT should have objects in it as soon as Variant class loaded.");
 		}
 
-		System.setProperty(VariantViaEvent.class.getName()
-				+ ROT.PUT_IN_ROT_SUFFIX, "false");
-		int countPriorToTest = ROT.getThreadObjects(true).entrySet().size();
+		int countPriorToTest = ROT.getThreadObjects(true).size();
 		new VariantViaEvent();
-		int countAfterAddWithoutROT = ROT.getThreadObjects(true).entrySet()
+		int countAfterAddWithoutROT = ROT.getThreadObjects(true)
 				.size();
 		if (countAfterAddWithoutROT != countPriorToTest) {
 			debug("Failure: count prior: " + countPriorToTest
@@ -40,10 +38,8 @@ public class ROTTest extends BaseTestCase {
 					+ countAfterAddWithoutROT);
 		}
 
-		System.setProperty(VariantViaEvent.class.getName()
-				+ ROT.PUT_IN_ROT_SUFFIX, "true");
 		new VariantViaEvent();
-		int countAfterAddWithROT = ROT.getThreadObjects(true).entrySet().size();
+		int countAfterAddWithROT = ROT.getThreadObjects(true).size();
 		if (countAfterAddWithROT != (countPriorToTest + 1)) {
 			debug("Failure: count prior: " + countPriorToTest
 					+ " and count after with ROT was: " + countAfterAddWithROT);
@@ -96,11 +92,11 @@ public class ROTTest extends BaseTestCase {
 		debug("Objects left after flood and gc but before adding a new object that clean's up weak references: "
 				+ sizeBeforeGC);
 		debug("Creating single object.  This adds one and causes ROT to clean up GC'd");
-		new JacobObject();
+		new Dispatch(0);
 		sizeAfterGC = ROT.getThreadObjects(false).size();
 		debug("Objects left after adding one (caused weak ref objects to be removed): "
 				+ sizeAfterGC);
-		new JacobObject();
+		new Dispatch(0);
 		if (ROT.getThreadObjects(false).size() != sizeAfterGC + 1) {
 			debug("Unexpected number of objects after adding only one more "
 					+ ROT.getThreadObjects(false).size());
@@ -118,7 +114,7 @@ public class ROTTest extends BaseTestCase {
 		// ========= part two ================================
 		debug("Verifying doesn't blow up with double release");
 		for (int i = 0; i <= 10000; i++) {
-			new JacobObject();
+			new Dispatch(0);
 		}
 		// force safeRelease call on all objects
 		ROT.clearObjects();

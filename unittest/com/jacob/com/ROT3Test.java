@@ -97,12 +97,6 @@ public class ROT3Test extends BaseTestCase {
 					// removing every other one?
 					if (i % 2 == 0) {
 						// remove the reference so gc can get it
-						if (!ROT.USE_AUTOMATIC_GARBAGE_COLLECTION) {
-							// uses deprecated API to set up a special situation
-							// because this is an ROT test
-							ROT.removeObject(variansCreatedInThisThread
-									.get(i - 1));
-						}
 						variansCreatedInThisThread.remove(i - 1);
 					}
 
@@ -110,10 +104,6 @@ public class ROT3Test extends BaseTestCase {
 
 				message += " (after mods " + ROT.getThreadObjects(true).size()
 						+ ")";
-				// comm
-				if (!ROT.USE_AUTOMATIC_GARBAGE_COLLECTION) {
-					ROT.clearObjects();
-				}
 				System.gc();
 				try {
 					// vain attempt at letting the gc run

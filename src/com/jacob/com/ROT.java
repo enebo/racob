@@ -50,6 +50,9 @@ public abstract class ROT {
         }
     };
 
+    public static List<WeakReference<JacobObject>> getThreadObjects(boolean ignored) {
+        return objectTable.get();
+    }
     /**
      * safeRelease all remaining alive objects in the soon-to-be-dead-thread.
      */
