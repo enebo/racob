@@ -18,8 +18,7 @@ public class VariantDateTest extends BaseTestCase {
 	 */
 	public void testVariantDate() {
 		Date now = new Date();
-		Variant holder = new Variant();
-		holder.putDate(now);
+		Variant holder = new Variant(now);
 		Date retrievedNow = holder.getJavaDate();
 		if (!now.equals(retrievedNow)) {
 			fail("Variant Date Test failed " + now + " != " + retrievedNow);

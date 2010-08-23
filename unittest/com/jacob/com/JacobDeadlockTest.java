@@ -53,7 +53,7 @@ public class JacobDeadlockTest extends BaseTestCase {
 					ComThread.InitMTA(false);
 				}
 				log("Creating JacobObject");
-				new JacobObject();
+				new Dispatch(0);
 				log("Releasing COM thread");
 				ComThread.Release();
 			}
