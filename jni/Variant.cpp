@@ -156,7 +156,7 @@ jobject createUnknown(JNIEnv *env, IUnknown *value) {
 /* Creates a Java object which represents the variant. */
 jobject variantToObject(JNIEnv *env, VARIANT* v) {
   if (!v) return NULL;
- printf("variantToObject: %d\n", V_VT(v)); fflush(stdout);
+// printf("variantToObject: %d\n", V_VT(v)); fflush(stdout);
 
   switch (V_VT(v)) {
      case VT_I2:

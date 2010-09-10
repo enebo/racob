@@ -20,7 +20,7 @@
 #include "EventProxy.h"
 #include "Variant.h"
 
-#define EVENT_PROXY_DEBUG 1
+#define EVENT_PROXY_DEBUG 0
 
 #define HANDLE_EXCEPTION if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
 
