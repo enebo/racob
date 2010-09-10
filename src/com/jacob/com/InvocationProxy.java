@@ -88,8 +88,8 @@ public abstract class InvocationProxy {
 	 *             if target is not publicly accessible
 	 */
 	public void setTarget(Object pTargetObject) {
-		if (JacobObject.isDebugEnabled()) {
-			JacobObject.debug("InvocationProxy: setting target "
+		if (IUnknown.isDebugEnabled()) {
+			IUnknown.debug("InvocationProxy: setting target "
 					+ pTargetObject);
 		}
 		if (pTargetObject != null) {

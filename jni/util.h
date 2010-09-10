@@ -33,7 +33,6 @@ extern "C" {
   jobject createVariant(JNIEnv *env, VARIANT* variant);
   void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* variant);
   VARIANT *extractVariant(JNIEnv *env, jobject arg);
-  void *extractPointer(JNIEnv *env, jobject arg);
 
   void ThrowComFail(JNIEnv *env, const char* desc, jint hr);
   void ThrowComFailUnicode(JNIEnv *env, const wchar_t* desc, jint hr);

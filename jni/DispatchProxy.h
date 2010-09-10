@@ -41,14 +41,6 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_DispatchProxy_MarshalIntoStream
 JNIEXPORT jobject JNICALL Java_com_jacob_com_DispatchProxy_MarshalFromStream
   (JNIEnv *, jobject, jint);
 
-/*
- * Class:     com_jacob_com_DispatchProxy
- * Method:    release
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_com_jacob_com_DispatchProxy_release
-  (JNIEnv *, jobject);
-
 #ifdef __cplusplus
 }
 #endif

@@ -146,7 +146,7 @@ public final class LibraryLoader {
 		}
 
 		if (path != null) {
-			JacobObject.debug("Loading library " + path
+			IUnknown.debug("Loading library " + path
 					+ " using System.loadLibrary ");
 			System.load(path);
 		} else {
@@ -178,7 +178,7 @@ public final class LibraryLoader {
 				name = getPreferredDLLName();
 			}
 
-			JacobObject.debug("Loading library " + name
+			IUnknown.debug("Loading library " + name
 					+ " using System.loadLibrary ");
 			// System.out.println("Loading " + name);
 			System.loadLibrary(name);

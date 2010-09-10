@@ -82,7 +82,6 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
 JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getVarDesc
   (JNIEnv *, jobject, jint, jint);
 
-
 #ifdef __cplusplus
 }
 #endif

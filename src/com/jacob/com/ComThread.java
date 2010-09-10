@@ -105,12 +105,12 @@ public abstract class ComThread {
 			// to avoid COM creating its own
 			startMainSTA();
 		}
-		if (JacobObject.isDebugEnabled()) {
-			JacobObject.debug("ComThread: before Init: " + mode);
+		if (IUnknown.isDebugEnabled()) {
+			IUnknown.debug("ComThread: before Init: " + mode);
 		}
 		doCoInitialize(mode);
-		if (JacobObject.isDebugEnabled()) {
-			JacobObject.debug("ComThread: after Init: " + mode);
+		if (IUnknown.isDebugEnabled()) {
+			IUnknown.debug("ComThread: after Init: " + mode);
 		}
 	}
 
@@ -118,16 +118,16 @@ public abstract class ComThread {
 	 * Call CoUninitialize to release this java thread from COM
 	 */
 	public static synchronized void Release() {
-		if (JacobObject.isDebugEnabled()) {
-			JacobObject.debug("ComThread: before clearObjects");
+		if (IUnknown.isDebugEnabled()) {
+			IUnknown.debug("ComThread: before clearObjects");
 		}
 		ROT.clearObjects();
-		if (JacobObject.isDebugEnabled()) {
-			JacobObject.debug("ComThread: before UnInit");
+		if (IUnknown.isDebugEnabled()) {
+			IUnknown.debug("ComThread: before UnInit");
 		}
 		doCoUninitialize();
-		if (JacobObject.isDebugEnabled()) {
-			JacobObject.debug("ComThread: after UnInit");
+		if (IUnknown.isDebugEnabled()) {
+			IUnknown.debug("ComThread: after UnInit");
 		}
 	}
 

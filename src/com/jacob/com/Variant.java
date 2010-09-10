@@ -398,6 +398,10 @@ public class Variant {
         return (Dispatch) value;
     }
 
+    public int getDispatchPointer() {
+        return getDispatch().pointer.get();
+    }
+
     @Deprecated
     public Dispatch toDispatch() {
         return getDispatch();

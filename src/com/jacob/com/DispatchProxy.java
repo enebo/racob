@@ -28,7 +28,7 @@ package com.jacob.com;
  * need to call it multiple times (or from multiple threads) you need to
  * construct a separate DispatchProxy instance for each such case!
  */
-public class DispatchProxy extends JacobObject {
+public class DispatchProxy extends IUnknown {
 
     /**
      * Marshals the passed in dispatch into the stream
@@ -36,7 +36,8 @@ public class DispatchProxy extends JacobObject {
      * @param localDispatch
      */
     public DispatchProxy(Dispatch localDispatch) {
-        pointer = MarshalIntoStream(localDispatch.pointer);
+        super();
+        pointer.set(MarshalIntoStream(localDispatch.pointer.get()));
     }
 
     /**
@@ -44,19 +45,12 @@ public class DispatchProxy extends JacobObject {
      * @return Dispatch the dispatch retrieved from the stream
      */
     public Dispatch toDispatch() {
-        Dispatch dispatch = MarshalFromStream(pointer);
-        pointer = 0;  // Cannot marshal from stream more than once
+        Dispatch dispatch = MarshalFromStream(pointer.get());
+        pointer.invalidate();  // Cannot marshal from stream more than once
         return dispatch;
     }
 
     private native int MarshalIntoStream(int pointer);
 
     private native Dispatch MarshalFromStream(int pointer);
-
-    /**
-     * now private so only this object can access was: call this to explicitly
-     * release the com object before gc
-     *
-     */
-    protected native void release(int pointer);
 }

@@ -80,14 +80,4 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_TypeLib_getTypeInfoCount
 
    return (jint) hr;
 }
-
-/**
- * release method
- */
-JNIEXPORT void JNICALL Java_com_jacob_com_TypeLib_release
-  (JNIEnv *env, jobject _this, jint pointer) {
-  ITypeLib *typelib = (ITypeLib *) pointer;
-
-  if (typelib) typelib->Release();
-}
 }

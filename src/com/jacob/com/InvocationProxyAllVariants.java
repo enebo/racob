@@ -46,8 +46,8 @@ public class InvocationProxyAllVariants extends InvocationProxy {
 	public Variant invoke(String methodName, Variant targetParameters[]) {
 		Variant mVariantToBeReturned = null;
 		if (mTargetObject == null) {
-			if (JacobObject.isDebugEnabled()) {
-				JacobObject.debug("InvocationProxy: received notification ("
+			if (IUnknown.isDebugEnabled()) {
+				IUnknown.debug("InvocationProxy: received notification ("
 						+ methodName + ") with no target set");
 			}
 			// structured programming guidlines say this return should not be up
@@ -64,8 +64,8 @@ public class InvocationProxyAllVariants extends InvocationProxy {
 					"InvocationProxy: missing Variant parameters");
 		}
 		try {
-			if (JacobObject.isDebugEnabled()) {
-				JacobObject.debug("InvocationProxy: trying to invoke "
+			if (IUnknown.isDebugEnabled()) {
+				IUnknown.debug("InvocationProxy: trying to invoke "
 						+ methodName + " on " + mTargetObject);
 			}
 			Method targetMethod;
@@ -97,8 +97,8 @@ public class InvocationProxyAllVariants extends InvocationProxy {
 		} catch (NoSuchMethodException e) {
 			// this happens whenever the listener doesn't implement all the
 			// methods
-			if (JacobObject.isDebugEnabled()) {
-				JacobObject.debug("InvocationProxy: listener (" + mTargetObject
+			if (IUnknown.isDebugEnabled()) {
+				IUnknown.debug("InvocationProxy: listener (" + mTargetObject
 						+ ") doesn't implement " + methodName);
 			}
 		} catch (IllegalArgumentException e) {
@@ -107,8 +107,8 @@ public class InvocationProxyAllVariants extends InvocationProxy {
 			throw e;
 		} catch (IllegalAccessException e) {
 			// can't access the method on the target instance for some reason
-			if (JacobObject.isDebugEnabled()) {
-				JacobObject
+			if (IUnknown.isDebugEnabled()) {
+				IUnknown
 						.debug("InvocationProxy: probably tried to access public method on non public class"
 								+ methodName);
 			}

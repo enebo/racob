@@ -38,7 +38,7 @@ package com.jacob.com;
  * use the passed in InvocationProxy.
  * 
  */
-public class DispatchEvents extends JacobObject {
+public class DispatchEvents extends IUnknown {
     /**
      * the wrapper for the event sink. This object is the one that will be sent
      * a message when an event occurs in the MS layer. Normally, the
@@ -118,7 +118,7 @@ public class DispatchEvents extends JacobObject {
      */
     public DispatchEvents(Dispatch sourceOfEvent, Object eventSink,
             String progId, String typeLib) {
-        if (JacobObject.isDebugEnabled()) {
+        if (IUnknown.isDebugEnabled()) {
             System.out.println("DispatchEvents: Registering " + eventSink + "for events ");
         }
         if (eventSink instanceof InvocationProxy) {
@@ -126,15 +126,14 @@ public class DispatchEvents extends JacobObject {
         } else {
             mInvocationProxy = getInvocationProxy(eventSink);
         }
-        if (mInvocationProxy != null) {
-            pointer = init3(sourceOfEvent.pointer, mInvocationProxy, progId, typeLib);
-        } else {
-            if (JacobObject.isDebugEnabled()) {
-                JacobObject.debug("Cannot register null event sink for events");
+        if (mInvocationProxy == null) {
+            if (IUnknown.isDebugEnabled()) {
+                IUnknown.debug("Cannot register null event sink for events");
             }
             throw new IllegalArgumentException(
                     "Cannot register null event sink for events");
         }
+        pointer.set(init3(sourceOfEvent.pointer.get(), mInvocationProxy, progId, typeLib));
     }
 
     /**
@@ -170,17 +169,10 @@ public class DispatchEvents extends JacobObject {
     private native int init3(int pointer, Object sink, String progId,
             String typeLib);
 
-    /**
-     * now private so only this object can asccess was: call this to explicitly
-     * release the com object before gc
-     *
-     */
-    protected native void release(int pointer);
-
     /*
      * (non-Javadoc)
      *
-     * @see com.jacob.com.JacobObject#safeRelease()
+     * @see com.jacob.com.IUnknown#safeRelease()
      */
     @Override
     public void safeRelease() {

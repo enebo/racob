@@ -24,7 +24,7 @@ package com.jacob.com;
  * and n-dimensional arrays. It exists in this form because n-dimensional arrays
  * were a later addition.
  */
-public class SafeArray extends JacobObject {
+public class SafeArray extends IUnknown {
     /**
      * Constructor. Why does this exist? Yeah, someone will post on sourceforge
      * about this comment.
@@ -113,13 +113,6 @@ public class SafeArray extends JacobObject {
 
     @Override
     public native Object clone();
-
-    /**
-     * now private so only this object can access. Was: call this to explicitly
-     * release the com object before gc
-     *
-     */
-    protected native void release(int pointer);
 
     /**
      * populate the safe array from the passed in array of data

@@ -109,21 +109,6 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_DispatchEvents_init3
 }
 
 /*
- * Class:     DispatchEvents
- * Method:    release
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_com_jacob_com_DispatchEvents_release
-  (JNIEnv *env, jobject _this, jint pointer)
-{
-  EventProxy *ep = (EventProxy *) pointer;
-  if (ep) {
-  	// this is the line that blows up in IETest
-    ep->Release();
-  }
-}
-
-/*
  * I need a reverse map from the event interface's dispids to
  * function names so that we can reflect them to java
  */

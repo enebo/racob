@@ -73,46 +73,6 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_QueryInterface
   return newAuto;
 }
 
-JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_toEnumVariant
-  (JNIEnv *env, jobject obj, jint pointer) {
-    IDispatch *dispatch = (IDispatch *) pointer;
-    LCID lcid = 2048; // <--- heh
-    unsigned int argErr;
-    EXCEPINFO excepinfo;
-    DISPPARAMS dispParams;
-    VARIANT result;
-    IEnumVARIANT *pEnum = NULL;
-
-    VariantInit(&result);
-    dispParams.rgvarg = NULL;
-    dispParams.rgdispidNamedArgs = NULL;
-    dispParams.cNamedArgs = 0;
-    dispParams.cArgs = 0;
-    memset(&excepinfo, 0, sizeof(excepinfo));
-    HRESULT hr = dispatch->Invoke(DISPID_NEWENUM, IID_NULL, lcid,
-         DISPATCH_METHOD | DISPATCH_PROPERTYGET, &dispParams, &result,
-            &excepinfo, &argErr);
-
-    if (FAILED(hr)) {
-       VariantClear(&result);
-       ThrowComFail(env, "failed to get IEnum Interface", hr);
-    }
-
-    if (V_VT(&result) == VT_UNKNOWN) {
-        hr = V_UNKNOWN(&result)->QueryInterface(IID_IEnumVARIANT, (void **) &pEnum);
-    } else if (V_VT(&result) == VT_DISPATCH) {
-        hr = V_DISPATCH(&result)->QueryInterface(IID_IEnumVARIANT, (void **) &pEnum);
-    }
-    if (FAILED(hr) || !pEnum) {
-       VariantClear(&result);
-       ThrowComFail(env, "failed to get IEnum Interface", hr);
-    }
-
-    VariantClear(&result);
-
-    return (jint) pEnum;
-}
-
 /**
  * starts up a new instance of the requested program (progId)
  * and connects to it.  does special code if the progid 
@@ -279,16 +239,6 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_getTypeInfo
    }
 
    return makeTypeInfo(env, typeInfo);
-}
-
-/**
- * release method
- */
-JNIEXPORT void JNICALL Java_com_jacob_com_Dispatch_release
-  (JNIEnv *env, jobject _this, jint pointer) {
-  IDispatch *disp = (IDispatch *) pointer;
-
-  if (disp) disp->Release();
 }
 
 static HRESULT

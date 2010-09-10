@@ -5,7 +5,7 @@ import java.net.URL;
 
 import junit.framework.TestCase;
 
-import com.jacob.com.JacobObject;
+import com.jacob.com.IUnknown;
 
 /**
  * This base test class may require that the unittest package be
@@ -28,9 +28,9 @@ public class BaseTestCase extends TestCase {
 	protected void setUp() {
 		// verify we have run with the dll in the lib path
 		try {
-			JacobObject foo = new Dispatch(0);
+			IUnknown foo = new Dispatch(0);
 			if (foo == null) {
-				fail("Failed basic sanity test: Can't create JacobObject (-D<java.library.path=xxx>)");
+				fail("Failed basic sanity test: Can't create IUnknown (-D<java.library.path=xxx>)");
 			}
 		} catch (UnsatisfiedLinkError ule) {
 			fail("Did you remember to run with the jacob.dll in the libpath ?");
@@ -41,7 +41,7 @@ public class BaseTestCase extends TestCase {
 	 * this test exists just to test the setup.
 	 */
 	public void testSetup() {
-		JacobObject foo = new Dispatch(0);
+		IUnknown foo = new Dispatch(0);
 		assertNotNull(foo);
 	}
 

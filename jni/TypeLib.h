@@ -50,14 +50,6 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
 JNIEXPORT jint JNICALL Java_com_jacob_com_TypeLib_getTypeInfoCount
   (JNIEnv *, jobject, jint);
 
-/*
- * Class:     TypeLib
- * Method:    release
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_com_jacob_com_TypeLib_release
-  (JNIEnv *, jobject, jint);
-
 #ifdef __cplusplus
 }
 #endif

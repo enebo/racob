@@ -30,11 +30,6 @@
 extern "C" 
 {
 
-// extract a IDispatch from a jobject
-void *extractPointer(JNIEnv *env, jobject arg) {
-  return (void *) env->GetIntField(arg, POINTER_FIELD);
-}
-
 void ThrowComFail(JNIEnv *env, const char* desc, jint hr)
 {
   jclass failClass = env->FindClass("com/jacob/com/ComFailException");

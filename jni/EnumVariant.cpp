@@ -60,16 +60,12 @@ Java_com_jacob_com_EnumVariant_Next(JNIEnv* env, jobject _this, jint pointer, jo
   if (fetchCount == 0) return 0; // Nothing retrieved.
 
   for (int i = 0; i < fetchCount; i++) {
-     env->SetObjectArrayElement(values, fetchCount - i - 1, createVariant(env, &sink[i]));
+     jobject variant = createVariant(env, &sink[i]);
+     env->SetObjectArrayElement(values, fetchCount - i - 1, variant);
+     env->DeleteLocalRef(variant);
   }
 
   return fetchCount;
-}
-
-JNIEXPORT void JNICALL
-Java_com_jacob_com_EnumVariant_release(JNIEnv* env, jobject _this, jint pointer) {
-  IEnumVARIANT* self = (IEnumVARIANT *) pointer;
-  if(self != NULL) self->Release();
 }
 
 JNIEXPORT void JNICALL

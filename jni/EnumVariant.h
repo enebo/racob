@@ -35,14 +35,6 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_EnumVariant_Next
 
 /*
  * Class:     com_jacob_com_EnumVariant
- * Method:    Release
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_com_jacob_com_EnumVariant_release
-  (JNIEnv *, jobject, jint);
-
-/*
- * Class:     com_jacob_com_EnumVariant
  * Method:    Reset
  * Signature: (I)V
  */

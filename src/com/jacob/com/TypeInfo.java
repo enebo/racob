@@ -4,7 +4,7 @@ package com.jacob.com;
  * Name Note: cVars -> varsCount.  The getCVars looked strange to me so I
  * broke from convention and gave it a more readable name.
  */
-public class TypeInfo extends JacobObject {
+public class TypeInfo extends IUnknown {
     public static final int FUNCFLAG_NONE = 0;
     public static final int FUNCFLAG_FRESTRICTED = 1;
     public static final int FUNCFLAG_FSOURCE = 2;
@@ -69,7 +69,7 @@ public class TypeInfo extends JacobObject {
     public TypeInfo(int pointer, String guid, int typekind, int functionCount,
             int implementationCount, int variableCount, int flags,
             int minorVersion, int majorVersion) {
-        this.pointer = pointer;
+        super(pointer);
         this.guid = guid;
         this.typekind = typekind;
         this.funcsCount = functionCount;
@@ -121,32 +121,30 @@ public class TypeInfo extends JacobObject {
     private native VarDesc getVarDesc(int pointer, int index);
 
     public TypeLib getContainingTypeLib() {
-        return getContainingTypeLib(pointer);
+        return getContainingTypeLib(pointer.get());
     }
     
     public Documentation getDocumentation(int index) {
-        return getDocumentation(pointer, index);
+        return getDocumentation(pointer.get(), index);
     }
 
     public FuncDesc getFuncDesc(int index) {
-        return getFuncDesc(pointer, index);
+        return getFuncDesc(pointer.get(), index);
     }
 
     public String[] getNames(int index) {
-        return getNames(pointer, index);
+        return getNames(pointer.get(), index);
     }
 
     public int getRefTypeOfImplType(int index) {
-        return getRefTypeOfImplType(pointer, index);
+        return getRefTypeOfImplType(pointer.get(), index);
     }
 
     public TypeInfo getRefTypeInfo(int index) {
-        return getRefTypeInfo(pointer, index);
+        return getRefTypeInfo(pointer.get(), index);
     }
 
     public VarDesc getVarDesc(int index) {
-        return getVarDesc(pointer, index);
+        return getVarDesc(pointer.get(), index);
     }
-
-    protected native void release(int pointer);
 }

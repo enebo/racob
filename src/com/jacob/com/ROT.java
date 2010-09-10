@@ -22,12 +22,12 @@ package com.jacob.com;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The Running Object Table (ROT) maps each thread to a collection of all the
- * JacobObjects that were created in that thread. It always operates on the
+ * IUnknowns that were created in that thread. It always operates on the
  * current thread so all the methods are static and they implicitly get the
  * current thread.
  * <p>
@@ -36,35 +36,35 @@ import java.util.List;
  * <p>
  */
 public abstract class ROT {
-    private static ThreadLocal<List<WeakReference<JacobObject>>> objectTable = new ThreadLocal() {
+    private static ThreadLocal<Set<PointerWeakReference>> objectTable = new ThreadLocal() {
         @Override
-        protected List<WeakReference<JacobObject>> initialValue() {
+        protected Set<PointerWeakReference> initialValue() {
             return null;
         }  
     };
 
-    private static ThreadLocal<ReferenceQueue<JacobObject>> deadPool = new ThreadLocal<ReferenceQueue<JacobObject>>() {
+    private static ThreadLocal<ReferenceQueue<IUnknown>> deadPool = new ThreadLocal<ReferenceQueue<IUnknown>>() {
         @Override
-        protected ReferenceQueue<JacobObject> initialValue() {
-            return new ReferenceQueue<JacobObject>();
+        protected ReferenceQueue<IUnknown> initialValue() {
+            return new ReferenceQueue<IUnknown>();
         }
     };
 
-    public static List<WeakReference<JacobObject>> getThreadObjects(boolean ignored) {
+    public static Set<PointerWeakReference> getThreadObjects(boolean ignored) {
         return objectTable.get();
     }
     /**
      * safeRelease all remaining alive objects in the soon-to-be-dead-thread.
      */
     protected static void clearObjects() {
-        List<WeakReference<JacobObject>> objects = objectTable.get();
-        if (JacobObject.isDebugEnabled()) {
-            JacobObject.debug("ROT: " + objects.size() + " objects to clear in this thread's ROT ");
+        Set<PointerWeakReference> objects = objectTable.get();
+        if (IUnknown.isDebugEnabled()) {
+            IUnknown.debug("ROT: " + objects.size() + " objects to clear in this thread's ROT ");
         }
 
         // walk the values
-        for (WeakReference<JacobObject> reference : objects) {
-            JacobObject value = reference.get();
+        for (WeakReference<IUnknown> reference : objects) {
+            IUnknown value = reference.get();
             // System.out.println("Clearing live reference");
 
             if (value != null) {
@@ -87,14 +87,14 @@ public abstract class ROT {
      *
      * @param o
      */
-    protected static void addObject(JacobObject o) {
-        List<WeakReference<JacobObject>> objects = objectTable.get();
-        ReferenceQueue<JacobObject> deadObjects = deadPool.get();
+    protected static void addObject(IUnknown o) {
+        Set<PointerWeakReference> objects = objectTable.get();
+        ReferenceQueue<IUnknown> deadObjects = deadPool.get();
 
         if (objects == null) {
             // System.out.println("Creating new Thread: " + Thread.currentThread().getName());
             ComThread.InitMTA(false);
-            objects = new ArrayList<WeakReference<JacobObject>>();
+            objects = new HashSet<PointerWeakReference>();
             objectTable.set(objects);
         }
 
@@ -107,28 +107,37 @@ public abstract class ROT {
         }*/
 
         // System.out.println("Adding new Object");
-        objects.add(new WeakReference<JacobObject>(o, deadObjects));
+        objects.add(new PointerWeakReference(o, deadObjects));
 
-        cullDeadPool(deadObjects);
+        int numberCulled = cullDeadPool(deadObjects, objects);
 
-        if (JacobObject.isDebugEnabled()) {
-            JacobObject.debug("ROT: adding " + o + "->"
-                    + o.getClass().getSimpleName() + " table size prior to addition:" + objects.size());
+        if (IUnknown.isDebugEnabled()) {
+            if (numberCulled > 0) {
+            IUnknown.debug("ROT: added instance of " +
+                    o.getClass().getSimpleName() + "->[+1, -" +
+                    numberCulled + "] with " + objects.size() +
+                    " remaining live objects");
+            }
         }
     }
 
-    protected static void cullDeadPool(ReferenceQueue<JacobObject> deadObjects) {
-        Reference<? extends JacobObject> deadReference;
+    @SuppressWarnings("element-type-mismatch")
+    protected static int cullDeadPool(ReferenceQueue<IUnknown> deadObjects,
+            Set<PointerWeakReference> liveList) {
+        int numberReleased = 0;
+        Reference<? extends IUnknown> deadReference;
         while ((deadReference = deadObjects.poll()) != null) {
-            // System.out.println("Clearing dead reference");
-            JacobObject deadObject = deadReference.get();
-            if (deadObject != null) deadObject.safeRelease();
+            ((PointerWeakReference) deadReference).safeRelease();
+            liveList.remove(deadReference);
+            numberReleased++;
         }
+
+        return numberReleased;
     }
 
     /**
-     * ROT can't be a subclass of JacobObject because of the way ROT pools are
-     * managed so we force a DLL load here by referencing JacobObject
+     * ROT can't be a subclass of IUnknown because of the way ROT pools are
+     * managed so we force a DLL load here by referencing IUnknown
      */
     static {
         LibraryLoader.loadJacobLibrary();

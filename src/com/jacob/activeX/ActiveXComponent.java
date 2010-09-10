@@ -20,7 +20,7 @@
 package com.jacob.activeX;
 
 import com.jacob.com.Dispatch;
-import com.jacob.com.JacobObject;
+import com.jacob.com.IUnknown;
 import com.jacob.com.Variant;
 
 /**
@@ -108,8 +108,8 @@ public class ActiveXComponent extends Dispatch {
 			mCreatedDispatch.coCreateInstance(pRequestedProgramId);
 		} catch (Exception e) {
 			mCreatedDispatch = null;
-			if (JacobObject.isDebugEnabled()) {
-				JacobObject.debug("Unable to co-create instance of "
+			if (IUnknown.isDebugEnabled()) {
+				IUnknown.debug("Unable to co-create instance of "
 						+ pRequestedProgramId);
 			}
 		}
@@ -139,8 +139,8 @@ public class ActiveXComponent extends Dispatch {
 			mCreatedDispatch.getActiveInstance(pRequestedProgramId);
 		} catch (Exception e) {
 			mCreatedDispatch = null;
-			if (JacobObject.isDebugEnabled()) {
-				JacobObject.debug("Unable to attach to running instance of "
+			if (IUnknown.isDebugEnabled()) {
+				IUnknown.debug("Unable to attach to running instance of "
 						+ pRequestedProgramId);
 			}
 		}

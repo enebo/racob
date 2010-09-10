@@ -25,7 +25,7 @@ import java.util.Enumeration;
  * An implementation of IEnumVariant based on code submitted by Thomas Hallgren
  * (mailto:Thomas.Hallgren@eoncompany.com)
  */
-public class EnumVariant extends JacobObject implements Enumeration<Variant> {
+public class EnumVariant extends IUnknown implements Enumeration<Variant> {
     private Variant[] values;
     int i = -1;
 
@@ -34,7 +34,7 @@ public class EnumVariant extends JacobObject implements Enumeration<Variant> {
     }
 
     protected EnumVariant(int pointer, int size) {
-        this.pointer = pointer;
+        super(pointer);
         values = new Variant[size];
     }
 
@@ -44,7 +44,7 @@ public class EnumVariant extends JacobObject implements Enumeration<Variant> {
      * @return boolean true if there are more elements in this enumeration
      */
     public boolean hasMoreElements() {
-        if (i == -1) i = Next(pointer, values, values.length) - 1;
+        if (i == -1) i = Next(pointer.get(), values, values.length) - 1;
 
         return i > -1;
     }
@@ -82,11 +82,4 @@ public class EnumVariant extends JacobObject implements Enumeration<Variant> {
      * This should be private and wrapped to protect JNI layer
      */
     public native void Reset(int pointer);
-
-    /**
-     * now private so only this object can access was: call this to explicitly
-     * release the com object before gc
-     *
-     */
-    protected native void release(int pointer);
 }

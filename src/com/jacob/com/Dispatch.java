@@ -27,7 +27,7 @@ package com.jacob.com;
  * <p>
  * You're going to live here a lot
  */
-public class Dispatch extends JacobObject {
+public class Dispatch extends IUnknown {
 
     /**
      * Used to set the locale in a call. The user locale is another option
@@ -67,7 +67,7 @@ public class Dispatch extends JacobObject {
      * only way to create a Dispatch without a value in the pointer field.
      */
     public Dispatch() {
-        pointer = 0;
+        super();
     }
 
     /**
@@ -89,7 +89,7 @@ public class Dispatch extends JacobObject {
         super();
         programId = requestedProgramId;
         if (programId != null && !"".equals(programId)) {
-            pointer = createInstanceNative(requestedProgramId);
+            pointer.set(createInstanceNative(requestedProgramId));
         } else {
             throw new IllegalArgumentException(
                     "Dispatch(String) does not accept null or an empty string as a parameter");
@@ -135,8 +135,8 @@ public class Dispatch extends JacobObject {
         if (pProgramIdentifier == null || "".equals(pProgramIdentifier)) {
             throw new IllegalArgumentException("program id is required");
         }
-        this.programId = pProgramIdentifier;
-        pointer = getActiveInstanceNative(pProgramIdentifier);
+        programId = pProgramIdentifier;
+        pointer.set(getActiveInstanceNative(pProgramIdentifier));
     }
 
     /**
@@ -163,7 +163,7 @@ public class Dispatch extends JacobObject {
             throw new IllegalArgumentException("program id is required");
         }
         this.programId = pProgramIdentifier;
-        pointer = coCreateInstanceNative(pProgramIdentifier);
+        pointer.set(coCreateInstanceNative(pProgramIdentifier));
     }
 
     /**
@@ -183,19 +183,13 @@ public class Dispatch extends JacobObject {
      * @return Dispatch a disptach that matches ??
      */
     public Dispatch QueryInterface(String iid) {
-        return QueryInterface(pointer, iid);
+        return QueryInterface(pointer.get(), iid);
     }
 
     private native Dispatch QueryInterface(int pointer, String iid);
 
-    private native int toEnumVariant(int pointer);
-
-    public EnumVariant toEnumVariant() {
-        return new EnumVariant(toEnumVariant(pointer));
-    }
-
     public TypeInfo getTypeInfo() {
-        return getTypeInfo(pointer);
+        return getTypeInfo(pointer.get());
     }
 
     private native TypeInfo getTypeInfo(int pointer);
@@ -207,8 +201,8 @@ public class Dispatch extends JacobObject {
      *
      * @param pDisp
      */
-    public Dispatch(int pDisp) {
-        pointer = pDisp;
+    public Dispatch(int pointer) {
+        super(pointer);
     }
 
     /**
@@ -221,10 +215,8 @@ public class Dispatch extends JacobObject {
      * @param dispatchToBeDisplaced
      */
     public Dispatch(Dispatch dispatchToBeDisplaced) {
-        // TAKE OVER THE IDispatch POINTER
-        this.pointer = dispatchToBeDisplaced.pointer;
-        // NULL OUT THE INPUT POINTER
-        dispatchToBeDisplaced.pointer = 0;
+        super(dispatchToBeDisplaced.pointer.get()); // TAKE OVER THE IDispatch POINTER
+        dispatchToBeDisplaced.pointer.invalidate(); // NULL OUT THE INPUT POINTER
     }
 
     /**
@@ -254,13 +246,6 @@ public class Dispatch extends JacobObject {
         }
 
     }
-
-    /**
-     * now private so only this object can access was: call this to explicitly
-     * release the com object before gc
-     *
-     */
-    protected native void release(int pointer);
 
     /**
      * not implemented yet
@@ -293,7 +278,7 @@ public class Dispatch extends JacobObject {
     public static void invokeSubv(Dispatch dispatchTarget, String name,
             int dispID, int lcid, int wFlags, Variant[] vArg, int[] uArgErr) {
         throwIfUnattachedDispatch(dispatchTarget);
-        invokev(dispatchTarget.pointer, name, dispID, lcid, wFlags, vArg, uArgErr);
+        invokev(dispatchTarget.pointer.get(), name, dispID, lcid, wFlags, vArg, uArgErr);
     }
 
     /**
@@ -306,7 +291,7 @@ public class Dispatch extends JacobObject {
     public static void invokeSubv(Dispatch dispatchTarget, String name,
             int wFlags, Variant[] vArg, int[] uArgErr) {
         throwIfUnattachedDispatch(dispatchTarget);
-        invokev(dispatchTarget.pointer, name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
+        invokev(dispatchTarget.pointer.get(), name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
                 wFlags, vArg, uArgErr);
     }
 
@@ -320,7 +305,7 @@ public class Dispatch extends JacobObject {
     public static void invokeSubv(Dispatch dispatchTarget, int dispID,
             int wFlags, Variant[] vArg, int[] uArgErr) {
         throwIfUnattachedDispatch(dispatchTarget);
-        invokev(dispatchTarget.pointer, null, dispID, Dispatch.LOCALE_SYSTEM_DEFAULT,
+        invokev(dispatchTarget.pointer.get(), null, dispID, Dispatch.LOCALE_SYSTEM_DEFAULT,
                 wFlags, vArg, uArgErr);
     }
 
@@ -391,7 +376,7 @@ public class Dispatch extends JacobObject {
     // eliminated _Guid argument
     public static int[] getIDsOfNames(Dispatch dispatchTarget, int lcid,
             String[] names) {
-        return getIDsOfNames(dispatchTarget.pointer, dispatchTarget, lcid, names);
+        return getIDsOfNames(dispatchTarget.pointer.get(), dispatchTarget, lcid, names);
     }
     private static native int[] getIDsOfNames(int pointer, Dispatch dispatchTarget, int lcid,
             String[] names);
@@ -453,7 +438,7 @@ public class Dispatch extends JacobObject {
     public static Variant invoke(Dispatch dispatchTarget, String name,
             int dispID, int lcid, int wFlags, Object[] oArg, int[] uArgErr) {
         throwIfUnattachedDispatch(dispatchTarget);
-        return invokev(dispatchTarget.pointer, name, dispID, lcid, wFlags,
+        return invokev(dispatchTarget.pointer.get(), name, dispID, lcid, wFlags,
                 VariantUtilities.objectsToVariants(oArg), uArgErr);
     }
 
@@ -809,7 +794,7 @@ public class Dispatch extends JacobObject {
      */
     public static Variant invokev(Dispatch dispatchTarget, String name,
             int dispID, int lcid, int wFlags, Variant[] vArg, int[] uArgErr) {
-        return invokev(dispatchTarget.pointer, name, dispID, lcid, wFlags, vArg, uArgErr);
+        return invokev(dispatchTarget.pointer.get(), name, dispID, lcid, wFlags, vArg, uArgErr);
     }
 
     private static native Variant invokev(int pointer, String name,
@@ -826,7 +811,7 @@ public class Dispatch extends JacobObject {
     public static Variant invokev(Dispatch dispatchTarget, String name,
             int wFlags, Variant[] vArg, int[] uArgErr) {
         throwIfUnattachedDispatch(dispatchTarget);
-        return invokev(dispatchTarget.pointer, name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
+        return invokev(dispatchTarget.pointer.get(), name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
                 wFlags, vArg, uArgErr);
     }
 
@@ -843,7 +828,7 @@ public class Dispatch extends JacobObject {
             int wFlags, Variant[] vArg, int[] uArgErr, int wFlagsEx) {
         throwIfUnattachedDispatch(dispatchTarget);
         // do not implement IDispatchEx for now
-        return invokev(dispatchTarget.pointer, name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
+        return invokev(dispatchTarget.pointer.get(), name, 0, Dispatch.LOCALE_SYSTEM_DEFAULT,
                 wFlags, vArg, uArgErr);
     }
 
@@ -858,7 +843,7 @@ public class Dispatch extends JacobObject {
     public static Variant invokev(Dispatch dispatchTarget, int dispID,
             int wFlags, Variant[] vArg, int[] uArgErr) {
         throwIfUnattachedDispatch(dispatchTarget);
-        return invokev(dispatchTarget.pointer, null, dispID,
+        return invokev(dispatchTarget.pointer.get(), null, dispID,
                 Dispatch.LOCALE_SYSTEM_DEFAULT, wFlags, vArg, uArgErr);
     }
 

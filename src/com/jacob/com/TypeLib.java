@@ -1,6 +1,6 @@
 package com.jacob.com;
 
-public class TypeLib extends JacobObject {
+public class TypeLib extends IUnknown {
     public static final int LIBFLAG_FRESTRICTED = 1;
     public static final int LIBFLAG_FCONTROL = 2;
     public static final int LIBFLAG_FHIDDEN = 4;
@@ -14,7 +14,7 @@ public class TypeLib extends JacobObject {
 
     public TypeLib(int pointer, String guid, int count, int flags,
             int majorVersion, int minorVersion) {
-        this.pointer = pointer;
+        super(pointer);
         this.guid = guid;
         this.flags = flags;
         this.count = count;
@@ -53,16 +53,14 @@ public class TypeLib extends JacobObject {
     private native int getTypeInfoCount(int pointer);
 
     public Documentation getDocumentation(int index) {
-        return getDocumentation(pointer, index);
+        return getDocumentation(pointer.get(), index);
     }
 
     public TypeInfo getTypeInfo(int index) {
-        return getTypeInfo(pointer, index);
+        return getTypeInfo(pointer.get(), index);
     }
 
     public int getTypeInfoCount() {
-        return getTypeInfoCount(pointer);
+        return getTypeInfoCount(pointer.get());
     }
-
-    protected native void release(int pointer);
 }

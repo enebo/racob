@@ -40,7 +40,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_IUnknown_toEnumVariant
  * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_com_jacob_com_IUnknown_release
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jclass, jint);
 
 #ifdef __cplusplus
 }

@@ -61,9 +61,6 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_initializeNative
     // prepare a new return value
     VARIANT_CLASS = (jclass) env->NewGlobalRef(env->FindClass("com/jacob/com/Variant"));
     DISPATCH_CLASS = (jclass) env->NewGlobalRef(env->FindClass("com/jacob/com/Dispatch"));
-    jclass c = (jclass) env->FindClass("com/jacob/com/JacobObject");
-
-    POINTER_FIELD = env->GetFieldID(c, "pointer", "I");
     
     jfieldID trueField = env->GetStaticFieldID(VARIANT_CLASS, "VT_TRUE", "Lcom/jacob/com/Variant;");
     jfieldID falseField = env->GetStaticFieldID(VARIANT_CLASS, "VT_FALSE", "Lcom/jacob/com/Variant;");
@@ -78,7 +75,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_initializeNative
     VARIANT_GETINT = env->GetMethodID(clazz, "getInt", "()I");
     VARIANT_GETFLOAT = env->GetMethodID(clazz, "getFloat", "()F");
     VARIANT_GETDOUBLE = env->GetMethodID(clazz, "getDouble", "()D");
-    VARIANT_GETDISPATCH = env->GetMethodID(clazz, "getDispatch", "()Lcom/jacob/com/Dispatch;");
+    VARIANT_GETDISPATCH = env->GetMethodID(clazz, "getDispatchPointer", "()I");
     VARIANT_GETDATEASDOUBLE = env->GetMethodID(clazz, "getDateAsDouble", "()D");
     VARIANT_GETCURRENCYASLONG = env->GetMethodID(clazz, "getCurrencyAsLong", "()J");
     VARIANT_GETBOOLEAN = env->GetMethodID(clazz, "getBoolean", "()Z");
@@ -325,8 +322,7 @@ void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* v) {
           V_BOOL(v) = getValueAsBoolean(env, javaVariant) == JNI_TRUE ? VARIANT_TRUE : VARIANT_FALSE;
           break;
      case VT_DISPATCH: {
-          jobject javaDispatch = getValueAsDispatch(env, javaVariant);
-          IDispatch *disp = (IDispatch *) extractPointer(env, javaDispatch);
+          IDispatch *disp = (IDispatch *) getValueAsDispatch(env, javaVariant);
           if (disp) {
              V_DISPATCH(v) = disp;
              disp->AddRef();     // I am handing the pointer to COM

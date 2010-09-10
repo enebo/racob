@@ -71,11 +71,4 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_DispatchProxy_MarshalFromStream
   jobject newAuto = env->NewObject(autoClass, autoCons, pD);
   return newAuto;
 }
-
-JNIEXPORT void JNICALL Java_com_jacob_com_DispatchProxy_release
-  (JNIEnv *env, jobject _this, jint pointer) {
-  IStream *ps =  (IStream *) pointer;
-  if (ps) ps->Release();
-}
-
 }
