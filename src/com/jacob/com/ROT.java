@@ -21,9 +21,8 @@ package com.jacob.com;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The Running Object Table (ROT) maps each thread to a collection of all the
@@ -36,12 +35,24 @@ import java.util.Set;
  * <p>
  */
 public abstract class ROT {
-    private static ThreadLocal<Set<PointerWeakReference>> objectTable = new ThreadLocal() {
+    private static ThreadLocal<Boolean> initMTA = new ThreadLocal<Boolean>() {
         @Override
-        protected Set<PointerWeakReference> initialValue() {
-            return null;
-        }  
+        public Boolean initialValue() {
+            return FALSE;
+        }
     };
+    public static Map<PointerWeakReference,Boolean> objects = new ConcurrentHashMap<PointerWeakReference, Boolean>();
+    private static final Boolean FALSE = new Boolean(false);
+    private static final Boolean TRUE = new Boolean(true);
+    private static int count = 0;
+    private static final int CULL_COUNT;
+
+    static {
+        String cull_count = System.getProperty("com.jacob.cull_count");
+        if (cull_count == null) cull_count = "2000";
+
+        CULL_COUNT = Integer.parseInt(cull_count);
+    }
 
     private static ThreadLocal<ReferenceQueue<IUnknown>> deadPool = new ThreadLocal<ReferenceQueue<IUnknown>>() {
         @Override
@@ -50,22 +61,20 @@ public abstract class ROT {
         }
     };
 
-    public static Set<PointerWeakReference> getThreadObjects(boolean ignored) {
-        return objectTable.get();
+    public static Map<PointerWeakReference,Boolean> getThreadObjects(boolean ignored) {
+        return objects;
     }
     /**
-     * safeRelease all remaining alive objects in the soon-to-be-dead-thread.
+     * safeRelease all remaining alive objects.
      */
     protected static void clearObjects() {
-        Set<PointerWeakReference> objects = objectTable.get();
         if (IUnknown.isDebugEnabled()) {
             IUnknown.debug("ROT: " + objects.size() + " objects to clear in this thread's ROT ");
         }
 
         // walk the values
-        for (WeakReference<IUnknown> reference : objects) {
-            IUnknown value = reference.get();
-            // System.out.println("Clearing live reference");
+        for (PointerWeakReference reference : objects.keySet()) {
+            IUnknown value = (IUnknown) reference.get();
 
             if (value != null) {
                 value.safeRelease();
@@ -75,55 +84,39 @@ public abstract class ROT {
     }
 
     /**
-     * Stores reference to supplied object so it can be released when it is
-     * no longer references by anything.
-     * <p>
-     * In addition, this method cannot be threaded because it calls
-     * ComThread.InitMTA. The ComThread object has some methods that call ROT so
-     * we could end up deadlocked. This method should be safe without the
-     * synchronization because the ROT works on per thread basis and the methods
-     * that add threads and remove thread related entries are all synchronized
-     *
+     * Stores object so it can be released in COM when it is no longer
+     * referenced.
      *
      * @param o
      */
     protected static void addObject(IUnknown o) {
-        Set<PointerWeakReference> objects = objectTable.get();
+        // If a new thread joins we need to add it to the apartment
+        if (initMTA.get() == FALSE) {
+            ComThread.InitMTA(false);
+            initMTA.set(TRUE);
+        }
+        
         ReferenceQueue<IUnknown> deadObjects = deadPool.get();
 
-        if (objects == null) {
-            // System.out.println("Creating new Thread: " + Thread.currentThread().getName());
-            ComThread.InitMTA(false);
-            objects = new HashSet<PointerWeakReference>();
-            objectTable.set(objects);
-        }
+        objects.put(new PointerWeakReference(o, deadObjects), FALSE);
 
-        /*
-        Thread[] threads = new Thread[Thread.activeCount()];
-        Thread.enumerate(threads);
-        System.out.println("LIVE THREADS: " + threads.length);
-        for (int i = 0; i < threads.length; i++) {
-            System.out.println("T: " + threads[i].getName());
-        }*/
+        if ((count++ % CULL_COUNT) == 0) {
+            int numberCulled = cullDeadPool(deadObjects, objects);
 
-        // System.out.println("Adding new Object");
-        objects.add(new PointerWeakReference(o, deadObjects));
-
-        int numberCulled = cullDeadPool(deadObjects, objects);
-
-        if (IUnknown.isDebugEnabled()) {
-            if (numberCulled > 0) {
-            IUnknown.debug("ROT: added instance of " +
+            if (IUnknown.isDebugEnabled()) {
+                if (numberCulled > 0) {
+                    IUnknown.debug("ROT: added instance of " +
                     o.getClass().getSimpleName() + "->[+1, -" +
                     numberCulled + "] with " + objects.size() +
                     " remaining live objects");
+                }
             }
         }
     }
 
     @SuppressWarnings("element-type-mismatch")
     protected static int cullDeadPool(ReferenceQueue<IUnknown> deadObjects,
-            Set<PointerWeakReference> liveList) {
+            Map<PointerWeakReference, Boolean> liveList) {
         int numberReleased = 0;
         Reference<? extends IUnknown> deadReference;
         while ((deadReference = deadObjects.poll()) != null) {
