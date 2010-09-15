@@ -390,8 +390,7 @@ static wchar_t* CreateErrorMsgFromInfo(HRESULT inResult, EXCEPINFO* ioInfo,
 JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
   (JNIEnv *env, jclass clazz,
   jint dispPointer, jstring name, jint dispid,
-  jint lcid, jint wFlags, jobjectArray vArg, jintArray uArgErr)
-{
+  jint lcid, jint wFlags, jobjectArray vArg, jintArray uArgErr) {
   DISPPARAMS  dispparams;
   EXCEPINFO   excepInfo;
 
@@ -399,8 +398,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
   if (!pIDispatch) return NULL;
 
   int dispID = dispid;
-  if (name != NULL) 
-  {
+  if (name != NULL) {
     const char *nm = env->GetStringUTFChars(name, NULL);
     HRESULT hr;
     if (FAILED(hr = name2ID(pIDispatch, nm, (long *)&dispID, lcid))) {
@@ -426,8 +424,6 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
       populateVariant(env, arg, &varr[j]);
       env->DeleteLocalRef(arg);
     }
-
-    fflush(stdout);
   }
 
   VARIANT returnValue;
@@ -511,7 +507,9 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
     return NULL;
   }
 
-  return createVariant(env, &returnValue);
+  jobject result = createVariant(env, &returnValue);
+  VariantClear(&returnValue);
+  return result;
 }
 
 }
