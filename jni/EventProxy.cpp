@@ -164,6 +164,7 @@ STDMETHODIMP EventProxy::Invoke(DISPID dispID, REFIID riid,
     for (i=numVariantParams-1,j=0; i>=0; i--,j++) {
        if (EVENT_PROXY_DEBUG) { printf("In invoke of %s (parm %d) start\n", eventMethodName, i); fflush(stdout); }
        env->SetObjectArrayElement(varr, j, createVariant(env, &pDispParams->rgvarg[i])); HANDLE_EXCEPTION;
+       VariantClear(&pDispParams->rgvarg[i]);
        if (EVENT_PROXY_DEBUG) { printf("In invoke of %s (parm %d) end\n", eventMethodName, i); fflush(stdout); }
     }
 
