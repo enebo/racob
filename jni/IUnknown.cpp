@@ -60,12 +60,9 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_IUnknown_toEnumVariant
     } else if (V_VT(&result) == VT_DISPATCH) {
         hr = V_DISPATCH(&result)->QueryInterface(IID_IEnumVARIANT, (void **) &pEnum);
     }
-    if (FAILED(hr) || !pEnum) {
-       VariantClear(&result);
-       ThrowComFail(env, "failed to get IEnum Interface", hr);
-    }
-
     VariantClear(&result);
+    
+    if (FAILED(hr) || !pEnum) ThrowComFail(env, "failed to get IEnum Interface", hr);
 
     return (jint) pEnum;
 }
