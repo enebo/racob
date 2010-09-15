@@ -39,7 +39,7 @@ extern "C" {
 JNIEXPORT jint JNICALL
 Java_com_jacob_com_EnumVariant_Next(JNIEnv* env, jobject _this, jint pointer, jobjectArray values, jint valuesSize) {
   IEnumVARIANT* enumVariant = (IEnumVARIANT *) pointer;
-  if (enumVariant == NULL) return NULL;
+  if (enumVariant == NULL) return 0;
 
   if (valuesSize > MAX_VALUES) {
      ThrowComFail(env, "IEnumVariant::Next -- too many values requested", -1);
@@ -61,6 +61,7 @@ Java_com_jacob_com_EnumVariant_Next(JNIEnv* env, jobject _this, jint pointer, jo
 
   for (int i = 0; i < fetchCount; i++) {
      jobject variant = createVariant(env, &sink[i]);
+     VariantClear(&sink[i]);
      env->SetObjectArrayElement(values, fetchCount - i - 1, variant);
      env->DeleteLocalRef(variant);
   }
