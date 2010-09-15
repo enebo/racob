@@ -46,12 +46,17 @@ public abstract class ROT {
     private static final Boolean TRUE = new Boolean(true);
     private static int count = 0;
     private static final int CULL_COUNT;
+    private static final int GC_COUNT;
 
     static {
         String cull_count = System.getProperty("com.jacob.cull_count");
         if (cull_count == null) cull_count = "2000";
-
         CULL_COUNT = Integer.parseInt(cull_count);
+
+        String gc_count = System.getProperty("com.jacob.gc_count");
+        if (gc_count == null) gc_count = "-1";
+        GC_COUNT = Integer.parseInt(gc_count);
+
     }
 
     private static ThreadLocal<ReferenceQueue<IUnknown>> deadPool = new ThreadLocal<ReferenceQueue<IUnknown>>() {
@@ -99,6 +104,10 @@ public abstract class ROT {
         ReferenceQueue<IUnknown> deadObjects = deadPool.get();
 
         objects.put(new PointerWeakReference(o, deadObjects), FALSE);
+
+        if (GC_COUNT != -1 && (count % GC_COUNT) == 0) {
+            System.gc();
+        }
 
         if ((count++ % CULL_COUNT) == 0) {
             int numberCulled = cullDeadPool(deadObjects, objects);
