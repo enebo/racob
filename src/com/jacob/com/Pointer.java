@@ -16,15 +16,7 @@ public class Pointer extends AtomicInteger {
     }
 
     public void safeRelease() {
-        boolean debug = IUnknown.isDebugEnabled();
-
-        if (isAlive()) {
-// Happens waaaay too often
-//            if (debug) IUnknown.debug("SafeRelease: " + this.getClass().getSimpleName());
-            IUnknown.release(invalidate());
-        } else {
-            if (debug) IUnknown.debug(getClass().getSimpleName() + ":" + hashCode() + " double release");
-        }
+        if (isAlive()) IUnknown.release(invalidate());
     }
 
     public boolean isAlive() {
