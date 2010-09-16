@@ -47,6 +47,7 @@ public abstract class ROT {
     private static int count = 0;
     private static final int CULL_COUNT;
     private static final int GC_COUNT;
+    private static final boolean AUTO_GC;
 
     static {
         String cull_count = System.getProperty("com.jacob.cull_count");
@@ -57,6 +58,9 @@ public abstract class ROT {
         if (gc_count == null) gc_count = "-1";
         GC_COUNT = Integer.parseInt(gc_count);
 
+        String auto_gc = System.getProperty("com.jacob.autogc");
+        if (auto_gc == null) gc_count = "true";
+        AUTO_GC = Boolean.parseBoolean(auto_gc);
     }
 
     private static ThreadLocal<ReferenceQueue<IUnknown>> deadPool = new ThreadLocal<ReferenceQueue<IUnknown>>() {
@@ -100,6 +104,8 @@ public abstract class ROT {
             ComThread.InitMTA(false);
             initMTA.set(TRUE);
         }
+
+        if (!AUTO_GC) return;
         
         ReferenceQueue<IUnknown> deadObjects = deadPool.get();
 
