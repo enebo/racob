@@ -59,7 +59,7 @@ public abstract class ROT {
         GC_COUNT = Integer.parseInt(gc_count);
 
         String auto_gc = System.getProperty("com.jacob.autogc");
-        if (auto_gc == null) gc_count = "true";
+        if (auto_gc == null) auto_gc = "true";
         AUTO_GC = Boolean.parseBoolean(auto_gc);
     }
 
