@@ -28,7 +28,7 @@ extern "C" {
 /*
  * Class:     com_jacob_com_STA
  * Method:    doMessagePump
- * Signature: ()V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_com_jacob_com_STA_doMessagePump
   (JNIEnv *, jobject);

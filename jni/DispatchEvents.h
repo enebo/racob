@@ -34,6 +34,14 @@ extern "C" {
 JNIEXPORT jint JNICALL Java_com_jacob_com_DispatchEvents_init3
   (JNIEnv *, jobject, jint, jobject, jstring, jstring);
 
+/*
+ * Class:     com_jacob_com_DispatchEvents
+ * Method:    messageLoop
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_jacob_com_DispatchEvents_messageLoop
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

@@ -110,19 +110,28 @@ public class Variant {
 
     public static final int DISP_E_PARAMNOTFOUND = new Integer(0x80020004);
 
+    private static boolean initialized;
+
     /*
      * Do the run time definition of DEFAULT and MISSING. Have to use static
      * block because of the way the initialization is done via two calls instead
      * of just a constructor for this type.
      */
     static {
-        initializeNative();
+        initialize();
         Variant vtMissing = new Variant(DISP_E_PARAMNOTFOUND, VariantError, false);
         DEFAULT = vtMissing;
         VT_MISSING = vtMissing;
     }
 
     private static native void initializeNative();
+
+    public static void initialize() {
+        if (!initialized) {
+            initialized = true;
+            initializeNative();
+        }
+    }
 
     // Is V_VT(v) in C or manually passed if going from Java to VARIANT
     private short type;
@@ -304,6 +313,10 @@ public class Variant {
 
     public static Variant createDateVariant(double comDateValue) {
         return new Variant(DateUtilities.convertWindowsTimeToDate(comDateValue));
+    }
+
+    public static Variant createIntVariant(int value) {
+        return new Variant(new Integer(value));
     }
 
     /**

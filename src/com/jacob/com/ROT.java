@@ -101,7 +101,7 @@ public abstract class ROT {
     protected static void addObject(IUnknown o) {
         // If a new thread joins we need to add it to the apartment
         if (initMTA.get() == FALSE) {
-            ComThread.InitMTA(false);
+            ComThread.InitSTA(false);
             initMTA.set(TRUE);
         }
 

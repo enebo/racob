@@ -169,6 +169,8 @@ public class DispatchEvents extends IUnknown {
     private native int init3(int pointer, Object sink, String progId,
             String typeLib);
 
+    public static native void messageLoop();
+
     /*
      * (non-Javadoc)
      *

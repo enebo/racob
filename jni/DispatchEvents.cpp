@@ -316,4 +316,12 @@ BOOL GetEventIIDForTypeLib(BSTR typeLib, IID* piid,
   }
 }
 
+JNIEXPORT void JNICALL Java_com_jacob_com_DispatchEvents_messageLoop
+  (JNIEnv *env, jclass clazz) {
+     MSG msg;
+    while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+}
 }

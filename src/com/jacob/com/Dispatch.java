@@ -474,6 +474,19 @@ public class Dispatch extends IUnknown {
      * ============================================================ start of the
      * callN section ===========================================================
      */
+
+    public static Object callO(Dispatch dispatchTarget, String name) {
+        throwIfUnattachedDispatch(dispatchTarget);
+        return invokev0(dispatchTarget.pointer.get(), name, 0,
+                Dispatch.LOCALE_SYSTEM_DEFAULT, Dispatch.Method | Dispatch.Get);
+    }
+
+    public static Object callO(Dispatch dispatchTarget, int dispid) {
+        throwIfUnattachedDispatch(dispatchTarget);
+        return invokev0(dispatchTarget.pointer.get(), null, dispid,
+                Dispatch.LOCALE_SYSTEM_DEFAULT, Dispatch.Method | Dispatch.Get);
+    }
+
     /**
      * @param dispatchTarget
      * @param name
@@ -481,7 +494,7 @@ public class Dispatch extends IUnknown {
      */
     public static Variant call(Dispatch dispatchTarget, String name) {
         throwIfUnattachedDispatch(dispatchTarget);
-        return callN(dispatchTarget, name, NO_VARIANT_ARGS);
+        return callN(dispatchTarget, name, NO_OBJECT_ARGS);
     }
 
     /**
@@ -796,6 +809,9 @@ public class Dispatch extends IUnknown {
             int dispID, int lcid, int wFlags, Variant[] vArg, int[] uArgErr) {
         return invokev(dispatchTarget.pointer.get(), name, dispID, lcid, wFlags, vArg, uArgErr);
     }
+
+    private static native Object invokev0(int pointer, String name,
+            int dispID, int lcid, int wFlags);
 
     private static native Variant invokev(int pointer, String name,
             int dispID, int lcid, int wFlags, Variant[] vArg, int[] uArgErr);

@@ -27,6 +27,14 @@ extern "C" {
 #endif
 /*
  * Class:     com_jacob_com_EnumVariant
+ * Method:    NextOne
+ * Signature: (I)Lcom/jacob/Variant;
+ */
+JNIEXPORT jobject JNICALL Java_com_jacob_com_EnumVariant_NextOne
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_jacob_com_EnumVariant
  * Method:    Next
  * Signature: (I[Lcom/jacob/Variant;I)I
  */

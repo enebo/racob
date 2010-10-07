@@ -34,7 +34,31 @@
  */
 extern "C" {
 
- #define MAX_VALUES 50
+ #define MAX_VALUES 5000
+
+JNIEXPORT jobject JNICALL
+Java_com_jacob_com_EnumVariant_NextOne(JNIEnv* env, jobject _this, jint pointer) {
+  IEnumVARIANT* enumVariant = (IEnumVARIANT *) pointer;
+  if (enumVariant == NULL) return 0;
+
+  VARIANT sink;
+  ULONG fetchCount = 0;
+
+  VariantInit(&sink);
+  VariantClear(&sink);
+
+  HRESULT hr = enumVariant->Next(1, &sink, &fetchCount);
+  if (FAILED(hr)) {
+    ThrowComFail(env, "IEnumVARIANT::Next", hr);
+    return 0;
+  }
+
+  if (fetchCount == 0) return 0; // Nothing retrieved.
+  
+  jobject returnValue = createVariant(env, &sink);
+  VariantClear(&sink);
+  return returnValue;
+}
 
 JNIEXPORT jint JNICALL
 Java_com_jacob_com_EnumVariant_Next(JNIEnv* env, jobject _this, jint pointer, jobjectArray values, jint valuesSize) {

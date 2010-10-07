@@ -13,6 +13,7 @@ import java.util.Date;
  * A utility class used to convert between Java objects and Variants
  */
 public final class VariantUtilities {
+    private static Variant[] EMPTY_ARRAY = new Variant[0];
 
     private VariantUtilities() {
         // utility class with only static methods don't need constructors
@@ -29,7 +30,15 @@ public final class VariantUtilities {
         if (value instanceof Integer) return new Variant(((Integer) value).intValue(), byRef);
         if (value instanceof Short) return new Variant(((Short) value).shortValue(), byRef);
         if (value instanceof String) return new Variant((String) value, byRef);
-        if (value instanceof Boolean) return new Variant((Boolean) value, byRef);
+        if (value instanceof Boolean) {
+//            if (!byRef) {
+//                boolean primitiveValue = ((Boolean) value).booleanValue();
+//
+//                return primitiveValue ? Variant.VT_TRUE : Variant.VT_FALSE;
+//            }
+
+            return new Variant((Boolean) value, byRef);
+        }
         if (value instanceof Double) return new Variant(((Double) value).doubleValue(), byRef);
         if (value instanceof Float) return new Variant(((Float) value).floatValue(), byRef);
         if (value instanceof BigDecimal) return new Variant(((BigDecimal) value), byRef);
@@ -126,6 +135,8 @@ public final class VariantUtilities {
      * @return Variant[]
      */
     protected static Variant[] objectsToVariants(Object[] array) {
+        if (array.length == 0) return EMPTY_ARRAY;
+        
         Variant variants[] = new Variant[array.length];
 
         for (int i = 0; i < array.length; i++) {
