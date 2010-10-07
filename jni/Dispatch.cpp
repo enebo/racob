@@ -387,6 +387,93 @@ static wchar_t* CreateErrorMsgFromInfo(HRESULT inResult, EXCEPINFO* ioInfo,
 
 #define SETNOPARAMS(dp) SETDISPPARAMS(dp, 0, NULL, 0, NULL)
 
+JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev0
+  (JNIEnv *env, jclass clazz, jint dispPointer, jstring name, jint dispid,
+        jint lcid, jint wFlags) {
+  DISPPARAMS  dispparams;
+  EXCEPINFO   excepInfo;
+
+  IDispatch *pIDispatch = (IDispatch *) dispPointer;
+  if (!pIDispatch) return NULL;
+
+  int dispID = dispid;
+  if (name != NULL) {
+    const char *nm = env->GetStringUTFChars(name, NULL);
+    HRESULT hr;
+    if (FAILED(hr = name2ID(pIDispatch, nm, (long *)&dispID, lcid))) {
+      char buf[1024];
+      sprintf_s(buf, 1024, "Can't map name to dispid: %s", nm);
+      ThrowComFail(env, buf, -1);
+      return NULL;
+    }
+    env->ReleaseStringUTFChars(name, nm);
+  }
+
+  VARIANT returnValue;
+  DISPID  dispidPropertyPut = DISPID_PROPERTYPUT;
+  VariantInit(&returnValue);
+
+  // determine how to dispatch
+  switch (wFlags) {
+    case DISPATCH_PROPERTYGET: // GET
+    case DISPATCH_METHOD: // METHOD
+    case DISPATCH_METHOD|DISPATCH_PROPERTYGET: {
+      SETDISPPARAMS(dispparams, 0, NULL, 0, NULL);
+      break;
+    }
+    case DISPATCH_PROPERTYPUT:
+    case DISPATCH_PROPERTYPUTREF: { // jacob-msg 1075 - SF 1053872
+      SETDISPPARAMS(dispparams, 0, NULL, 1, &dispidPropertyPut);
+      break;
+    }
+  }
+
+  HRESULT hr = pIDispatch->Invoke(dispID, IID_NULL,
+            lcid, (WORD) wFlags, &dispparams, &returnValue, &excepInfo, NULL);
+
+  // check for error and display a somewhat verbose error message
+  if (!SUCCEEDED(hr)) {
+    // two buffers that may have to be freed later
+    wchar_t *buf = NULL;
+    char *dispIdAsName = NULL;
+    // this method can get called with a name or a dispatch id
+    // we need to handle both SF 1114159
+    if (name != NULL){
+	    const char *nm = env->GetStringUTFChars(name, NULL);
+	    buf = CreateErrorMsgFromInfo(hr, &excepInfo, nm);
+	    env->ReleaseStringUTFChars(name, nm);
+    } else {
+		dispIdAsName = new char[256];
+		// get the id string
+		_itoa_s (dispID, dispIdAsName, 256,10);
+		//continue on mostly as before
+		buf = CreateErrorMsgFromInfo(hr,&excepInfo,dispIdAsName);
+    }
+
+    // jacob-msg 3696 - SF 1053866
+	if(hr == DISP_E_EXCEPTION)
+	{
+		if(excepInfo.scode != 0)
+		{
+			hr = excepInfo.scode;
+		}
+		else
+		{
+			hr = _com_error::WCodeToHRESULT(excepInfo.wCode);
+		}
+	}
+
+    ThrowComFailUnicode(env, buf, hr);
+    if (buf) delete buf;
+    if (dispIdAsName) delete dispIdAsName;
+    return NULL;
+  }
+
+  jobject result = variantToObject(env, &returnValue);
+  VariantClear(&returnValue);
+  return result;
+}
+
 JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
   (JNIEnv *env, jclass clazz,
   jint dispPointer, jstring name, jint dispid,

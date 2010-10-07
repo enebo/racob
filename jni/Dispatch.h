@@ -67,6 +67,14 @@ JNIEXPORT jintArray JNICALL Java_com_jacob_com_Dispatch_getIDsOfNames
 
 /*
  * Class:     Dispatch
+ * Method:    invokev0
+ * Signature: (ILjava/lang/String;III[LVariant;[I)LVariant;
+ */
+JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev0
+  (JNIEnv *, jclass, jint, jstring, jint, jint, jint);
+
+/*
+ * Class:     Dispatch
  * Method:    invokev
  * Signature: (ILjava/lang/String;III[LVariant;[I)LVariant;
  */

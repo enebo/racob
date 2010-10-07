@@ -32,12 +32,14 @@ extern "C"
 {
 
 /* Initialized by initializeNative */
+jclass BOOLEAN_CLASS = 0;
 jclass DISPATCH_CLASS = 0;
 jclass VARIANT_CLASS = 0;
 
 jfieldID POINTER_FIELD = 0;
 jfieldID VARIANT_TYPE = 0;
 
+jmethodID BOOLEAN_CONSTRUCTOR = 0;
 jmethodID DISPATCH_CONSTRUCTOR = 0;
 jmethodID VARIANT_CONSTRUCTOR = 0;
 jmethodID VARIANT_GETSTRING = 0;
@@ -53,6 +55,7 @@ jmethodID VARIANT_GETBYTE = 0;
 jmethodID VARIANT_GETVARIANT = 0;
 jmethodID VARIANT_CREATEDISPATCH = 0;
 jmethodID VARIANT_CREATEDATE = 0;
+jmethodID VARIANT_CREATEINT = 0;
 jobject TRUE_VARIANT = 0;
 jobject FALSE_VARIANT = 0;
 
@@ -61,12 +64,15 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_initializeNative
     // prepare a new return value
     VARIANT_CLASS = (jclass) env->NewGlobalRef(env->FindClass("com/jacob/com/Variant"));
     DISPATCH_CLASS = (jclass) env->NewGlobalRef(env->FindClass("com/jacob/com/Dispatch"));
+    BOOLEAN_CLASS = (jclass) env->NewGlobalRef(env->FindClass("java/lang/Boolean"));
     
     jfieldID trueField = env->GetStaticFieldID(VARIANT_CLASS, "VT_TRUE", "Lcom/jacob/com/Variant;");
     jfieldID falseField = env->GetStaticFieldID(VARIANT_CLASS, "VT_FALSE", "Lcom/jacob/com/Variant;");
     TRUE_VARIANT =  env->NewGlobalRef(env->GetStaticObjectField(VARIANT_CLASS, trueField));
     FALSE_VARIANT = env->NewGlobalRef(env->GetStaticObjectField(VARIANT_CLASS, falseField));
 
+
+    BOOLEAN_CONSTRUCTOR = env->GetMethodID(BOOLEAN_CLASS, "<init>", "(Z)V");
     DISPATCH_CONSTRUCTOR = env->GetMethodID(DISPATCH_CLASS, "<init>", "(I)V");
     VARIANT_CONSTRUCTOR = env->GetMethodID(VARIANT_CLASS, "<init>", "(Ljava/lang/Object;S)V");
     VARIANT_TYPE = env->GetFieldID(VARIANT_CLASS, "type", "S");
@@ -84,6 +90,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_initializeNative
 
     VARIANT_CREATEDISPATCH = env->GetStaticMethodID(clazz, "createDispatchVariant", "(I)Lcom/jacob/com/Variant;");
     VARIANT_CREATEDATE = env->GetStaticMethodID(clazz, "createDateVariant", "(D)Lcom/jacob/com/Variant;");
+    VARIANT_CREATEINT = env->GetStaticMethodID(clazz, "createIntVariant", "(I)Lcom/jacob/com/Variant;");
 
     return NULL;
  }
@@ -102,10 +109,18 @@ jobject createBooleanVariant(JNIEnv *env, jboolean value) {
  return value == 0 ? FALSE_VARIANT : TRUE_VARIANT;
 }
 
+jobject createIntVariant(JNIEnv *env, jint value) {
+  return env->CallStaticObjectMethod(VARIANT_CLASS, VARIANT_CREATEINT, value);
+}
+
 jobject createBoxedByte(JNIEnv *env, jbyte value) {
   jclass clazz = env->FindClass("java/lang/Byte");
   jmethodID constructor = env->GetMethodID(clazz, "<init>", "(B)V");
   return env->NewObject(clazz, constructor, value);
+}
+
+jobject createBoxedBoolean(JNIEnv *env, jboolean value) {
+  return env->NewObject(BOOLEAN_CLASS, BOOLEAN_CONSTRUCTOR, value);
 }
 
 jobject createBoxedDouble(JNIEnv *env, jdouble value) {
@@ -138,6 +153,12 @@ jobject createCurrency(JNIEnv *env, CY cy) {
   jclass clazz = env->FindClass("com/jacob/com/Currency");
   jmethodID constructor = env->GetMethodID(clazz, "<init>", "(J)V");
   return env->NewObject(clazz, constructor, jl);
+}
+
+jobject createDate(JNIEnv *env, jdouble date) {
+  jclass clazz = env->FindClass("com/jacob/com/DateUtilities");
+  jmethodID constructor = env->GetStaticMethodID(clazz, "convertWindowsTimeToDate", "(D)Ljava/util/Date;");
+  return env->CallStaticObjectMethod(clazz, constructor, date);
 }
 
 jobject createDispatch(JNIEnv *env, IDispatch* value) {
@@ -178,10 +199,16 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
         return createBoxedDouble(env, (jdouble) V_R8(v));
      case VT_R8|VT_BYREF:
         return createBoxedDouble(env, (jdouble) *V_R8REF(v));
+      case VT_BOOL:
+         return createBoxedBoolean(env, (jboolean) V_BOOL(v));
+      case VT_BOOL|VT_BYREF:
+         return createBoxedBoolean(env, (jboolean) *V_BOOLREF(v));
      case VT_CY:
         return createCurrency(env, V_CY(v));
      case VT_CY|VT_BYREF:
        return createCurrency(env, *V_CYREF(v));
+      case VT_DATE:
+          return createDate(env, (jdouble) V_DATE(v));
      case VT_BSTR:
         return createString(env, (BSTR) V_BSTR(v));
      case VT_BSTR|VT_BYREF:
@@ -225,6 +252,8 @@ jobject createVariant(JNIEnv *env, VARIANT* v) {
          return createBooleanVariant(env, (jboolean) *V_BOOLREF(v));
       case VT_DATE:
           return createDateVariant(env, (jdouble) V_DATE(v));
+       case VT_I4:
+          return createIntVariant(env, (jint) V_I4(v));
       case VT_DATE|VT_BYREF:
           return createDateVariant(env, (jdouble) *V_DATEREF(v));
       case VT_DISPATCH:
