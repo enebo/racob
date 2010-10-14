@@ -59,6 +59,7 @@ public class TypeInfo extends IUnknown {
 
     private final int typekind;
     private final String guid;
+    private final String progid;
     private final int funcsCount;
     private final int implTypesCount;
     private final int varsCount;
@@ -66,11 +67,12 @@ public class TypeInfo extends IUnknown {
     private final int minorVersion;
     private final int majorVersion;
 
-    public TypeInfo(int pointer, String guid, int typekind, int functionCount,
-            int implementationCount, int variableCount, int flags,
-            int minorVersion, int majorVersion) {
+    public TypeInfo(int pointer, String guid, String progid, int typekind,
+            int functionCount, int implementationCount, int variableCount,
+            int flags, int minorVersion, int majorVersion) {
         super(pointer);
         this.guid = guid;
+        this.progid = progid;
         this.typekind = typekind;
         this.funcsCount = functionCount;
         this.implTypesCount = implementationCount;
@@ -106,6 +108,10 @@ public class TypeInfo extends IUnknown {
 
     public int getMajorVersion() {
         return majorVersion;
+    }
+
+    public String getProgid() {
+        return progid;
     }
 
     public int getVarsCount() {

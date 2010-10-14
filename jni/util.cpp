@@ -108,8 +108,7 @@ int CheckEnv(JNIEnv *env1, JNIEnv *env2)
 
  }
 
- jobject makeTypeInfo(JNIEnv *env, ITypeInfo *typeInfo)
- {
+ jobject makeTypeInfo(JNIEnv *env, ITypeInfo *typeInfo) {
    TYPEATTR *typeAttributes = NULL;
    HRESULT hr = typeInfo->GetTypeAttr(&typeAttributes);
    if (!SUCCEEDED(hr)) {
@@ -117,10 +116,20 @@ int CheckEnv(JNIEnv *env1, JNIEnv *env2)
       return NULL;
    }
 
+   jstring progid = 0;
+   LPOLESTR buffer;
+   hr = ProgIDFromCLSID(typeAttributes->guid, &buffer);
+   if (SUCCEEDED(hr)) {
+      BSTR bstr = OLE2BSTR(buffer);
+      progid = makeString(env, bstr);
+      SysFreeString(bstr);
+      CoTaskMemFree(buffer);
+   }
+
    jclass autoClass = env->FindClass("com/jacob/com/TypeInfo");
-   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILjava/lang/String;IIIIIII)V");
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILjava/lang/String;Ljava/lang/String;IIIIIII)V");
    jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeInfo,
-           makeGUIDString(env, typeAttributes->guid),
+           makeGUIDString(env, typeAttributes->guid), progid,
            typeAttributes->typekind, typeAttributes->cFuncs,
            typeAttributes->cImplTypes, typeAttributes->cVars,
            typeAttributes->wTypeFlags, typeAttributes->wMajorVerNum,

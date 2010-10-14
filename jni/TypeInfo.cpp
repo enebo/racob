@@ -107,9 +107,45 @@ extern "C" {
       return NULL;
    }
 
+
+   int paramLength = funcDesc->cParams;
+   unsigned int nameLength = 0;
+   BSTR *names = (BSTR *) malloc(sizeof(BSTR) * paramLength + 1);
+   hr = typeInfo->GetNames(funcDesc->memid, names, paramLength + 1, &nameLength);
+   if (FAILED(hr)) {
+      typeInfo->ReleaseFuncDesc(funcDesc);
+      ThrowComFail(env, "getFuncDesc failed", hr);
+      return NULL;
+   }
+   SysFreeString(names[0]);
+
+   int defaultMask = (PARAMFLAG_FOPT|PARAMFLAG_FHASDEFAULT);
+   jclass paramClass = env->FindClass("com/jacob/com/Parameter");
+   jmethodID paramCons = env->GetMethodID(paramClass, "<init>", "(Ljava/lang/String;ZZZZIZLcom/jacob/com/Variant;)V");
+   jobjectArray parameters = env->NewObjectArray(nameLength - 1, paramClass, 0);
+   for (int i = 0; i < nameLength - 1; i++) {
+      int flags = funcDesc->lprgelemdescParam[i].paramdesc.wParamFlags;
+      int vt = funcDesc->lprgelemdescParam[i].tdesc.vt;
+      int hasDefault = (flags & defaultMask) == defaultMask;
+      jobject defaultValue = 0;
+      if (hasDefault) {
+         PARAMDESCEX *paramDescEx = funcDesc->lprgelemdescParam[i].paramdesc.pparamdescex;
+         defaultValue = createVariant(env, &paramDescEx->varDefaultValue);
+      }
+      jstring name = makeString(env, names[i+1]);
+      SysFreeString(names[i+1]);
+      jobject parameter = env->NewObject(paramClass, paramCons, name, flags & PARAMFLAG_FIN,
+              flags & PARAMFLAG_FOUT, flags & PARAMFLAG_FOPT, flags & PARAMFLAG_FRETVAL, vt,
+              hasDefault, defaultValue);
+      env->SetObjectArrayElement(parameters, i, parameter);
+      env->DeleteLocalRef(parameter);
+   }
+
    jclass autoClass = env->FindClass("com/jacob/com/FuncDesc");
-   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(I)V");
-   jobject newAuto = env->NewObject(autoClass, autoCons, funcDesc->memid);
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(III[Lcom/jacob/com/Parameter;I)V");
+   jobject newAuto = env->NewObject(autoClass, autoCons, funcDesc->memid,
+           funcDesc->invkind, funcDesc->wFuncFlags, parameters,
+           funcDesc->cParamsOpt);
 
    typeInfo->ReleaseFuncDesc(funcDesc);
 

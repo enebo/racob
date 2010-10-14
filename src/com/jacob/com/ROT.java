@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  */
 public abstract class ROT {
-    private static ThreadLocal<Boolean> initMTA = new ThreadLocal<Boolean>() {
+    private static ThreadLocal<Boolean> apartmentInitialized = new ThreadLocal<Boolean>() {
         @Override
         public Boolean initialValue() {
             return FALSE;
@@ -100,9 +100,9 @@ public abstract class ROT {
      */
     protected static void addObject(IUnknown o) {
         // If a new thread joins we need to add it to the apartment
-        if (initMTA.get() == FALSE) {
+        if (apartmentInitialized.get() == FALSE) {
             ComThread.InitSTA(false);
-            initMTA.set(TRUE);
+            apartmentInitialized.set(TRUE);
         }
 
         if (!AUTO_GC) return;
