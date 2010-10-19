@@ -26,11 +26,11 @@
 extern "C" {
 #endif
 /*
- * Class:     com_jacob_com_Dispatch
+ * Class:     org_racob_com_Dispatch
  * Method:    QueryInterface
- * Signature: (ILjava/lang/String;)Lcom/jacob/com/Dispatch;
+ * Signature: (ILjava/lang/String;)Lorg/racob/com/Dispatch;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_QueryInterface
+JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_QueryInterface
   (JNIEnv *, jobject, jint, jstring);
 
 /*
@@ -38,7 +38,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_QueryInterface
  * Method:    createInstance
  * Signature: (Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_createInstanceNative
+JNIEXPORT jint JNICALL Java_org_racob_com_Dispatch_createInstanceNative
   (JNIEnv *, jobject, jstring);
 
 /*
@@ -46,7 +46,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_createInstanceNative
  * Method:    getActiveInstance
  * Signature: (Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_getActiveInstanceNative
+JNIEXPORT jint JNICALL Java_org_racob_com_Dispatch_getActiveInstanceNative
   (JNIEnv *, jobject, jstring);
 
 /*
@@ -54,7 +54,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_getActiveInstanceNative
  * Method:    coCreateInstance
  * Signature: (Ljava/lang/String;)V
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_coCreateInstanceNative
+JNIEXPORT jint JNICALL Java_org_racob_com_Dispatch_coCreateInstanceNative
   (JNIEnv *, jobject, jstring);
 
 /*
@@ -62,7 +62,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_coCreateInstanceNative
  * Method:    getIDsOfNames
  * Signature: (ILjava/lang/Object;I[Ljava/lang/String;)[I
  */
-JNIEXPORT jintArray JNICALL Java_com_jacob_com_Dispatch_getIDsOfNames
+JNIEXPORT jintArray JNICALL Java_org_racob_com_Dispatch_getIDsOfNames
   (JNIEnv *, jclass, jint, jobject, jint, jobjectArray);
 
 /*
@@ -70,7 +70,7 @@ JNIEXPORT jintArray JNICALL Java_com_jacob_com_Dispatch_getIDsOfNames
  * Method:    invokev0
  * Signature: (ILjava/lang/String;III[LVariant;[I)LVariant;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev0
+JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev0
   (JNIEnv *, jclass, jint, jstring, jint, jint, jint);
 
 /*
@@ -78,15 +78,15 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev0
  * Method:    invokev
  * Signature: (ILjava/lang/String;III[LVariant;[I)LVariant;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
+JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
   (JNIEnv *, jclass, jint, jstring, jint, jint, jint, jobjectArray, jintArray);
 
 /*
  * Class:     Dispatch
  * Method:    getTypeInfo
- * Signature: (I)Lcom/jacob/com/TypeInfo;
+ * Signature: (I)Lorg/racob/com/TypeInfo;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_getTypeInfo
+JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_getTypeInfo
   (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus

@@ -18,27 +18,27 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <jni.h>
-/* Header for class com_jacob_com_ComThread */
+/* Header for class org_racob_com_ComThread */
 
-#ifndef _Included_com_jacob_com_ComThread
-#define _Included_com_jacob_com_ComThread
+#ifndef _Included_org_racob_com_ComThread
+#define _Included_org_racob_com_ComThread
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     com_jacob_com_ComThread
+ * Class:     org_racob_com_ComThread
  * Method:    doCoInitialize
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_ComThread_doCoInitialize
+JNIEXPORT void JNICALL Java_org_racob_com_ComThread_doCoInitialize
   (JNIEnv *, jclass, jint);
 
 /*
- * Class:     com_jacob_com_ComThread
+ * Class:     org_racob_com_ComThread
  * Method:    doCoUninitialize
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_ComThread_doCoUninitialize
+JNIEXPORT void JNICALL Java_org_racob_com_ComThread_doCoUninitialize
   (JNIEnv *, jclass);
 
 

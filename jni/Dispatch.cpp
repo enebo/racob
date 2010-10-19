@@ -37,7 +37,7 @@ extern "C"
  * in the event callback thread of a JWS client where the root class loader
  * does not have com.jacob.com.Dispatch in its classpath
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_QueryInterface
+JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_QueryInterface
   (JNIEnv *env, jobject _this, jint pointer, jstring _iid)
 {
   // get the current IDispatch
@@ -63,7 +63,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_QueryInterface
     return NULL;
   }
 
-  jclass autoClass = env->FindClass("com/jacob/com/Dispatch");
+  jclass autoClass = env->FindClass("org/racob/com/Dispatch");
   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(I)V");
   // construct a Dispatch object to return
   // I am copying the pointer to java
@@ -78,7 +78,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_QueryInterface
  * and connects to it.  does special code if the progid 
  * is of the alternate format (with ":")
  **/
-JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_createInstanceNative
+JNIEXPORT jint JNICALL Java_org_racob_com_Dispatch_createInstanceNative
   (JNIEnv *env, jobject _this, jstring _progid) {
 
   // if we used env->GetStringChars() would that let us drop the conversion?
@@ -142,7 +142,7 @@ doDisp:
  * attempts to connect to an running instance of the requested program
  * This exists solely for the factory method connectToActiveInstance.
  **/
-JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_getActiveInstanceNative
+JNIEXPORT jint JNICALL Java_org_racob_com_Dispatch_getActiveInstanceNative
   (JNIEnv *env, jobject _this, jstring _progid)
 {
   // if we used env->GetStringChars() would that let us drop the conversion?
@@ -182,7 +182,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_getActiveInstanceNative
  * starts up a new instance of the requested program (progId).  
  * This exists solely for the factory method connectToActiveInstance.
  **/
-JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_coCreateInstanceNative
+JNIEXPORT jint JNICALL Java_org_racob_com_Dispatch_coCreateInstanceNative
   (JNIEnv *env, jobject _this, jstring _progid) {
   // if we used env->GetStringChars() would that let us drop the conversion?
   const char *progid = env->GetStringUTFChars(_progid, NULL);
@@ -216,7 +216,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_Dispatch_coCreateInstanceNative
   return (jint) pIDispatch;
 }
 
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_getTypeInfo
+JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_getTypeInfo
   (JNIEnv *env, jobject _this, jint pointer) {
    IDispatch *disp = (IDispatch *) pointer;
    if (!disp) return NULL;
@@ -251,7 +251,7 @@ name2ID(IDispatch *pIDispatch, const char *prop, DISPID *dispid, long lcid)
   return hresult;
 }
 
-JNIEXPORT jintArray JNICALL Java_com_jacob_com_Dispatch_getIDsOfNames
+JNIEXPORT jintArray JNICALL Java_org_racob_com_Dispatch_getIDsOfNames
   (JNIEnv *env, jclass clazz, jint pointer, jobject disp, jint lcid, jobjectArray names)
 {
   IDispatch *pIDispatch = (IDispatch *) pointer;
@@ -387,7 +387,7 @@ static wchar_t* CreateErrorMsgFromInfo(HRESULT inResult, EXCEPINFO* ioInfo,
 
 #define SETNOPARAMS(dp) SETDISPPARAMS(dp, 0, NULL, 0, NULL)
 
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev0
+JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev0
   (JNIEnv *env, jclass clazz, jint dispPointer, jstring name, jint dispid,
         jint lcid, jint wFlags) {
   DISPPARAMS  dispparams;
@@ -474,7 +474,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev0
   return result;
 }
 
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Dispatch_invokev
+JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
   (JNIEnv *env, jclass clazz,
   jint dispPointer, jstring name, jint dispid,
   jint lcid, jint wFlags, jobjectArray vArg, jintArray uArgErr) {

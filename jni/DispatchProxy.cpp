@@ -31,7 +31,7 @@
 extern "C" 
 {
 
-JNIEXPORT int JNICALL Java_com_jacob_com_DispatchProxy_MarshalIntoStream
+JNIEXPORT int JNICALL Java_org_racob_com_DispatchProxy_MarshalIntoStream
   (JNIEnv *env, jobject _this, jint pointer)
 {
   IDispatch *pIDispatch = (IDispatch *) pointer;
@@ -47,7 +47,7 @@ JNIEXPORT int JNICALL Java_com_jacob_com_DispatchProxy_MarshalIntoStream
   return (jint) ps;
 }
 
-JNIEXPORT jobject JNICALL Java_com_jacob_com_DispatchProxy_MarshalFromStream
+JNIEXPORT jobject JNICALL Java_org_racob_com_DispatchProxy_MarshalFromStream
   (JNIEnv *env, jobject _this, jint pointer)
 {
   IStream *ps = (IStream *) pointer;
@@ -63,7 +63,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_DispatchProxy_MarshalFromStream
     ThrowComFail(env, "Could not Marshal Dispatch from IStream", hr);
     return NULL;
   }
-  jclass autoClass = env->FindClass("com/jacob/com/Dispatch");
+  jclass autoClass = env->FindClass("org/racob/com/Dispatch");
   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(I)V");
   // construct a Dispatch object to return
   // I am copying the pointer to java

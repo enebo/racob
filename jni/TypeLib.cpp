@@ -30,7 +30,7 @@
 
 extern "C" {
 
-  JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getDocumentation
+  JNIEXPORT jobject JNICALL Java_org_racob_com_TypeLib_getDocumentation
   (JNIEnv *env, jobject obj, jint pointer, jint index) {
    ITypeLib *typeLib = (ITypeLib *) pointer;
    BSTR name;
@@ -45,7 +45,7 @@ extern "C" {
       return NULL;
    }
 
-   jclass autoClass = env->FindClass("com/jacob/com/Documentation");
+   jclass autoClass = env->FindClass("org/racob/com/Documentation");
    jmethodID autoCons = env->GetMethodID(autoClass, "<init>",
            "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
    jobject newAuto = env->NewObject(autoClass, autoCons, makeString(env, name),
@@ -56,7 +56,7 @@ extern "C" {
    return newAuto;
  }
 
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
+JNIEXPORT jobject JNICALL Java_org_racob_com_TypeLib_getTypeInfo
   (JNIEnv *env, jobject obj, jint pointer, jint index) {
    ITypeLib *typelib = (ITypeLib *) pointer;
    ITypeInfo* typeInfo = 0;
@@ -69,7 +69,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
    return makeTypeInfo(env, typeInfo);
 }
 
-JNIEXPORT jint JNICALL Java_com_jacob_com_TypeLib_getTypeInfoCount
+JNIEXPORT jint JNICALL Java_org_racob_com_TypeLib_getTypeInfoCount
   (JNIEnv *env, jobject obj, jint pointer) {
    ITypeLib *typelib = (ITypeLib *) pointer;
    HRESULT hr = typelib->GetTypeInfoCount();

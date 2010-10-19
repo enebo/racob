@@ -29,17 +29,17 @@ extern "C" {
 /*
  * Class:     TypeLib
  * Method:    getDocumentation
- * Signature: (II)Lcom/jacob/com/Documentation;
+ * Signature: (II)Lorg/racob/com/Documentation;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getDocumentation
+JNIEXPORT jobject JNICALL Java_org_racob_com_TypeLib_getDocumentation
   (JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     TypeLib
  * Method:    getTypeInfo
- * Signature: (II)Lcom/jacob/com/TypeInfo;
+ * Signature: (II)Lorg/racob/com/TypeInfo;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
+JNIEXPORT jobject JNICALL Java_org_racob_com_TypeLib_getTypeInfo
   (JNIEnv *, jobject, jint, jint);
 
 /*
@@ -47,7 +47,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeLib_getTypeInfo
  * Method:    getTypeInfoCount
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_TypeLib_getTypeInfoCount
+JNIEXPORT jint JNICALL Java_org_racob_com_TypeLib_getTypeInfoCount
   (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus

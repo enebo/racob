@@ -59,15 +59,15 @@ jmethodID VARIANT_CREATEINT = 0;
 jobject TRUE_VARIANT = 0;
 jobject FALSE_VARIANT = 0;
 
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_initializeNative
+JNIEXPORT jobject JNICALL Java_org_racob_com_Variant_initializeNative
   (JNIEnv *env, jclass clazz) {
     // prepare a new return value
-    VARIANT_CLASS = (jclass) env->NewGlobalRef(env->FindClass("com/jacob/com/Variant"));
-    DISPATCH_CLASS = (jclass) env->NewGlobalRef(env->FindClass("com/jacob/com/Dispatch"));
+    VARIANT_CLASS = (jclass) env->NewGlobalRef(env->FindClass("org/racob/com/Variant"));
+    DISPATCH_CLASS = (jclass) env->NewGlobalRef(env->FindClass("org/racob/com/Dispatch"));
     BOOLEAN_CLASS = (jclass) env->NewGlobalRef(env->FindClass("java/lang/Boolean"));
     
-    jfieldID trueField = env->GetStaticFieldID(VARIANT_CLASS, "VT_TRUE", "Lcom/jacob/com/Variant;");
-    jfieldID falseField = env->GetStaticFieldID(VARIANT_CLASS, "VT_FALSE", "Lcom/jacob/com/Variant;");
+    jfieldID trueField = env->GetStaticFieldID(VARIANT_CLASS, "VT_TRUE", "Lorg/racob/com/Variant;");
+    jfieldID falseField = env->GetStaticFieldID(VARIANT_CLASS, "VT_FALSE", "Lorg/racob/com/Variant;");
     TRUE_VARIANT =  env->NewGlobalRef(env->GetStaticObjectField(VARIANT_CLASS, trueField));
     FALSE_VARIANT = env->NewGlobalRef(env->GetStaticObjectField(VARIANT_CLASS, falseField));
 
@@ -86,11 +86,11 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_initializeNative
     VARIANT_GETCURRENCYASLONG = env->GetMethodID(clazz, "getCurrencyAsLong", "()J");
     VARIANT_GETBOOLEAN = env->GetMethodID(clazz, "getBoolean", "()Z");
     VARIANT_GETBYTE = env->GetMethodID(clazz, "getByte", "()B");
-    VARIANT_GETVARIANT = env->GetMethodID(clazz, "getVariant", "()Lcom/jacob/com/Variant;");
+    VARIANT_GETVARIANT = env->GetMethodID(clazz, "getVariant", "()Lorg/racob/com/Variant;");
 
-    VARIANT_CREATEDISPATCH = env->GetStaticMethodID(clazz, "createDispatchVariant", "(I)Lcom/jacob/com/Variant;");
-    VARIANT_CREATEDATE = env->GetStaticMethodID(clazz, "createDateVariant", "(D)Lcom/jacob/com/Variant;");
-    VARIANT_CREATEINT = env->GetStaticMethodID(clazz, "createIntVariant", "(I)Lcom/jacob/com/Variant;");
+    VARIANT_CREATEDISPATCH = env->GetStaticMethodID(clazz, "createDispatchVariant", "(I)Lorg/racob/com/Variant;");
+    VARIANT_CREATEDATE = env->GetStaticMethodID(clazz, "createDateVariant", "(D)Lorg/racob/com/Variant;");
+    VARIANT_CREATEINT = env->GetStaticMethodID(clazz, "createIntVariant", "(I)Lorg/racob/com/Variant;");
 
     return NULL;
  }
@@ -150,13 +150,13 @@ jobject createBoxedShort(JNIEnv *env, jshort value) {
 jobject createCurrency(JNIEnv *env, CY cy) {
   jlong jl;
   memcpy(&jl, &cy, sizeof (jl)); // was 64. should be sizeof(x) SF 1690420
-  jclass clazz = env->FindClass("com/jacob/com/Currency");
+  jclass clazz = env->FindClass("org/racob/com/Currency");
   jmethodID constructor = env->GetMethodID(clazz, "<init>", "(J)V");
   return env->NewObject(clazz, constructor, jl);
 }
 
 jobject createDate(JNIEnv *env, jdouble date) {
-  jclass clazz = env->FindClass("com/jacob/com/DateUtilities");
+  jclass clazz = env->FindClass("org/racob/com/DateUtilities");
   jmethodID constructor = env->GetStaticMethodID(clazz, "convertWindowsTimeToDate", "(D)Ljava/util/Date;");
   return env->CallStaticObjectMethod(clazz, constructor, date);
 }
@@ -172,7 +172,7 @@ jobject createString(JNIEnv *env, BSTR value) {
 }
 
 jobject createUnknown(JNIEnv *env, IUnknown *value) {
-  jclass clazz = env->FindClass("com/jacob/com/IUnknown");
+  jclass clazz = env->FindClass("org/racob/com/IUnknown");
   jmethodID constructor = env->GetMethodID(clazz, "<init>", "(I)V");
   return env->NewObject(clazz, constructor, value);
 }
@@ -396,7 +396,7 @@ VARIANT *extractVariant(JNIEnv *env, jobject arg)
   return v;
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantNull
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantNull
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -406,7 +406,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantNull
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantShortRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantShortRef
   (JNIEnv *env, jobject _this, jshort s)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -419,7 +419,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantShortRef
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantIntRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantIntRef
   (JNIEnv *env, jobject _this, jint s)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -432,7 +432,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantIntRef
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDoubleRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantDoubleRef
   (JNIEnv *env, jobject _this, jdouble s)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -444,7 +444,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDoubleRef
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDateRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantDateRef
   (JNIEnv *env, jobject _this, jdouble s)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -458,7 +458,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDateRef
 }
 
 // SF 1065533  added unicode support
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantStringRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantStringRef
   (JNIEnv *env, jobject _this, jstring s)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -481,7 +481,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantStringRef
     env->ReleaseStringChars(s,cStr);  }
 }
 
-JNIEXPORT jshort JNICALL Java_com_jacob_com_Variant_getVariantShortRef
+JNIEXPORT jshort JNICALL Java_org_racob_com_Variant_getVariantShortRef
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -494,7 +494,7 @@ JNIEXPORT jshort JNICALL Java_com_jacob_com_Variant_getVariantShortRef
   return NULL;
 }
 
-JNIEXPORT jint JNICALL Java_com_jacob_com_Variant_getVariantIntRef
+JNIEXPORT jint JNICALL Java_org_racob_com_Variant_getVariantIntRef
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -507,7 +507,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_Variant_getVariantIntRef
   return NULL;
 }
 
-JNIEXPORT jdouble JNICALL Java_com_jacob_com_Variant_getVariantDoubleRef
+JNIEXPORT jdouble JNICALL Java_org_racob_com_Variant_getVariantDoubleRef
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -520,7 +520,7 @@ JNIEXPORT jdouble JNICALL Java_com_jacob_com_Variant_getVariantDoubleRef
   return NULL;
 }
 
-JNIEXPORT jdouble JNICALL Java_com_jacob_com_Variant_getVariantDateRef
+JNIEXPORT jdouble JNICALL Java_org_racob_com_Variant_getVariantDateRef
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -533,7 +533,7 @@ JNIEXPORT jdouble JNICALL Java_com_jacob_com_Variant_getVariantDateRef
   return NULL;
 }
 
-JNIEXPORT jstring JNICALL Java_com_jacob_com_Variant_getVariantStringRef
+JNIEXPORT jstring JNICALL Java_org_racob_com_Variant_getVariantStringRef
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -548,7 +548,7 @@ JNIEXPORT jstring JNICALL Java_com_jacob_com_Variant_getVariantStringRef
   return NULL;
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantEmpty
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantEmpty
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -561,7 +561,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantEmpty
 /**
  * Sets the variant type to dispatch with no value object
  **/
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantNothing
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantNothing
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -571,7 +571,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantNothing
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantFloatRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantFloatRef
   (JNIEnv *env, jobject _this, jfloat val)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -584,7 +584,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantFloatRef
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantCurrencyRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantCurrencyRef
   (JNIEnv *env, jobject _this, jlong cur)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -597,7 +597,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantCurrencyRef
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantLongRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantLongRef
   (JNIEnv *env, jobject _this, jlong longValue)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -610,7 +610,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantLongRef
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantErrorRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantErrorRef
   (JNIEnv *env, jobject _this, jint i)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -621,7 +621,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantErrorRef
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantBooleanRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantBooleanRef
   (JNIEnv *env, jobject _this, jboolean b)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -634,7 +634,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantBooleanRef
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantByteRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantByteRef
   (JNIEnv *env, jobject _this, jbyte b)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -647,7 +647,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantByteRef
   }
 }
 
-JNIEXPORT jfloat JNICALL Java_com_jacob_com_Variant_getVariantFloatRef
+JNIEXPORT jfloat JNICALL Java_org_racob_com_Variant_getVariantFloatRef
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -660,7 +660,7 @@ JNIEXPORT jfloat JNICALL Java_com_jacob_com_Variant_getVariantFloatRef
   return NULL;
 }
 
-JNIEXPORT jlong JNICALL Java_com_jacob_com_Variant_getVariantCurrencyRef
+JNIEXPORT jlong JNICALL Java_org_racob_com_Variant_getVariantCurrencyRef
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -677,7 +677,7 @@ JNIEXPORT jlong JNICALL Java_com_jacob_com_Variant_getVariantCurrencyRef
   return NULL;
 }
 
-JNIEXPORT jlong JNICALL Java_com_jacob_com_Variant_getVariantLongRef
+JNIEXPORT jlong JNICALL Java_org_racob_com_Variant_getVariantLongRef
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -690,7 +690,7 @@ JNIEXPORT jlong JNICALL Java_com_jacob_com_Variant_getVariantLongRef
   return NULL;
 }
 
-JNIEXPORT jint JNICALL Java_com_jacob_com_Variant_getVariantErrorRef
+JNIEXPORT jint JNICALL Java_org_racob_com_Variant_getVariantErrorRef
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -703,7 +703,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_Variant_getVariantErrorRef
   return NULL;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_jacob_com_Variant_getVariantBooleanRef
+JNIEXPORT jboolean JNICALL Java_org_racob_com_Variant_getVariantBooleanRef
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -717,7 +717,7 @@ JNIEXPORT jboolean JNICALL Java_com_jacob_com_Variant_getVariantBooleanRef
 }
 
 
-JNIEXPORT jbyte JNICALL Java_com_jacob_com_Variant_getVariantByteRef
+JNIEXPORT jbyte JNICALL Java_org_racob_com_Variant_getVariantByteRef
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -733,7 +733,7 @@ JNIEXPORT jbyte JNICALL Java_com_jacob_com_Variant_getVariantByteRef
 /**
  * Converts the data to a Safe Array object and then returns it as a Dispatch
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_toVariantSafeArray
+JNIEXPORT jobject JNICALL Java_org_racob_com_Variant_toVariantSafeArray
   (JNIEnv *env, jobject _this, jboolean deepCopy)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -744,7 +744,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_toVariantSafeArray
       return NULL;
     }
     // prepare a new sa obj
-    jclass saClass = env->FindClass("com/jacob/com/SafeArray");
+    jclass saClass = env->FindClass("org/racob/com/SafeArray");
     jmethodID saCons = env->GetMethodID(saClass, "<init>", "()V");
     // construct an SA to return
     jobject newSA = env->NewObject(saClass, saCons);
@@ -755,7 +755,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_toVariantSafeArray
   return NULL;
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantSafeArrayRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantSafeArrayRef
   (JNIEnv *env, jobject _this, jobject sa)
 {
   SAFEARRAY *psa = extractSA(env, sa);
@@ -778,7 +778,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantSafeArrayRef
   return;
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantSafeArray
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantSafeArray
   (JNIEnv *env, jobject _this, jobject sa)
 {
   SAFEARRAY *psa = extractSA(env, sa);
@@ -802,7 +802,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantSafeArray
 /**
  * sets the type to VT_ERROR and the error message to DISP_E_PARAMNOTFOIUND
  * */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantNoParam
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantNoParam
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -817,7 +817,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantNoParam
  * the variant type is 
  * 	VT_EMPTY, VT_NULL, VT_ERROR or VT_DISPATCH with no dispatch object
  * */
-JNIEXPORT jboolean JNICALL Java_com_jacob_com_Variant_isVariantConsideredNull
+JNIEXPORT jboolean JNICALL Java_org_racob_com_Variant_isVariantConsideredNull
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractVariant(env, _this);
@@ -850,7 +850,7 @@ JNIEXPORT jboolean JNICALL Java_com_jacob_com_Variant_isVariantConsideredNull
   * puts a VT_DECIMAL by reference
   * Added 1.13M4
   * */
- JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDecRef
+ JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantDecRef
     (JNIEnv *env, jobject _this, jint signum, jbyte scale, jint lo, jint mid, jint hi)
   {
     VARIANT *v = extractVariant(env, _this);
@@ -876,7 +876,7 @@ JNIEXPORT jboolean JNICALL Java_com_jacob_com_Variant_isVariantConsideredNull
   * puts a VT_DECIMAL
   * Added 1.13M4
   * */
- JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDec
+ JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantDec
     (JNIEnv *env, jobject _this, jint signum, jbyte scale, jint lo, jint mid, jint hi)
   {
     VARIANT *v = extractVariant(env, _this);
@@ -968,7 +968,7 @@ jobject extractDecimal
   * gets a VT_DECIMAL by ref as a BigDecimal
   * Added 1.13M4
   * */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_getVariantDecRef
+JNIEXPORT jobject JNICALL Java_org_racob_com_Variant_getVariantDecRef
     (JNIEnv *env, jobject _this)
   {
     VARIANT *v = extractVariant(env, _this);
@@ -985,7 +985,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_getVariantDecRef
   * gets a VT_DECIMAL as a BigDecimal
   * Added 1.13M4
   * */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_getVariantDec
+JNIEXPORT jobject JNICALL Java_org_racob_com_Variant_getVariantDec
     (JNIEnv *env, jobject _this)
   {
     VARIANT *v = extractVariant(env, _this); 

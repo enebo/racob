@@ -147,7 +147,7 @@ STDMETHODIMP EventProxy::Invoke(DISPID dispID, REFIID riid,
 
     // find the class of the InvocationHandler
     jclass javaSinkClass = env->GetObjectClass(javaSinkObj); HANDLE_EXCEPTION;
-    jmethodID invokeMethod = env->GetMethodID(javaSinkClass, "invoke", "(Ljava/lang/String;[Lcom/jacob/com/Variant;)Lcom/jacob/com/Variant;"); HANDLE_EXCEPTION;
+    jmethodID invokeMethod = env->GetMethodID(javaSinkClass, "invoke", "(Ljava/lang/String;[Lorg/racob/com/Variant;)Lorg/racob/com/Variant;"); HANDLE_EXCEPTION;
     jstring eventMethodNameAsString = env->NewStringUTF(eventMethodName);
 
     // create the variant parameter array

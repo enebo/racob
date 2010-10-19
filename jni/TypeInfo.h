@@ -29,33 +29,41 @@ extern "C" {
 /*
  * Class:     TypeInfo
  * Method:    getContainingTypeLibNative
- * Signature: (I)Lcom/jacob/com/TypeLib;
+ * Signature: (I)Lorg/racob/com/TypeLib;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getContainingTypeLib
+JNIEXPORT jobject JNICALL Java_org_racob_com_TypeInfo_getContainingTypeLib
   (JNIEnv *, jobject, jint);
 
 /*
  * Class:     TypeInfo
  * Method:    getDocumentationNative
- * Signature: (II)Lcom/jacob/com/Documentation;
+ * Signature: (II)Lorg/racob/com/Documentation;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getDocumentation
+JNIEXPORT jobject JNICALL Java_org_racob_com_TypeInfo_getDocumentation
   (JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     TypeInfo
  * Method:    getFuncDesc
- * Signature: (II)Lcom/jacob/com/FuncDesc;
+ * Signature: (II)Lorg/racob/com/FuncDesc;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getFuncDesc
+JNIEXPORT jobject JNICALL Java_org_racob_com_TypeInfo_getFuncDesc
   (JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     TypeInfo
  * Method:    getNames
- * Signature: (II)Lcom/jacob/com/VarDesc;
+ * Signature: (II)Lorg/racob/com/VarDesc;
  */
-JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_TypeInfo_getNames
+JNIEXPORT jobjectArray JNICALL Java_org_racob_com_TypeInfo_getNames
+  (JNIEnv *, jobject, jint, jint);
+
+/*
+ * Class:     TypeInfo
+ * Method:    getImplTypeFlags
+ * Signature: (II)I
+ */
+JNIEXPORT jint JNICALL Java_org_racob_com_TypeInfo_getImplTypeFlags
   (JNIEnv *, jobject, jint, jint);
 
 /*
@@ -63,23 +71,23 @@ JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_TypeInfo_getNames
  * Method:    getRefTypeOfImplType
  * Signature: (II)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_TypeInfo_getRefTypeOfImplType
+JNIEXPORT jint JNICALL Java_org_racob_com_TypeInfo_getRefTypeOfImplType
   (JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     TypeInfo
  * Method:    getRefTypeInfo
- * Signature: (II)Lcom/jacob/com/TypeInfo;
+ * Signature: (II)Lorg/racob/com/TypeInfo;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
+JNIEXPORT jobject JNICALL Java_org_racob_com_TypeInfo_getRefTypeInfo
   (JNIEnv *, jobject, jint, jint);
 
 /*
  * Class:     TypeInfo
  * Method:    getVarDesc
- * Signature: (II)Lcom/jacob/com/VarDesc;
+ * Signature: (II)Lorg/racob/com/VarDesc;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getVarDesc
+JNIEXPORT jobject JNICALL Java_org_racob_com_TypeInfo_getVarDesc
   (JNIEnv *, jobject, jint, jint);
 
 #ifdef __cplusplus

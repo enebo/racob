@@ -39,11 +39,11 @@ BOOL getClassInfoFromProgId(LPOLESTR bsProgId,LPTYPEINFO *pClassInfo);
 BOOL MapEventIIDs(IID*, CComBSTR **, DISPID **, int *, LPOLESTR , LPTYPEINFO );
 
 /*
- * Class:     com_jacob_com_DispatchEvents
+ * Class:     org_racob_com_DispatchEvents
  * Method:    init3
  * Signature: (ILjava/lang/Object;Ljava/lang/String;Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_DispatchEvents_init3
+JNIEXPORT jint JNICALL Java_org_racob_com_DispatchEvents_init3
    (JNIEnv *env, jobject _this, jint pointer, jobject sink, jstring _progid, jstring _typelib) {
 	USES_CONVERSION;
 
@@ -316,7 +316,7 @@ BOOL GetEventIIDForTypeLib(BSTR typeLib, IID* piid,
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_DispatchEvents_messageLoop
+JNIEXPORT void JNICALL Java_org_racob_com_DispatchEvents_messageLoop
   (JNIEnv *env, jclass clazz) {
      MSG msg;
     while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {

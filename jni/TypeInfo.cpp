@@ -33,7 +33,7 @@ extern "C" {
  // Total number of names to return from GetNames
 #define MAX_NAMES 50
 
- JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getContainingTypeLib
+ JNIEXPORT jobject JNICALL Java_org_racob_com_TypeInfo_getContainingTypeLib
   (JNIEnv *env, jobject obj, jint pointer) {
    ITypeInfo *typeInfo = (ITypeInfo *) pointer;
    ITypeLib* typeLib = NULL;
@@ -58,9 +58,9 @@ extern "C" {
  }
 
  jstring guid = makeGUIDString(env, libAttr->guid);
- jclass autoClass = env->FindClass("com/jacob/com/TypeLib");
- jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILjava/lang/String;IIII)V");
- jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeLib,
+ jclass autoClass = env->FindClass("org/racob/com/TypeLib");
+ jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(IILjava/lang/String;IIII)V");
+ jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeLib, index,
          guid, typeCount, libAttr->wLibFlags, libAttr->wMajorVerNum,
          libAttr->wMinorVerNum);
 
@@ -69,7 +69,7 @@ extern "C" {
  return newAuto;
  }
 
-  JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getDocumentation
+  JNIEXPORT jobject JNICALL Java_org_racob_com_TypeInfo_getDocumentation
   (JNIEnv *env, jobject obj, jint pointer, jint index) {
    ITypeInfo *typeInfo = (ITypeInfo *) pointer;
    BSTR name;
@@ -84,7 +84,7 @@ extern "C" {
       return NULL;
    }
 
-   jclass autoClass = env->FindClass("com/jacob/com/Documentation");
+   jclass autoClass = env->FindClass("org/racob/com/Documentation");
    jmethodID autoCons = env->GetMethodID(autoClass, "<init>",
            "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
    jobject newAuto = env->NewObject(autoClass, autoCons, makeString(env, name),
@@ -95,7 +95,29 @@ extern "C" {
    return newAuto;
  }
 
- JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getFuncDesc
+ jobject createParameter(JNIEnv *env, jclass paramClass, jmethodID paramCons,
+         ELEMDESC elemDesc, BSTR theName) {
+   int defaultMask = (PARAMFLAG_FOPT|PARAMFLAG_FHASDEFAULT);
+   int flags = elemDesc.paramdesc.wParamFlags;
+   int vt = elemDesc.tdesc.vt;
+   int hasDefault = (flags & defaultMask) == defaultMask;
+   jobject defaultValue = 0;
+   if (hasDefault) {
+     PARAMDESCEX *paramDescEx = elemDesc.paramdesc.pparamdescex;
+     defaultValue = createVariant(env, &paramDescEx->varDefaultValue);
+   }
+   jstring name = 0;
+   if (theName != NULL) {
+     name = makeString(env, theName);
+     SysFreeString(theName);
+   }
+
+   return env->NewObject(paramClass, paramCons, name, flags & PARAMFLAG_FIN,
+           flags & PARAMFLAG_FOUT, flags & PARAMFLAG_FOPT, flags & PARAMFLAG_FRETVAL,
+           vt, hasDefault, defaultValue);
+ }
+
+ JNIEXPORT jobject JNICALL Java_org_racob_com_TypeInfo_getFuncDesc
   (JNIEnv *env, jobject obj, jint pointer, jint index) {
    ITypeInfo *typeInfo = (ITypeInfo *) pointer;
    if (!typeInfo) return NULL;
@@ -119,40 +141,29 @@ extern "C" {
    }
    SysFreeString(names[0]);
 
-   int defaultMask = (PARAMFLAG_FOPT|PARAMFLAG_FHASDEFAULT);
-   jclass paramClass = env->FindClass("com/jacob/com/Parameter");
-   jmethodID paramCons = env->GetMethodID(paramClass, "<init>", "(Ljava/lang/String;ZZZZIZLcom/jacob/com/Variant;)V");
+   jclass paramClass = env->FindClass("org/racob/com/Parameter");
+   jmethodID paramCons = env->GetMethodID(paramClass, "<init>", "(Ljava/lang/String;ZZZZIZLorg/racob/com/Variant;)V");
    jobjectArray parameters = env->NewObjectArray(nameLength - 1, paramClass, 0);
    for (int i = 0; i < nameLength - 1; i++) {
-      int flags = funcDesc->lprgelemdescParam[i].paramdesc.wParamFlags;
-      int vt = funcDesc->lprgelemdescParam[i].tdesc.vt;
-      int hasDefault = (flags & defaultMask) == defaultMask;
-      jobject defaultValue = 0;
-      if (hasDefault) {
-         PARAMDESCEX *paramDescEx = funcDesc->lprgelemdescParam[i].paramdesc.pparamdescex;
-         defaultValue = createVariant(env, &paramDescEx->varDefaultValue);
-      }
-      jstring name = makeString(env, names[i+1]);
-      SysFreeString(names[i+1]);
-      jobject parameter = env->NewObject(paramClass, paramCons, name, flags & PARAMFLAG_FIN,
-              flags & PARAMFLAG_FOUT, flags & PARAMFLAG_FOPT, flags & PARAMFLAG_FRETVAL, vt,
-              hasDefault, defaultValue);
+      jobject parameter = createParameter(env, paramClass, paramCons,
+              funcDesc->lprgelemdescParam[i], names[i+1]);
       env->SetObjectArrayElement(parameters, i, parameter);
       env->DeleteLocalRef(parameter);
    }
 
-   jclass autoClass = env->FindClass("com/jacob/com/FuncDesc");
-   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(III[Lcom/jacob/com/Parameter;I)V");
+   jobject returnValue = createParameter(env, paramClass, paramCons, funcDesc->elemdescFunc, NULL);
+   jclass autoClass = env->FindClass("org/racob/com/FuncDesc");
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(IIII[Lorg/racob/com/Parameter;Lorg/racob/com/Parameter;II)V");
    jobject newAuto = env->NewObject(autoClass, autoCons, funcDesc->memid,
-           funcDesc->invkind, funcDesc->wFuncFlags, parameters,
-           funcDesc->cParamsOpt);
+           index, funcDesc->invkind, funcDesc->wFuncFlags, parameters,
+           returnValue, funcDesc->cParamsOpt, funcDesc->oVft);
 
    typeInfo->ReleaseFuncDesc(funcDesc);
 
    return newAuto;
  }
 
-JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_TypeInfo_getNames
+JNIEXPORT jobjectArray JNICALL Java_org_racob_com_TypeInfo_getNames
   (JNIEnv *env, jobject obj, jint pointer, jint memid) {
    ITypeInfo *typeInfo = (ITypeInfo *) pointer;
    BSTR names[MAX_NAMES];
@@ -182,7 +193,20 @@ JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_TypeInfo_getNames
    return array;
 }
 
-JNIEXPORT jint JNICALL Java_com_jacob_com_TypeInfo_getRefTypeOfImplType
+JNIEXPORT jint JNICALL Java_org_racob_com_TypeInfo_getImplTypeFlags
+  (JNIEnv *env, jobject obj, jint pointer, jint index) {
+   ITypeInfo *typeInfo = (ITypeInfo *) pointer;
+  int flags;
+  HRESULT hr = typeInfo->GetImplTypeFlags(index, &flags);
+  if (!SUCCEEDED(hr)) {
+     ThrowComFail(env, "getImplTypeFlags failed", hr);
+     return NULL;
+  }
+
+  return (jint) flags;
+}
+
+JNIEXPORT jint JNICALL Java_org_racob_com_TypeInfo_getRefTypeOfImplType
   (JNIEnv *env, jobject obj, jint pointer, jint index) {
   ITypeInfo *typeInfo = (ITypeInfo *) pointer;
   HREFTYPE href;
@@ -195,7 +219,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_TypeInfo_getRefTypeOfImplType
   return (jint) href;
 }
 
-JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
+JNIEXPORT jobject JNICALL Java_org_racob_com_TypeInfo_getRefTypeInfo
   (JNIEnv *env, jobject obj, jint pointer, jint reftype) {
    ITypeInfo *typeInfo = (ITypeInfo *) pointer;
    ITypeInfo *newTypeInfo = NULL;
@@ -208,7 +232,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
    return makeTypeInfo(env, newTypeInfo);
 }
 
- JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getVarDesc
+ JNIEXPORT jobject JNICALL Java_org_racob_com_TypeInfo_getVarDesc
   (JNIEnv *env, jobject obj, jint pointer, jint index)
  {
    ITypeInfo *typeInfo = (ITypeInfo *) pointer;
@@ -221,8 +245,8 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_TypeInfo_getRefTypeInfo
 
    // We have a constant so let's save the variant
    jobject cValue = varDesc->varkind == VAR_CONST ? createVariant(env, varDesc->lpvarValue) : NULL;
-   jclass autoClass = env->FindClass("com/jacob/com/VarDesc");
-   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILcom/jacob/com/Variant;II)V");
+   jclass autoClass = env->FindClass("org/racob/com/VarDesc");
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILorg/racob/com/Variant;II)V");
    jobject newAuto = env->NewObject(autoClass, autoCons, varDesc->memid,
            cValue, varDesc->varkind, varDesc->wVarFlags);
 

@@ -31,7 +31,7 @@ extern "C" {
  * Method:    toEnumVariant
  * Signature: (I)I;
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_IUnknown_toEnumVariant
+JNIEXPORT jint JNICALL Java_org_racob_com_IUnknown_toEnumVariant
   (JNIEnv *, jobject, jint);
 
 /*
@@ -39,7 +39,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_IUnknown_toEnumVariant
  * Method:    release
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_IUnknown_release
+JNIEXPORT void JNICALL Java_org_racob_com_IUnknown_release
   (JNIEnv *, jclass, jint);
 
 #ifdef __cplusplus

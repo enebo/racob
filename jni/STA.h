@@ -20,25 +20,25 @@
 #include <jni.h>
 /* Header for class STA */
 
-#ifndef _Included_com_jacob_com_STA
-#define _Included_com_jacob_com_STA
+#ifndef _Included_org_racob_com_STA
+#define _Included_org_racob_com_STA
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     com_jacob_com_STA
+ * Class:     org_racob_com_STA
  * Method:    doMessagePump
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_STA_doMessagePump
+JNIEXPORT void JNICALL Java_org_racob_com_STA_doMessagePump
   (JNIEnv *, jobject);
 
 /*
- * Class:     com_jacob_com_STA
+ * Class:     org_racob_com_STA
  * Method:    quitMessagePump
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_STA_quitMessagePump
+JNIEXPORT void JNICALL Java_org_racob_com_STA_quitMessagePump
   (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus

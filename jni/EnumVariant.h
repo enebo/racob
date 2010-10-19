@@ -26,35 +26,35 @@
 extern "C" {
 #endif
 /*
- * Class:     com_jacob_com_EnumVariant
+ * Class:     org_racob_com_EnumVariant
  * Method:    NextOne
- * Signature: (I)Lcom/jacob/Variant;
+ * Signature: (I)Lorg/racob/Variant;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_EnumVariant_NextOne
+JNIEXPORT jobject JNICALL Java_org_racob_com_EnumVariant_NextOne
   (JNIEnv *, jobject, jint);
 
 /*
- * Class:     com_jacob_com_EnumVariant
+ * Class:     org_racob_com_EnumVariant
  * Method:    Next
- * Signature: (I[Lcom/jacob/Variant;I)I
+ * Signature: (I[Lorg/racob/Variant;I)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_EnumVariant_Next
+JNIEXPORT jint JNICALL Java_org_racob_com_EnumVariant_Next
   (JNIEnv *, jobject, jint, jobjectArray, jint);
 
 /*
- * Class:     com_jacob_com_EnumVariant
+ * Class:     org_racob_com_EnumVariant
  * Method:    Reset
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_EnumVariant_Reset
+JNIEXPORT void JNICALL Java_org_racob_com_EnumVariant_Reset
   (JNIEnv *, jobject, jint);
 
 /*
- * Class:     com_jacob_com_EnumVariant
+ * Class:     org_racob_com_EnumVariant
  * Method:    Skip
  * Signature: (II)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_EnumVariant_Skip
+JNIEXPORT void JNICALL Java_org_racob_com_EnumVariant_Skip
   (JNIEnv *, jobject, jint, jint);
 
 #ifdef __cplusplus

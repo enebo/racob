@@ -31,7 +31,7 @@
 extern "C" 
 {
 
-JNIEXPORT void JNICALL Java_com_jacob_com_STA_doMessagePump
+JNIEXPORT void JNICALL Java_org_racob_com_STA_doMessagePump
   (JNIEnv *env, jobject obj) {
   // store the current thread id so we can kill it
   jclass argClass = env->GetObjectClass(obj);
@@ -49,7 +49,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_STA_doMessagePump
   }
 }
 
-JNIEXPORT void JNICALL Java_com_jacob_com_STA_quitMessagePump
+JNIEXPORT void JNICALL Java_org_racob_com_STA_quitMessagePump
   (JNIEnv *env, jobject obj, jint threadID) {
   PostThreadMessage((DWORD)threadID, WM_QUIT, 0, 0);
 }

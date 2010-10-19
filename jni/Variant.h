@@ -18,10 +18,10 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <jni.h>
-/* Header for class com_jacob_com_Variant */
+/* Header for class org_racob_com_Variant */
 
-#ifndef _Included_com_jacob_com_Variant
-#define _Included_com_jacob_com_Variant
+#ifndef _Included_org_racob_com_Variant
+#define _Included_org_racob_com_Variant
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -31,168 +31,168 @@ extern "C" {
  * Method:    initializeNative
  * Signature: ()V
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_initializeNative
+JNIEXPORT jobject JNICALL Java_org_racob_com_Variant_initializeNative
   (JNIEnv *, jclass);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantNull
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantNull
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantNull
   (JNIEnv *, jobject);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantShortRef
  * Signature: (S)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantShortRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantShortRef
   (JNIEnv *, jobject, jshort);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantIntRef
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantIntRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantIntRef
   (JNIEnv *, jobject, jint);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantDoubleRef
  * Signature: (D)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDoubleRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantDoubleRef
   (JNIEnv *, jobject, jdouble);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantDateRef
  * Signature: (D)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDateRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantDateRef
   (JNIEnv *, jobject, jdouble);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantStringRef
  * Signature: (Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantStringRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantStringRef
   (JNIEnv *, jobject, jstring);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantEmpty
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantEmpty
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantEmpty
   (JNIEnv *, jobject);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantNothing
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantNothing
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantNothing
   (JNIEnv *, jobject);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantCurrencyRef
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantCurrencyRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantCurrencyRef
   (JNIEnv *, jobject, jlong);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantLongRef
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantLongRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantLongRef
   (JNIEnv *, jobject, jlong);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantErrorRef
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantErrorRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantErrorRef
   (JNIEnv *, jobject, jint);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantBooleanRef
  * Signature: (Z)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantBooleanRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantBooleanRef
   (JNIEnv *, jobject, jboolean);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putObjectRef
  * Signature: (Ljava/lang/Object;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putObjectRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putObjectRef
   (JNIEnv *, jobject, jobject);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantByteRef
  * Signature: (B)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantByteRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantByteRef
   (JNIEnv *, jobject, jbyte);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    toVariantSafeArray
- * Signature: (Z)Lcom/jacob/com/SafeArray;
+ * Signature: (Z)Lorg/racob/com/SafeArray;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Variant_toVariantSafeArray
+JNIEXPORT jobject JNICALL Java_org_racob_com_Variant_toVariantSafeArray
   (JNIEnv *, jobject, jboolean);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantSafeArrayRef
  * Signature: (LSafeArray;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantSafeArrayRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantSafeArrayRef
   (JNIEnv *, jobject, jobject);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantSafeArray
  * Signature: (LSafeArray;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantSafeArray
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantSafeArray
   (JNIEnv *, jobject, jobject);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantNoParam
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantNoParam
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantNoParam
   (JNIEnv *, jobject);
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantDecRef
  * Signature: (Ljava.math.BigDecimal;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDecRef
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantDecRef
   (JNIEnv *env, jobject _this, jint signum, jbyte scale, jint lo, jint mid, jint hi);
 
 
 /*
- * Class:     com_jacob_com_Variant
+ * Class:     org_racob_com_Variant
  * Method:    putVariantDec
  * Signature: (Ljava.math.BigDecimal;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_Variant_putVariantDec
+JNIEXPORT void JNICALL Java_org_racob_com_Variant_putVariantDec
   (JNIEnv *env, jobject _this, jint signum, jbyte scale, jint lo, jint mid, jint hi);
 
 #ifdef __cplusplus

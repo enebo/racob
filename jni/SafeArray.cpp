@@ -131,7 +131,7 @@ void setSA(JNIEnv *env, jobject arg, SAFEARRAY *sa, int copy)
  * Method:    init
  * Signature: (I[I[I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_init
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_init
   (JNIEnv *env, jobject _this, jint vt, jintArray lb, jintArray cel)
 {
   jint *lbounds = env->GetIntArrayElements(lb, NULL);
@@ -155,7 +155,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_init
  * Method:    clone
  * Signature: ()Ljava/lang/Object;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_SafeArray_clone
+JNIEXPORT jobject JNICALL Java_org_racob_com_SafeArray_clone
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -178,7 +178,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_SafeArray_clone
  * Method:    destroy
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_destroy
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_destroy
   (JNIEnv *env, jobject _this)
 {
   VARIANT *v = extractWrapper(env, _this);
@@ -199,7 +199,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_destroy
  * Method:    getvt
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getvt
+JNIEXPORT jint JNICALL Java_org_racob_com_SafeArray_getvt
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -216,7 +216,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getvt
  * Method:    reinit
  * Signature: (LSafeArray;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_reinit
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_reinit
   (JNIEnv *env, jobject _this, jobject sa)
 {
   // what to do here?
@@ -227,7 +227,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_reinit
  * Method:    reinterpretType
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_reinterpretType
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_reinterpretType
   (JNIEnv *env, jobject _this, jint vt)
 {
 }
@@ -237,7 +237,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_reinterpretType
  * Method:    getLBound
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getLBound__
+JNIEXPORT jint JNICALL Java_org_racob_com_SafeArray_getLBound__
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -254,7 +254,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getLBound__
  * Method:    getLBound
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getLBound__I
+JNIEXPORT jint JNICALL Java_org_racob_com_SafeArray_getLBound__I
   (JNIEnv *env, jobject _this, jint dim)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -271,7 +271,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getLBound__I
  * Method:    getUBound
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getUBound__
+JNIEXPORT jint JNICALL Java_org_racob_com_SafeArray_getUBound__
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -288,7 +288,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getUBound__
  * Method:    getUBound
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getUBound__I
+JNIEXPORT jint JNICALL Java_org_racob_com_SafeArray_getUBound__I
   (JNIEnv *env, jobject _this, jint dim)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -305,7 +305,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getUBound__I
  * Method:    getNumDim
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getNumDim
+JNIEXPORT jint JNICALL Java_org_racob_com_SafeArray_getNumDim
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -320,7 +320,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getNumDim
  * Method:    getFeatures
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getFeatures
+JNIEXPORT jint JNICALL Java_org_racob_com_SafeArray_getFeatures
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -338,7 +338,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getFeatures
  * Method:    getElemSize
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getElemSize
+JNIEXPORT jint JNICALL Java_org_racob_com_SafeArray_getElemSize
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -367,7 +367,7 @@ static int numElements(SAFEARRAY *psa)
  * Method:    fromCharArray
  * Signature: ([C)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromCharArray
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_fromCharArray
   (JNIEnv *env, jobject _this, jcharArray a)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -410,7 +410,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromCharArray
  * Method:    fromIntArray
  * Signature: ([I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromIntArray
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_fromIntArray
   (JNIEnv *env, jobject _this, jintArray a)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -453,7 +453,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromIntArray
  * Method:    fromLongArray
  * Signature: ([L)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromLongArray
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_fromLongArray
   (JNIEnv *env, jobject _this, jlongArray a)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -497,7 +497,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromLongArray
  * Method:    fromShortArray
  * Signature: ([S)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromShortArray
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_fromShortArray
   (JNIEnv *env, jobject _this, jshortArray a)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -540,7 +540,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromShortArray
  * Method:    fromDoubleArray
  * Signature: ([D)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromDoubleArray
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_fromDoubleArray
   (JNIEnv *env, jobject _this, jdoubleArray a)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -583,7 +583,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromDoubleArray
  * Method:    fromStringArray
  * Signature: ([Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromStringArray
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_fromStringArray
   (JNIEnv *env, jobject _this, jobjectArray a)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -640,7 +640,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromStringArray
  * Method:    fromByteArray
  * Signature: ([B)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromByteArray
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_fromByteArray
   (JNIEnv *env, jobject _this, jbyteArray a)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -683,7 +683,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromByteArray
  * Method:    fromFloatArray
  * Signature: ([F)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromFloatArray
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_fromFloatArray
   (JNIEnv *env, jobject _this, jfloatArray a)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -726,7 +726,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromFloatArray
  * Method:    fromBooleanArray
  * Signature: ([Z)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromBooleanArray
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_fromBooleanArray
   (JNIEnv *env, jobject _this, jbooleanArray a)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -772,7 +772,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromBooleanArray
  * Method:    fromVariantArray
  * Signature: ([LVariant;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromVariantArray
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_fromVariantArray
   (JNIEnv *env, jobject _this, jobjectArray a)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -805,7 +805,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_fromVariantArray
  * Method:    toCharArray
  * Signature: ()[C
  */
-JNIEXPORT jcharArray JNICALL Java_com_jacob_com_SafeArray_toCharArray
+JNIEXPORT jcharArray JNICALL Java_org_racob_com_SafeArray_toCharArray
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -849,7 +849,7 @@ JNIEXPORT jcharArray JNICALL Java_com_jacob_com_SafeArray_toCharArray
  * Method:    toIntArray
  * Signature: ()[I
  */
-JNIEXPORT jintArray JNICALL Java_com_jacob_com_SafeArray_toIntArray
+JNIEXPORT jintArray JNICALL Java_org_racob_com_SafeArray_toIntArray
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -894,7 +894,7 @@ JNIEXPORT jintArray JNICALL Java_com_jacob_com_SafeArray_toIntArray
  * Method:    toLongArray
  * Signature: ()[L
  */
-JNIEXPORT jlongArray JNICALL Java_com_jacob_com_SafeArray_toLongArray
+JNIEXPORT jlongArray JNICALL Java_org_racob_com_SafeArray_toLongArray
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -939,7 +939,7 @@ JNIEXPORT jlongArray JNICALL Java_com_jacob_com_SafeArray_toLongArray
  * Method:    toShortArray
  * Signature: ()[S
  */
-JNIEXPORT jshortArray JNICALL Java_com_jacob_com_SafeArray_toShortArray
+JNIEXPORT jshortArray JNICALL Java_org_racob_com_SafeArray_toShortArray
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -983,7 +983,7 @@ JNIEXPORT jshortArray JNICALL Java_com_jacob_com_SafeArray_toShortArray
  * Method:    toDoubleArray
  * Signature: ()[D
  */
-JNIEXPORT jdoubleArray JNICALL Java_com_jacob_com_SafeArray_toDoubleArray
+JNIEXPORT jdoubleArray JNICALL Java_org_racob_com_SafeArray_toDoubleArray
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -1027,7 +1027,7 @@ JNIEXPORT jdoubleArray JNICALL Java_com_jacob_com_SafeArray_toDoubleArray
  * Method:    toStringArray
  * Signature: ()[Ljava/lang/String;
  */
-JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_SafeArray_toStringArray
+JNIEXPORT jobjectArray JNICALL Java_org_racob_com_SafeArray_toStringArray
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -1079,7 +1079,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_SafeArray_toStringArray
  * Method:    toByteArray
  * Signature: ()[B
  */
-JNIEXPORT jbyteArray JNICALL Java_com_jacob_com_SafeArray_toByteArray
+JNIEXPORT jbyteArray JNICALL Java_org_racob_com_SafeArray_toByteArray
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -1123,7 +1123,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_jacob_com_SafeArray_toByteArray
  * Method:    toFloatArray
  * Signature: ()[F
  */
-JNIEXPORT jfloatArray JNICALL Java_com_jacob_com_SafeArray_toFloatArray
+JNIEXPORT jfloatArray JNICALL Java_org_racob_com_SafeArray_toFloatArray
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -1167,7 +1167,7 @@ JNIEXPORT jfloatArray JNICALL Java_com_jacob_com_SafeArray_toFloatArray
  * Method:    toBooleanArray
  * Signature: ()[Z
  */
-JNIEXPORT jbooleanArray JNICALL Java_com_jacob_com_SafeArray_toBooleanArray
+JNIEXPORT jbooleanArray JNICALL Java_org_racob_com_SafeArray_toBooleanArray
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -1215,7 +1215,7 @@ JNIEXPORT jbooleanArray JNICALL Java_com_jacob_com_SafeArray_toBooleanArray
  * Method:    toVariantArray
  * Signature: ()[LVariant;
  */
-JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_SafeArray_toVariantArray
+JNIEXPORT jobjectArray JNICALL Java_org_racob_com_SafeArray_toVariantArray
   (JNIEnv *env, jobject _this)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -1227,7 +1227,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_SafeArray_toVariantArray
   SafeArrayGetLBound(sa, 1, &lb);
   SafeArrayGetUBound(sa, 1, &ub);
   int num = ub - lb + 1;
-  jclass vClass = env->FindClass("com/jacob/com/Variant");
+  jclass vClass = env->FindClass("org/racob/com/Variant");
   // create an array of Variant's
   jobjectArray varr = env->NewObjectArray(num, vClass, 0);
   // fill them in
@@ -1424,7 +1424,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_jacob_com_SafeArray_toVariantArray
  * Method:    getChar
  * Signature: (I)C
  */
-JNIEXPORT jchar JNICALL Java_com_jacob_com_SafeArray_getChar__I
+JNIEXPORT jchar JNICALL Java_org_racob_com_SafeArray_getChar__I
   (JNIEnv *env, jobject _this, jint idx)
 {
   GET1DCODE(VT_UI2, V_UI2, jchar)
@@ -1435,7 +1435,7 @@ JNIEXPORT jchar JNICALL Java_com_jacob_com_SafeArray_getChar__I
  * Method:    getChar
  * Signature: (II)C
  */
-JNIEXPORT jchar JNICALL Java_com_jacob_com_SafeArray_getChar__II
+JNIEXPORT jchar JNICALL Java_org_racob_com_SafeArray_getChar__II
   (JNIEnv *env, jobject _this, jint i, jint j)
 {
   GET2DCODE(VT_UI2, V_UI2, jchar)
@@ -1447,7 +1447,7 @@ JNIEXPORT jchar JNICALL Java_com_jacob_com_SafeArray_getChar__II
  * Method:    setChar
  * Signature: (IC)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setChar__IC
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setChar__IC
   (JNIEnv *env, jobject _this, jint idx, jchar c)
 {
   SET1DCODE(VT_UI2, V_UI2);
@@ -1458,7 +1458,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setChar__IC
  * Method:    setChar
  * Signature: (IIC)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setChar__IIC
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setChar__IIC
   (JNIEnv *env, jobject _this, jint i, jint j, jchar c)
 {
   SET2DCODE(VT_UI2, V_UI2);
@@ -1469,7 +1469,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setChar__IIC
  * Method:    getChars
  * Signature: (II[CI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getChars
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_getChars
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jcharArray ja, jint ja_start)
 {
   GETARRAYCODE(VT_UI2, VT_I2, V_UI2, jchar, SetCharArrayRegion);
@@ -1480,7 +1480,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getChars
  * Method:    setChars
  * Signature: (II[CI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setChars
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setChars
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jcharArray ja, jint ja_start)
 {
   SETARRAYCODE(VT_UI2, VT_I2, V_UI2, jchar, 
@@ -1494,7 +1494,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setChars
  * Method:    getInt
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getInt__I
+JNIEXPORT jint JNICALL Java_org_racob_com_SafeArray_getInt__I
   (JNIEnv *env, jobject _this, jint idx)
 {
   GET1DCODE(VT_I4, V_I4, jint)
@@ -1505,7 +1505,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getInt__I
  * Method:    getInt
  * Signature: (II)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getInt__II
+JNIEXPORT jint JNICALL Java_org_racob_com_SafeArray_getInt__II
   (JNIEnv *env, jobject _this, jint i, jint j)
 {
   GET2DCODE(VT_I4, V_I4, jint)
@@ -1516,7 +1516,7 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getInt__II
  * Method:    setInt
  * Signature: (II)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setInt__II
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setInt__II
   (JNIEnv *env, jobject _this, jint idx, jint c)
 {
   SET1DCODE(VT_I4, V_I4);
@@ -1527,7 +1527,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setInt__II
  * Method:    setInt
  * Signature: (III)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setInt__III
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setInt__III
   (JNIEnv *env, jobject _this, jint i, jint j, jint c)
 {
   SET2DCODE(VT_I4, V_I4);
@@ -1538,7 +1538,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setInt__III
  * Method:    getInts
  * Signature: (II[II)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getInts
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_getInts
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jintArray ja, jint ja_start)
 {
   GETARRAYCODE(VT_I4, VT_I4, V_I4, jint, SetIntArrayRegion);
@@ -1549,7 +1549,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getInts
  * Method:    setInts
  * Signature: (II[II)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setInts
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setInts
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jintArray ja, jint ja_start)
 {
   SETARRAYCODE(VT_I4, VT_I4, V_I4, jint, 
@@ -1564,7 +1564,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setInts
  * Method:    getLong
  * Signature: (I)J
  */
-JNIEXPORT jlong JNICALL Java_com_jacob_com_SafeArray_getLong__I
+JNIEXPORT jlong JNICALL Java_org_racob_com_SafeArray_getLong__I
   (JNIEnv *env, jobject _this, jint idx)
 {
   GET1DCODE(VT_I8, V_I8, jlong)
@@ -1575,7 +1575,7 @@ JNIEXPORT jlong JNICALL Java_com_jacob_com_SafeArray_getLong__I
  * Method:    getLong
  * Signature: (II)J
  */
-JNIEXPORT jlong JNICALL Java_com_jacob_com_SafeArray_getLong__II
+JNIEXPORT jlong JNICALL Java_org_racob_com_SafeArray_getLong__II
   (JNIEnv *env, jobject _this, jint i, jint j)
 {
   GET2DCODE(VT_I8, V_I8, jlong)
@@ -1586,7 +1586,7 @@ JNIEXPORT jlong JNICALL Java_com_jacob_com_SafeArray_getLong__II
  * Method:    setLong
  * Signature: (IJ)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setLong__IJ
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setLong__IJ
   (JNIEnv *env, jobject _this, jint idx, jlong c)
 {
   SET1DCODE(VT_I8, V_I8);
@@ -1597,7 +1597,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setLong__IJ
  * Method:    setLong
  * Signature: (IIJ)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setLong__IIJ
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setLong__IIJ
   (JNIEnv *env, jobject _this, jint i, jint j, jlong c)
 {
   SET2DCODE(VT_I8, V_I8);
@@ -1608,7 +1608,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setLong__IIJ
  * Method:    getLongs
  * Signature: (II[JI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getLongs
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_getLongs
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jlongArray ja, jint ja_start)
 {
   GETARRAYCODE(VT_I8, VT_I8, V_I8, jlong, SetLongArrayRegion);
@@ -1619,7 +1619,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getLongs
  * Method:    setLongs
  * Signature: (II[JI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setLongs
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setLongs
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jlongArray ja, jint ja_start)
 {
   SETARRAYCODE(VT_I8, VT_I8, V_I8, jlong, 
@@ -1634,7 +1634,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setLongs
  * Method:    getShort
  * Signature: (I)S
  */
-JNIEXPORT jshort JNICALL Java_com_jacob_com_SafeArray_getShort__I
+JNIEXPORT jshort JNICALL Java_org_racob_com_SafeArray_getShort__I
   (JNIEnv *env, jobject _this, jint idx)
 {
   GET1DCODE(VT_I2, V_I2, jshort)
@@ -1645,7 +1645,7 @@ JNIEXPORT jshort JNICALL Java_com_jacob_com_SafeArray_getShort__I
  * Method:    getShort
  * Signature: (II)S
  */
-JNIEXPORT jshort JNICALL Java_com_jacob_com_SafeArray_getShort__II
+JNIEXPORT jshort JNICALL Java_org_racob_com_SafeArray_getShort__II
   (JNIEnv *env, jobject _this, jint i, jint j)
 {
   GET2DCODE(VT_I2, V_I2, jshort)
@@ -1656,7 +1656,7 @@ JNIEXPORT jshort JNICALL Java_com_jacob_com_SafeArray_getShort__II
  * Method:    setShort
  * Signature: (IS)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setShort__IS
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setShort__IS
   (JNIEnv *env, jobject _this, jint idx, jshort c)
 {
   SET1DCODE(VT_I2, V_I2);
@@ -1667,7 +1667,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setShort__IS
  * Method:    setShort
  * Signature: (IIS)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setShort__IIS
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setShort__IIS
   (JNIEnv *env, jobject _this, jint i, jint j, jshort c)
 {
   SET2DCODE(VT_I2, V_I2);
@@ -1678,7 +1678,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setShort__IIS
  * Method:    getShorts
  * Signature: (II[SI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getShorts
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_getShorts
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jshortArray ja, jint ja_start)
 {
   GETARRAYCODE(VT_I2, VT_I2, V_I2, jshort, SetShortArrayRegion);
@@ -1689,7 +1689,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getShorts
  * Method:    setShorts
  * Signature: (II[SI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setShorts
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setShorts
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jshortArray ja, jint ja_start)
 {
   SETARRAYCODE(VT_I2, VT_I2, V_I2, jshort, 
@@ -1701,7 +1701,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setShorts
  * Method:    getDouble
  * Signature: (I)D
  */
-JNIEXPORT jdouble JNICALL Java_com_jacob_com_SafeArray_getDouble__I
+JNIEXPORT jdouble JNICALL Java_org_racob_com_SafeArray_getDouble__I
   (JNIEnv *env, jobject _this, jint idx)
 {
   GET1DCODE(VT_R8, V_R8, jdouble)
@@ -1712,7 +1712,7 @@ JNIEXPORT jdouble JNICALL Java_com_jacob_com_SafeArray_getDouble__I
  * Method:    getDouble
  * Signature: (II)D
  */
-JNIEXPORT jdouble JNICALL Java_com_jacob_com_SafeArray_getDouble__II
+JNIEXPORT jdouble JNICALL Java_org_racob_com_SafeArray_getDouble__II
   (JNIEnv *env, jobject _this, jint i, jint j)
 {
   GET2DCODE(VT_R8, V_R8, jdouble)
@@ -1723,7 +1723,7 @@ JNIEXPORT jdouble JNICALL Java_com_jacob_com_SafeArray_getDouble__II
  * Method:    setDouble
  * Signature: (ID)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setDouble__ID
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setDouble__ID
   (JNIEnv *env, jobject _this, jint idx, jdouble c)
 {
   SET1DCODE(VT_R8, V_R8);
@@ -1734,7 +1734,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setDouble__ID
  * Method:    setDouble
  * Signature: (IID)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setDouble__IID
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setDouble__IID
   (JNIEnv *env, jobject _this, jint i, jint j, jdouble c)
 {
   SET2DCODE(VT_R8, V_R8);
@@ -1745,7 +1745,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setDouble__IID
  * Method:    getDoubles
  * Signature: (II[DI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getDoubles
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_getDoubles
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jdoubleArray ja, jint ja_start)
 {
   GETARRAYCODE(VT_R8, VT_R8, V_R8, jdouble, SetDoubleArrayRegion);
@@ -1756,7 +1756,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getDoubles
  * Method:    setDoubles
  * Signature: (II[DI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setDoubles
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setDoubles
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jdoubleArray ja, jint ja_start)
 {
   SETARRAYCODE(VT_R8, VT_R8, V_R8, jdouble, 
@@ -1773,7 +1773,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setDoubles
  * "StrFree, Release or VariantClear to release the memory"
  * waiting on the actual patch the submitter used before modifying this
  */
-JNIEXPORT jstring JNICALL Java_com_jacob_com_SafeArray_getString__I
+JNIEXPORT jstring JNICALL Java_org_racob_com_SafeArray_getString__I
   (JNIEnv *env, jobject _this, jint idx)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -1814,7 +1814,7 @@ JNIEXPORT jstring JNICALL Java_com_jacob_com_SafeArray_getString__I
  * Method:    getString
  * Signature: (II)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_jacob_com_SafeArray_getString__II
+JNIEXPORT jstring JNICALL Java_org_racob_com_SafeArray_getString__II
   (JNIEnv *env, jobject _this, jint i, jint j)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -1851,7 +1851,7 @@ JNIEXPORT jstring JNICALL Java_com_jacob_com_SafeArray_getString__II
  * Method:    setString
  * Signature: (ILjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setString__ILjava_lang_String_2
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setString__ILjava_lang_String_2
   (JNIEnv *env, jobject _this, jint idx, jstring s)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -1892,7 +1892,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setString__ILjava_lang_Strin
  * Method:    setString
  * Signature: (IILjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setString__IILjava_lang_String_2
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setString__IILjava_lang_String_2
   (JNIEnv *env, jobject _this, jint i, jint j, jstring s)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -1935,7 +1935,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setString__IILjava_lang_Stri
  * Method:    getStrings
  * Signature: (II[Ljava/lang/String;I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getStrings
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_getStrings
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jobjectArray ja, jint ja_start)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -1984,7 +1984,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getStrings
  * Method:    setStrings
  * Signature: (II[Ljava/lang/String;I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setStrings
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setStrings
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jobjectArray ja, jint ja_start)
 {
   SAFEARRAY *psa = extractSA(env, _this); 
@@ -2036,7 +2036,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setStrings
  * Method:    getByte
  * Signature: (I)B
  */
-JNIEXPORT jbyte JNICALL Java_com_jacob_com_SafeArray_getByte__I
+JNIEXPORT jbyte JNICALL Java_org_racob_com_SafeArray_getByte__I
   (JNIEnv *env, jobject _this, jint idx)
 {
   GET1DCODE(VT_UI1, V_UI1, jbyte)
@@ -2047,7 +2047,7 @@ JNIEXPORT jbyte JNICALL Java_com_jacob_com_SafeArray_getByte__I
  * Method:    getByte
  * Signature: (II)B
  */
-JNIEXPORT jbyte JNICALL Java_com_jacob_com_SafeArray_getByte__II
+JNIEXPORT jbyte JNICALL Java_org_racob_com_SafeArray_getByte__II
   (JNIEnv *env, jobject _this, jint i, jint j)
 {
   GET2DCODE(VT_UI1, V_UI1, jbyte)
@@ -2058,7 +2058,7 @@ JNIEXPORT jbyte JNICALL Java_com_jacob_com_SafeArray_getByte__II
  * Method:    setByte
  * Signature: (IB)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setByte__IB
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setByte__IB
   (JNIEnv *env, jobject _this, jint idx, jbyte c)
 {
   SET1DCODE(VT_UI1, V_UI1);
@@ -2069,7 +2069,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setByte__IB
  * Method:    setByte
  * Signature: (IIB)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setByte__IIB
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setByte__IIB
   (JNIEnv *env, jobject _this, jint i, jint j, jbyte c)
 {
   SET2DCODE(VT_UI1, V_UI1);
@@ -2080,7 +2080,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setByte__IIB
  * Method:    getBytes
  * Signature: (II[BI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getBytes
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_getBytes
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jbyteArray ja, jint ja_start)
 {
   GETARRAYCODE(VT_UI1, VT_I1, V_UI1, jbyte, SetByteArrayRegion);
@@ -2091,7 +2091,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getBytes
  * Method:    setBytes
  * Signature: (II[BI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setBytes
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setBytes
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jbyteArray ja, jint ja_start)
 {
   SETARRAYCODE(VT_UI1, VT_I1, V_UI1, jbyte, 
@@ -2103,7 +2103,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setBytes
  * Method:    getFloat
  * Signature: (I)F
  */
-JNIEXPORT jfloat JNICALL Java_com_jacob_com_SafeArray_getFloat__I
+JNIEXPORT jfloat JNICALL Java_org_racob_com_SafeArray_getFloat__I
   (JNIEnv *env, jobject _this, jint idx)
 {
   GET1DCODE(VT_R4, V_R4, jfloat)
@@ -2114,7 +2114,7 @@ JNIEXPORT jfloat JNICALL Java_com_jacob_com_SafeArray_getFloat__I
  * Method:    getFloat
  * Signature: (II)F
  */
-JNIEXPORT jfloat JNICALL Java_com_jacob_com_SafeArray_getFloat__II
+JNIEXPORT jfloat JNICALL Java_org_racob_com_SafeArray_getFloat__II
   (JNIEnv *env, jobject _this, jint i, jint j)
 {
   GET2DCODE(VT_R4, V_R4, jfloat)
@@ -2125,7 +2125,7 @@ JNIEXPORT jfloat JNICALL Java_com_jacob_com_SafeArray_getFloat__II
  * Method:    setFloat
  * Signature: (IF)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setFloat__IF
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setFloat__IF
   (JNIEnv *env, jobject _this, jint idx, jfloat c)
 {
   SET1DCODE(VT_R4, V_R4);
@@ -2136,7 +2136,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setFloat__IF
  * Method:    setFloat
  * Signature: (IIF)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setFloat__IIF
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setFloat__IIF
   (JNIEnv *env, jobject _this, jint i, jint j, jfloat c)
 {
   SET2DCODE(VT_R4, V_R4);
@@ -2147,7 +2147,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setFloat__IIF
  * Method:    getFloats
  * Signature: (II[FI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getFloats
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_getFloats
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jfloatArray ja, jint ja_start)
 {
   GETARRAYCODE(VT_R4, VT_R4, V_R4, jfloat, SetFloatArrayRegion);
@@ -2158,7 +2158,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getFloats
  * Method:    setFloats
  * Signature: (II[FI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setFloats
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setFloats
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jfloatArray ja, jint ja_start)
 {
   SETARRAYCODE(VT_R4, VT_R4, V_R4, jfloat, 
@@ -2170,7 +2170,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setFloats
  * Method:    getBoolean
  * Signature: (I)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_jacob_com_SafeArray_getBoolean__I
+JNIEXPORT jboolean JNICALL Java_org_racob_com_SafeArray_getBoolean__I
   (JNIEnv *env, jobject _this, jint idx)
 {
   // code is inline because of size mismatch
@@ -2210,7 +2210,7 @@ JNIEXPORT jboolean JNICALL Java_com_jacob_com_SafeArray_getBoolean__I
  * Method:    getBoolean
  * Signature: (II)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_jacob_com_SafeArray_getBoolean__II
+JNIEXPORT jboolean JNICALL Java_org_racob_com_SafeArray_getBoolean__II
   (JNIEnv *env, jobject _this, jint i, jint j)
 {
   // code is inline because of size mismatch
@@ -2251,7 +2251,7 @@ JNIEXPORT jboolean JNICALL Java_com_jacob_com_SafeArray_getBoolean__II
  * Method:    setBoolean
  * Signature: (IZ)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setBoolean__IZ
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setBoolean__IZ
   (JNIEnv *env, jobject _this, jint idx, jboolean c)
 {
   // code is inline because of size mismatch
@@ -2285,7 +2285,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setBoolean__IZ
  * Method:    setBoolean
  * Signature: (IIZ)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setBoolean__IIZ
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setBoolean__IIZ
   (JNIEnv *env, jobject _this, jint i, jint j, jboolean c)
 {
   // code is inline because of size mismatch
@@ -2320,7 +2320,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setBoolean__IIZ
  * Method:    getBooleans
  * Signature: (II[ZI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getBooleans
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_getBooleans
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jbooleanArray ja, jint ja_start)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -2361,7 +2361,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getBooleans
  * Method:    setBooleans
  * Signature: (II[ZI)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setBooleans
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setBooleans
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jbooleanArray ja, jint ja_start)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -2404,7 +2404,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setBooleans
  * Method:    getVariant
  * Signature: (I)LVariant;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_SafeArray_getVariant__I
+JNIEXPORT jobject JNICALL Java_org_racob_com_SafeArray_getVariant__I
   (JNIEnv *env, jobject _this, jint idx)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -2415,7 +2415,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_SafeArray_getVariant__I
   VARTYPE vt;
   SafeArrayGetVartype(psa, &vt);
   // prepare a new return value
-  jclass variantClass = env->FindClass("com/jacob/com/Variant");
+  jclass variantClass = env->FindClass("org/racob/com/Variant");
   jmethodID variantCons = 
       env->GetMethodID(variantClass, "<init>", "()V");
   // construct a variant to return
@@ -2443,7 +2443,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_SafeArray_getVariant__I
  * Method:    getVariant
  * Signature: (II)LVariant;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_SafeArray_getVariant__II
+JNIEXPORT jobject JNICALL Java_org_racob_com_SafeArray_getVariant__II
   (JNIEnv *env, jobject _this, jint i, jint j)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -2454,7 +2454,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_SafeArray_getVariant__II
   VARTYPE vt;
   SafeArrayGetVartype(psa, &vt);
   // prepare a new return value
-  jclass variantClass = env->FindClass("com/jacob/com/Variant");
+  jclass variantClass = env->FindClass("org/racob/com/Variant");
   jmethodID variantCons = 
       env->GetMethodID(variantClass, "<init>", "()V");
   // construct a variant to return
@@ -2483,7 +2483,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_SafeArray_getVariant__II
  * Method:    setVariant
  * Signature: (ILVariant;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setVariant__ILcom_jacob_com_Variant_2
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setVariant__ILorg_racob_com_Variant_2
   (JNIEnv *env, jobject _this, jint idx, jobject s)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -2518,7 +2518,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setVariant__ILcom_jacob_com_
  * Method:    setVariant
  * Signature: (IILVariant;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setVariant__IILcom_jacob_com_Variant_2
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setVariant__IILorg_racob_com_Variant_2
   (JNIEnv *env, jobject _this, jint i, jint j, jobject s)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -2554,7 +2554,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setVariant__IILcom_jacob_com
  * Method:    getVariants
  * Signature: (II[LVariant;I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getVariants
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_getVariants
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jobjectArray ja, jint ja_start)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -2569,7 +2569,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getVariants
   SafeArrayGetVartype(sa, &vt); 
   if (vt == VT_VARIANT) 
   {
-    jclass variantClass = env->FindClass("com/jacob/com/Variant");
+    jclass variantClass = env->FindClass("org/racob/com/Variant");
     jmethodID variantCons = 
         env->GetMethodID(variantClass, "<init>", "()V");
     for(int i=idx, j=ja_start;i<idx+nelem;i++,j++) 
@@ -2592,7 +2592,7 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_getVariants
  * Method:    setVariants
  * Signature: (II[LVariant;I)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setVariants
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setVariants
   (JNIEnv *env, jobject _this, jint idx, jint nelem, jobjectArray ja, jint ja_start)
 {
   SAFEARRAY *psa = extractSA(env, _this); 
@@ -2707,11 +2707,11 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setVariants
   } 
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    getVariant
- * Signature: ([I)Lcom/jacob/com/Variant;
+ * Signature: ([I)Lorg/racob/com/Variant;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_SafeArray_getVariant___3I
+JNIEXPORT jobject JNICALL Java_org_racob_com_SafeArray_getVariant___3I
   (JNIEnv *env, jobject _this, jintArray indices)
 {
 
@@ -2737,7 +2737,7 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_SafeArray_getVariant___3I
 
 
   // prepare a new return value
-  jclass variantClass = env->FindClass("com/jacob/com/Variant");
+  jclass variantClass = env->FindClass("org/racob/com/Variant");
   jmethodID variantCons = 
       env->GetMethodID(variantClass, "<init>", "()V");
   // construct a variant to return
@@ -2762,11 +2762,11 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_SafeArray_getVariant___3I
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    setVariant
- * Signature: ([ILcom/jacob/com/Variant;)V
+ * Signature: ([ILorg/racob/com/Variant;)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setVariant___3ILcom_jacob_com_Variant_2
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setVariant___3ILorg_racob_com_Variant_2
   (JNIEnv *env, jobject _this, jintArray indices, jobject s)
 {
 
@@ -2809,22 +2809,22 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setVariant___3ILcom_jacob_co
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    getChar
  * Signature: ([I)C
  */
-JNIEXPORT jchar JNICALL Java_com_jacob_com_SafeArray_getChar___3I
+JNIEXPORT jchar JNICALL Java_org_racob_com_SafeArray_getChar___3I
   (JNIEnv *env, jobject _this, jintArray indices)
 {
   GETNDCODE(VT_UI2, V_UI2, jchar)
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    setChar
  * Signature: ([IC)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setChar___3IC
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setChar___3IC
   (JNIEnv *env, jobject _this, jintArray indices, jchar c)
 {
   SETNDCODE(VT_UI2, V_UI2);
@@ -2833,11 +2833,11 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setChar___3IC
 /*----------------------- INTS ----------------------------------*/
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    getInt
  * Signature: ([I)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getInt___3I
+JNIEXPORT jint JNICALL Java_org_racob_com_SafeArray_getInt___3I
   (JNIEnv *env, jobject _this, jintArray indices)
 {
   GETNDCODE(VT_I4, V_I4, jint)
@@ -2845,11 +2845,11 @@ JNIEXPORT jint JNICALL Java_com_jacob_com_SafeArray_getInt___3I
 
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    setInt
  * Signature: ([II)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setInt___3II
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setInt___3II
   (JNIEnv *env, jobject _this, jintArray indices, jint c)
 {
   SETNDCODE(VT_I4, V_I4);
@@ -2859,11 +2859,11 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setInt___3II
 /*----------------------- LONGS ----------------------------------*/
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    getLong
  * Signature: ([I)J
  */
-JNIEXPORT jlong JNICALL Java_com_jacob_com_SafeArray_getLong___3I
+JNIEXPORT jlong JNICALL Java_org_racob_com_SafeArray_getLong___3I
   (JNIEnv *env, jobject _this, jintArray indices)
 {
   GETNDCODE(VT_I8, V_I8, jlong)
@@ -2871,11 +2871,11 @@ JNIEXPORT jlong JNICALL Java_com_jacob_com_SafeArray_getLong___3I
 
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    setLong
  * Signature: ([IJ)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setLong___3IJ
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setLong___3IJ
   (JNIEnv *env, jobject _this, jintArray indices, jlong c)
 {
   SETNDCODE(VT_I8, V_I8);
@@ -2884,55 +2884,55 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setLong___3IJ
 /*----------------------- END LONGS ----------------------------------*/
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    getShort
  * Signature: ([I)S
  */
-JNIEXPORT jshort JNICALL Java_com_jacob_com_SafeArray_getShort___3I
+JNIEXPORT jshort JNICALL Java_org_racob_com_SafeArray_getShort___3I
   (JNIEnv *env, jobject _this, jintArray indices)
 {
   GETNDCODE(VT_I2, V_I2, jshort)
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    setShort
  * Signature: ([IS)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setShort___3IS
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setShort___3IS
   (JNIEnv *env, jobject _this, jintArray indices, jshort c)
 {
   SETNDCODE(VT_I2, V_I2);
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    getDouble
  * Signature: ([I)D
  */
-JNIEXPORT jdouble JNICALL Java_com_jacob_com_SafeArray_getDouble___3I
+JNIEXPORT jdouble JNICALL Java_org_racob_com_SafeArray_getDouble___3I
   (JNIEnv *env, jobject _this, jintArray indices)
 {
   GETNDCODE(VT_R8, V_R8, jdouble)
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    setDouble
  * Signature: ([ID)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setDouble___3ID
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setDouble___3ID
   (JNIEnv *env, jobject _this, jintArray indices, jdouble c)
 {
   SETNDCODE(VT_R8, V_R8);
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    getString
  * Signature: ([I)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_jacob_com_SafeArray_getString___3I
+JNIEXPORT jstring JNICALL Java_org_racob_com_SafeArray_getString___3I
   (JNIEnv *env, jobject _this, jintArray indices)
 {
   SAFEARRAY *psa = extractSA(env, _this);
@@ -2981,12 +2981,12 @@ JNIEXPORT jstring JNICALL Java_com_jacob_com_SafeArray_getString___3I
 
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    setStringjIndices, NULL);ILjava/lang/String;)V
  * 
  * This method has a leak in it somewhere.
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setString___3ILjava_lang_String_2
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setString___3ILjava_lang_String_2
   (JNIEnv *env, jobject _this, jintArray indices, jstring s)
 {
   SAFEARRAY *sa = extractSA(env, _this);
@@ -3035,33 +3035,33 @@ JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setString___3ILjava_lang_Str
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    getByte
  * Signature: ([I)B
  */
-JNIEXPORT jbyte JNICALL Java_com_jacob_com_SafeArray_getByte___3I
+JNIEXPORT jbyte JNICALL Java_org_racob_com_SafeArray_getByte___3I
   (JNIEnv *env, jobject _this, jintArray indices)
 {
   GETNDCODE(VT_UI1, V_UI1, jbyte)
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    setByte
  * Signature: ([IB)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setByte___3IB
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setByte___3IB
   (JNIEnv *env, jobject _this, jintArray indices, jbyte c)
 {
   SETNDCODE(VT_UI1, V_UI1);
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    getFloat
  * Signature: ([I)F
  */
-JNIEXPORT jfloat JNICALL Java_com_jacob_com_SafeArray_getFloat___3I
+JNIEXPORT jfloat JNICALL Java_org_racob_com_SafeArray_getFloat___3I
   (JNIEnv *env, jobject _this, jintArray indices)
 {
   GETNDCODE(VT_R4, V_R4, jfloat)
@@ -3069,22 +3069,22 @@ JNIEXPORT jfloat JNICALL Java_com_jacob_com_SafeArray_getFloat___3I
 
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    setFloat
  * Signature: ([IF)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setFloat___3IF
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setFloat___3IF
   (JNIEnv *env, jobject _this, jintArray indices, jfloat c)
 {
   SETNDCODE(VT_R4, V_R4);
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    getBoolean
  * Signature: ([I)Z
  */
-JNIEXPORT jboolean JNICALL Java_com_jacob_com_SafeArray_getBoolean___3I
+JNIEXPORT jboolean JNICALL Java_org_racob_com_SafeArray_getBoolean___3I
   (JNIEnv *env, jobject _this, jintArray indices)
 {
   // code is inline because of size mismatch
@@ -3131,11 +3131,11 @@ JNIEXPORT jboolean JNICALL Java_com_jacob_com_SafeArray_getBoolean___3I
 }
 
 /*
- * Class:     com_jacob_com_SafeArray
+ * Class:     org_racob_com_SafeArray
  * Method:    setBoolean
  * Signature: ([IZ)V
  */
-JNIEXPORT void JNICALL Java_com_jacob_com_SafeArray_setBoolean___3IZ
+JNIEXPORT void JNICALL Java_org_racob_com_SafeArray_setBoolean___3IZ
   (JNIEnv *env, jobject _this, jintArray indices, jboolean c)
 {
   // code is inline because of size mismatch

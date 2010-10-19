@@ -29,9 +29,9 @@ extern "C" {
 /*
  * Class:     Automation
  * Method:    loadTypeLib
- * Signature: (Ljava/lang/String;)Lcom/jacob/com/TypeLib;
+ * Signature: (Ljava/lang/String;)Lorg/racob/com/TypeLib;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Automation_loadTypeLib
+JNIEXPORT jobject JNICALL Java_org_racob_com_Automation_loadTypeLib
   (JNIEnv *, jclass, jstring);
 
 #ifdef __cplusplus

@@ -18,27 +18,27 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 #include <jni.h>
-/* Header for class com_jacob_com_DispatchProxy */
+/* Header for class org_racob_com_DispatchProxy */
 
-#ifndef _Included_com_jacob_com_DispatchProxy
-#define _Included_com_jacob_com_DispatchProxy
+#ifndef _Included_org_racob_com_DispatchProxy
+#define _Included_org_racob_com_DispatchProxy
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     com_jacob_com_DispatchProxy
+ * Class:     org_racob_com_DispatchProxy
  * Method:    MarshalIntoStream
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_com_jacob_com_DispatchProxy_MarshalIntoStream
+JNIEXPORT jint JNICALL Java_org_racob_com_DispatchProxy_MarshalIntoStream
   (JNIEnv *, jobject, jint);
 
 /*
- * Class:     com_jacob_com_DispatchProxy
+ * Class:     org_racob_com_DispatchProxy
  * Method:    MarshalFromStream
- * Signature: (I)Lcom/jacob/com/Dispatch;
+ * Signature: (I)Lorg/racob/com/Dispatch;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_DispatchProxy_MarshalFromStream
+JNIEXPORT jobject JNICALL Java_org_racob_com_DispatchProxy_MarshalFromStream
   (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus

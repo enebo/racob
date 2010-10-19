@@ -37,7 +37,7 @@ extern "C" {
  #define MAX_VALUES 5000
 
 JNIEXPORT jobject JNICALL
-Java_com_jacob_com_EnumVariant_NextOne(JNIEnv* env, jobject _this, jint pointer) {
+Java_org_racob_com_EnumVariant_NextOne(JNIEnv* env, jobject _this, jint pointer) {
   IEnumVARIANT* enumVariant = (IEnumVARIANT *) pointer;
   if (enumVariant == NULL) return 0;
 
@@ -61,7 +61,7 @@ Java_com_jacob_com_EnumVariant_NextOne(JNIEnv* env, jobject _this, jint pointer)
 }
 
 JNIEXPORT jint JNICALL
-Java_com_jacob_com_EnumVariant_Next(JNIEnv* env, jobject _this, jint pointer, jobjectArray values, jint valuesSize) {
+Java_org_racob_com_EnumVariant_Next(JNIEnv* env, jobject _this, jint pointer, jobjectArray values, jint valuesSize) {
   IEnumVARIANT* enumVariant = (IEnumVARIANT *) pointer;
   if (enumVariant == NULL) return 0;
 
@@ -94,7 +94,7 @@ Java_com_jacob_com_EnumVariant_Next(JNIEnv* env, jobject _this, jint pointer, jo
 }
 
 JNIEXPORT void JNICALL
-Java_com_jacob_com_EnumVariant_Reset(JNIEnv* env, jobject _this, jint pointer) {
+Java_org_racob_com_EnumVariant_Reset(JNIEnv* env, jobject _this, jint pointer) {
   IEnumVARIANT* self = (IEnumVARIANT *) pointer;
   if(self == NULL) return;
 
@@ -103,7 +103,7 @@ Java_com_jacob_com_EnumVariant_Reset(JNIEnv* env, jobject _this, jint pointer) {
 }
 
 JNIEXPORT void JNICALL
-Java_com_jacob_com_EnumVariant_Skip(JNIEnv* env, jobject _this, jint pointer, jint count) {
+Java_org_racob_com_EnumVariant_Skip(JNIEnv* env, jobject _this, jint pointer, jint count) {
   IEnumVARIANT* self = (IEnumVARIANT *) pointer;
   if(self == NULL) return;
 

@@ -32,7 +32,7 @@ extern "C"
 
 void ThrowComFail(JNIEnv *env, const char* desc, jint hr)
 {
-  jclass failClass = env->FindClass("com/jacob/com/ComFailException");
+  jclass failClass = env->FindClass("org/racob/com/ComFailException");
   // call the constructor that takes hr and message
   jmethodID failCons = 
      env->GetMethodID(failClass, "<init>", "(ILjava/lang/String;)V");
@@ -49,7 +49,7 @@ void ThrowComFailUnicode(JNIEnv *env, const wchar_t* desc, jint hr)
   if (!desc) {
 	  ThrowComFail(env, "Java/COM Error", hr);
   }
-  jclass failClass = env->FindClass("com/jacob/com/ComFailException");
+  jclass failClass = env->FindClass("org/racob/com/ComFailException");
   // call the constructor that takes hr and message
   jmethodID failCons = 
      env->GetMethodID(failClass, "<init>", "(ILjava/lang/String;)V");
@@ -62,7 +62,7 @@ void ThrowComFailUnicode(JNIEnv *env, const wchar_t* desc, jint hr)
 int CheckEnv(JNIEnv *env1, JNIEnv *env2)
 {
   if (env1 != env2) {
-    jclass failClass = env1->FindClass("com/jacob/com/WrongThreadException");
+    jclass failClass = env1->FindClass("org/racob/com/WrongThreadException");
     // call the constructor that takes hr and message
     jmethodID failCons = 
        env1->GetMethodID(failClass, "<init>", "()V");
@@ -126,14 +126,19 @@ int CheckEnv(JNIEnv *env1, JNIEnv *env2)
       CoTaskMemFree(buffer);
    }
 
-   jclass autoClass = env->FindClass("com/jacob/com/TypeInfo");
-   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILjava/lang/String;Ljava/lang/String;IIIIIII)V");
+   jint aliasVT = -1;
+   if (typeAttributes->typekind == 6 /*TYPEKIND_ALIAS where is this defined */) {
+      aliasVT = typeAttributes->tdescAlias.vt;
+   }
+
+   jclass autoClass = env->FindClass("org/racob/com/TypeInfo");
+   jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILjava/lang/String;Ljava/lang/String;IIIIIIII)V");
    jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeInfo,
            makeGUIDString(env, typeAttributes->guid), progid,
            typeAttributes->typekind, typeAttributes->cFuncs,
            typeAttributes->cImplTypes, typeAttributes->cVars,
            typeAttributes->wTypeFlags, typeAttributes->wMajorVerNum,
-           typeAttributes->wMinorVerNum);
+           typeAttributes->wMinorVerNum, aliasVT);
 
    typeInfo->ReleaseTypeAttr(typeAttributes);
 

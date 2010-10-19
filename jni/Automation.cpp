@@ -37,9 +37,9 @@ extern "C" {
 /*
  * Class:     Automation
  * Method:    loadTypeLib
- * Signature: (Ljava/lang/String;)Lcom/jacob/com/TypeLib;
+ * Signature: (Ljava/lang/String;)Lorg/racob/com/TypeLib;
  */
-JNIEXPORT jobject JNICALL Java_com_jacob_com_Automation_loadTypeLib
+JNIEXPORT jobject JNICALL Java_org_racob_com_Automation_loadTypeLib
   (JNIEnv *env, jclass obj, jstring file)
 {
  BSTR filename = makeBStr(env, file);
@@ -70,9 +70,9 @@ JNIEXPORT jobject JNICALL Java_com_jacob_com_Automation_loadTypeLib
  BSTR copy = SysAllocString(bstr);
  jstring guid = length > 3 ? makeString(env, copy) : NULL;
 
- jclass autoClass = env->FindClass("com/jacob/com/TypeLib");
- jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(ILjava/lang/String;IIII)V");
- jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeLib,
+ jclass autoClass = env->FindClass("org/racob/com/TypeLib");
+ jmethodID autoCons = env->GetMethodID(autoClass, "<init>", "(IILjava/lang/String;IIII)V");
+ jobject newAuto = env->NewObject(autoClass, autoCons, (jint) typeLib, 0,
          guid, typeCount, libAttr->wLibFlags, libAttr->wMajorVerNum,
          libAttr->wMinorVerNum);
 
