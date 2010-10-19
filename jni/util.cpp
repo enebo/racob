@@ -58,20 +58,6 @@ void ThrowComFailUnicode(JNIEnv *env, const wchar_t* desc, jint hr)
   env->Throw(fail);
 }
 
-// if env's are different throw on the 1st env
-int CheckEnv(JNIEnv *env1, JNIEnv *env2)
-{
-  if (env1 != env2) {
-    jclass failClass = env1->FindClass("org/racob/com/WrongThreadException");
-    // call the constructor that takes hr and message
-    jmethodID failCons = 
-       env1->GetMethodID(failClass, "<init>", "()V");
-    env1->ThrowNew(failClass, "Wrong Thread");
-		return 0;
-  }
-	return 1;
-}
-
  void freeDocumentationStrings(BSTR name, BSTR docString, BSTR helpFile)
  {
   if (name != NULL) SysFreeString(name);

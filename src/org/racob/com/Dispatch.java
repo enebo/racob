@@ -247,19 +247,6 @@ public class Dispatch extends IUnknown {
 
     }
 
-    /**
-     * not implemented yet
-     *
-     * @param dispatchTarget
-     * @param name
-     * @param val
-     * @throws com.jacob.com.NotImplementedException
-     */
-    public static void put_Casesensitive(Dispatch dispatchTarget, String name,
-            Object val) {
-        throw new NotImplementedException("not implemented yet");
-    }
-
     /*
      * ============================================================ start of the
      * invokev section
@@ -307,20 +294,6 @@ public class Dispatch extends IUnknown {
         throwIfUnattachedDispatch(dispatchTarget);
         invokev(dispatchTarget.pointer.get(), null, dispID, Dispatch.LOCALE_SYSTEM_DEFAULT,
                 wFlags, vArg, uArgErr);
-    }
-
-    /**
-     * not implemented yet
-     *
-     * @param dispatchTarget
-     * @param name
-     * @param values
-     * @return never returns anything because
-     * @throws com.jacob.com.NotImplementedException
-     */
-    public static Variant callN_CaseSensitive(Dispatch dispatchTarget,
-            String name, Object[] values) {
-        throw new NotImplementedException("not implemented yet");
     }
 
     /**
@@ -1272,17 +1245,5 @@ public class Dispatch extends IUnknown {
         throwIfUnattachedDispatch(dispatchTarget);
         invoke(dispatchTarget, dispid, Dispatch.PutRef, new Object[]{val},
                 new int[1]);
-    }
-
-    /**
-     * not implemented yet
-     *
-     * @param dispatchTarget
-     * @param name
-     * @return Variant never returned
-     * @throws com.jacob.com.NotImplementedException
-     */
-    public static Variant get_CaseSensitive(Dispatch dispatchTarget, String name) {
-        throw new NotImplementedException("not implemented yet");
     }
 }

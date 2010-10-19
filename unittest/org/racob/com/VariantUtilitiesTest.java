@@ -1,9 +1,5 @@
 package org.racob.com;
 
-import org.racob.com.Currency;
-import org.racob.com.SafeArray;
-import org.racob.com.VariantUtilities;
-import org.racob.com.Variant;
 import java.util.Arrays;
 import java.util.Date;
 

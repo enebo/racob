@@ -22,7 +22,7 @@ package org.racob.com;
 /**
  * Standard exception thrown by com jni code when there is a problem
  */
-public abstract class ComException extends JacobException {
+public abstract class ComException extends RuntimeException {
 
 	/**
 	 * COM code initializes this filed with an appropriate return code that was

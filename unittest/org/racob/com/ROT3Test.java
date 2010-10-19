@@ -1,7 +1,5 @@
 package org.racob.com;
 
-import org.racob.com.ROT;
-import org.racob.com.Variant;
 import org.racob.test.BaseTestCase;
 
 /**

@@ -1,8 +1,5 @@
 package org.racob.com;
 
-import org.racob.com.Currency;
-import org.racob.com.VariantUtilities;
-import org.racob.com.Variant;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;

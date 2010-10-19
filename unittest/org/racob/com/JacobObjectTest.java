@@ -1,6 +1,6 @@
 package org.racob.com;
 
-import org.racob.com.JacobReleaseInfo;
+import org.racob.com.ReleaseInfo;
 import org.racob.test.BaseTestCase;
 
 /**
@@ -16,8 +16,8 @@ public class JacobObjectTest extends BaseTestCase {
 	 * verify the build version and date functions work correctly
 	 */
 	public void testBuildVersion() {
-		System.out.println("build version is " + JacobReleaseInfo.getBuildVersion());
-		System.out.println("build date is " + JacobReleaseInfo.getBuildDate());
+		System.out.println("build version is " + ReleaseInfo.getBuildVersion());
+		System.out.println("build date is " + ReleaseInfo.getBuildDate());
 	}
 
 }

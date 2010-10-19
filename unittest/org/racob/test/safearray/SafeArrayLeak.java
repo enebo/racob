@@ -3,7 +3,7 @@ package org.racob.test.safearray;
 import org.racob.activeX.ActiveXComponent;
 import org.racob.com.ComThread;
 import org.racob.com.Dispatch;
-import org.racob.com.JacobReleaseInfo;
+import org.racob.com.ReleaseInfo;
 import org.racob.com.SafeArray;
 import org.racob.com.Variant;
 import org.racob.test.BaseTestCase;
@@ -37,7 +37,7 @@ public class SafeArrayLeak extends BaseTestCase {
 		SafeArray sa = null;
 
 		// -Dcom.jacob.autogc=true
-		System.out.println("Jacob version: " + JacobReleaseInfo.getBuildVersion());
+		System.out.println("Jacob version: " + ReleaseInfo.getBuildVersion());
 
 		for (int t = 0; t < 10; t++) {
 			// look at a large range of cells

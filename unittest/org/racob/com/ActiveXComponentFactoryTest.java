@@ -1,8 +1,5 @@
 package org.racob.com;
 
-import org.racob.com.ComException;
-import org.racob.com.ComThread;
-import org.racob.com.Variant;
 import org.racob.activeX.ActiveXComponent;
 import org.racob.test.BaseTestCase;
 

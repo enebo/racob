@@ -1,7 +1,5 @@
 package org.racob.com;
 
-import org.racob.com.ComThread;
-import org.racob.com.Dispatch;
 import org.racob.test.BaseTestCase;
 
 /**
@@ -23,7 +21,7 @@ import org.racob.test.BaseTestCase;
  * @author jsamarziya
  * 
  */
-public class JacobDeadlockTest extends BaseTestCase {
+public class DeadlockTest extends BaseTestCase {
 	private static final long TIMEOUT = 5000l;
 
 	/** Thread component */

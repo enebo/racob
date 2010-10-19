@@ -1,4 +1,6 @@
 *~
+build/*
+dist/*
 jacob.dll
 jacob.jar
 jacobdll.jar
@@ -14,6 +16,5 @@ release
 .cdtproject
 foo.foo
 foo.ser
-JacobVersion.properties
 .settings
 

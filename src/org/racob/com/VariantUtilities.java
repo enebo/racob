@@ -51,7 +51,7 @@ public final class VariantUtilities {
         if (value instanceof Variant) return new Variant((Variant) value, byRef);
 
         // sourceforge patch 2171967 - used to rely on coercion but sometimes crashed VM
-        throw new NotImplementedException("createVariant() not implemented for " + value.getClass());
+        throw new RuntimeException("createVariant() not implemented for " + value.getClass());
     }
 
 
@@ -201,13 +201,13 @@ public final class VariantUtilities {
             case Variant.VariantDispatch: // 9
                 return sourceData.getDispatch();
             case Variant.VariantError: // 10
-                throw new NotImplementedException("toJavaObject() Not implemented for VariantError");
+                throw new RuntimeException("toJavaObject() Not implemented for VariantError");
             case Variant.VariantBoolean: // 11
                 return sourceData.getBoolean();
             case Variant.VariantVariant: // 12 they are always by ref
                 return sourceData.getVariant();
             case Variant.VariantObject: // 13
-                throw new NotImplementedException("toJavaObject() Not implemented for VariantObject");
+                throw new RuntimeException("toJavaObject() Not implemented for VariantObject");
             case Variant.VariantDecimal: // 14
                 return sourceData.getDecimal();
             case Variant.VariantByte: // 17
@@ -215,13 +215,13 @@ public final class VariantUtilities {
             case Variant.VariantLongInt: // 20
                 return sourceData.getLong();
             case Variant.VariantTypeMask: // 4095
-                throw new NotImplementedException("toJavaObject() Not implemented for VariantTypeMask");
+                throw new RuntimeException("toJavaObject() Not implemented for VariantTypeMask");
             case Variant.VariantArray: // 8192
-                throw new NotImplementedException("toJavaObject() Not implemented for VariantArray");
+                throw new RuntimeException("toJavaObject() Not implemented for VariantArray");
             case Variant.VariantByref: // 16384
-                throw new NotImplementedException("toJavaObject() Not implemented for VariantByref");
+                throw new RuntimeException("toJavaObject() Not implemented for VariantByref");
             default:
-                throw new NotImplementedException("Unknown return type: " + type);
+                throw new RuntimeException("Unknown return type: " + type);
                 // there was a "return result" here that caused defect 1602118
                 // so it was removed
         }

@@ -23,7 +23,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.racob.com.InvocationProxy;
-import org.racob.com.NotImplementedException;
 import org.racob.com.Variant;
 import org.racob.com.VariantUtilities;
 
@@ -170,7 +169,7 @@ public class ActiveXInvocationProxy extends InvocationProxy {
 				try {
 					parametersAsJavaObjects[parameterIndex] = oneParameterObject
 							.toJavaObject();
-				} catch (NotImplementedException nie) {
+				} catch (RuntimeException nie) {
 					throw new IllegalArgumentException(
 							"Can't convert parameter " + parameterIndex
 									+ " type " + oneParameterObject.getvt()

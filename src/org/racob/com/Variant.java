@@ -634,7 +634,7 @@ public class Variant {
      *             if the calculated result was a JacobObject usually as a
      *             result of error
      */
-    public Object toJavaObject() throws JacobException {
+    public Object toJavaObject() {
         return VariantUtilities.variantToObject(this);
     }
 
@@ -731,7 +731,7 @@ public class Variant {
                 return "{Java null}";
             }
             return foo.toString();
-        } catch (NotImplementedException nie) {
+        } catch (RuntimeException nie) {
             // some types do not generate a good description yet
             return "Description not available for type: " + getvt();
         }

@@ -1,6 +1,5 @@
 package org.racob.com;
 
-import org.racob.com.Variant;
 import java.util.Date;
 
 import org.racob.test.BaseTestCase;

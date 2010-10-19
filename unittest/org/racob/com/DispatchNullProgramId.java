@@ -1,6 +1,5 @@
 package org.racob.com;
 
-import org.racob.com.Dispatch;
 import org.racob.test.BaseTestCase;
 
 /**
