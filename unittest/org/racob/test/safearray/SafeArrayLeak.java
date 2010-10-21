@@ -36,8 +36,8 @@ public class SafeArrayLeak extends BaseTestCase {
 		Dispatch tabCells = null;
 		SafeArray sa = null;
 
-		// -Dcom.jacob.autogc=true
-		System.out.println("Jacob version: " + ReleaseInfo.getBuildVersion());
+		// -Dorg.racob.autogc=true
+		System.out.println("Racob version: " + ReleaseInfo.getBuildVersion());
 
 		for (int t = 0; t < 10; t++) {
 			// look at a large range of cells

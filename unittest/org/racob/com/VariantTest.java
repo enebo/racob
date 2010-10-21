@@ -11,7 +11,7 @@ import org.racob.test.BaseTestCase;
  * 
  * <p>
  * May need to run with some command line options (including from inside
- * Eclipse). Look in the docs area at the Jacob usage document for command line
+ * Eclipse). Look in the docs area at the Racob usage document for command line
  * options.
  */
 public class VariantTest extends BaseTestCase {
@@ -264,8 +264,8 @@ public class VariantTest extends BaseTestCase {
 
 	/**
 	 * for(BigDecimal i in 79228162514264337593543950330.0 ..
-	 * 79228162514264337593543950341.0) { com.jacob.com.Variant dv = new
-	 * com.jacob.com.Variant(i, false) println i + " : " + dv.getDecimal() }
+	 * 79228162514264337593543950341.0) { org.racob.com.Variant dv = new
+	 * org.racob.com.Variant(i, false) println i + " : " + dv.getDecimal() }
 	 * 
 	 */
 	public void testLargeDecimals() {
