@@ -9,16 +9,16 @@ import org.racob.com.IUnknown;
 
 /**
  * This base test class may require that the unittest package be
- * 'jacob-project/unittest' be on the classpath to find some resources.
+ * '{PROJECT_HOME}/unittest' be on the classpath to find some resources.
  * 
  * May need to run with some command line options (including from inside
- * Eclipse). Look in the docs area at the Jacob usage document for command line
+ * Eclipse). Look in the docs area at the Racob usage document for command line
  * options. Or try these:
  * 
  * <pre>
- *      -Djava.library.path=d:/jacob/release/x86 
- *      -Dcom.jacob.autogc=false 
- *      -Dcom.jacob.debug=false 
+ *      -Djava.library.path=d:/racob/release/x86
+ *      -Dorg.racob.autogc=false
+ *      -Dorg.racob.debug=false
  *      -Xcheck:jni
  * </pre>
  */
@@ -33,7 +33,7 @@ public class BaseTestCase extends TestCase {
 				fail("Failed basic sanity test: Can't create IUnknown (-D<java.library.path=xxx>)");
 			}
 		} catch (UnsatisfiedLinkError ule) {
-			fail("Did you remember to run with the jacob.dll in the libpath ?");
+			fail("Did you remember to run with the racob.dll in the libpath ?");
 		}
 	}
 
