@@ -195,7 +195,7 @@
 		 ================================================================== -->
 	<target name="javaJarCheck">
 		<uptodate property="jarUpToDate" targetfile="${release.file.jar}">
-			<srcfiles dir="${src.java.mainroot}" includes="com/**/*.java" />
+			<srcfiles dir="${src.java.mainroot}" includes="org/**/*.java" />
 			<!-- Check the build file itself as well -->
 			<srcfiles dir="${basedir}" includes="build.xml" />
 		</uptodate>
@@ -234,7 +234,7 @@
 			<exclude name="**/CVS" />
 			<!-- exclude all unit tests (ending in Test) 
 				and everything in the test packages -->
-			<exclude name="com/**/*Test*.class"/>
+			<exclude name="org/**/*Test*.class"/>
 			<exclude name="org/racob/test/**"/>
 			<include name="org/**/*.class" />
 			<include name="META-INF/${generated.filename.version}" />
@@ -394,7 +394,7 @@
 		
 			<doctitle><![CDATA[<h1>${application.title}</h1>]]></doctitle>
 			<bottom><![CDATA[<i>${application.vendor}</i>]]></bottom>
-			<group title="Core COM Communication" packages="${src.java.mainpackage}.com/**"/>
+			<group title="Core COM Communication" packages="${src.java.mainpackage}.org/**"/>
 			<group title="Higher Level Active X" packages="${src.java.mainpackage}.activeX/**"/>
 			<group title="API Stub Generator" packages="${src.java.mainpackage}.jacobgen/**"/>
 			<link offline="true" href="http://java.sun.com/j2se/1.5.0/docs/api/" packagelistLoc="C:\tmp"/>
