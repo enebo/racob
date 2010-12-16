@@ -27,8 +27,26 @@
 #include <olectl.h>
 #include "util.h"
 
-extern "C" 
-{
+extern "C" {
+    unsigned long referenceCountFor(IUnknown *obj) {
+        if (obj == NULL) return 0;
+
+        unsigned long count = obj->AddRef();
+        obj->Release();
+
+        return count - 1;
+    }
+
+    void IDispatchAddRef(char* message, IDispatch *obj) {
+        if (obj == NULL) {
+            printf("%s: NULL\n", message); fflush(stdout);
+            return;
+        }
+
+        unsigned long count = obj->AddRef();
+        printf("%s: Adding dispatch reference (count = %d) [%d]\n", message, count, obj);
+        fflush(stdout);
+    }
 
 void ThrowComFail(JNIEnv *env, const char* desc, jint hr)
 {

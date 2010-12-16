@@ -28,6 +28,8 @@ extern "C" {
   extern jfieldID DISPATCH_FIELD;
   extern jfieldID POINTER_FIELD;
 
+  unsigned long referenceCountFor(IUnknown *unknown);
+  void IDispatchAddRef(char* message, IDispatch *obj);
 
   /* Defined in variant.cpp */
   jobject createVariant(JNIEnv *env, VARIANT* variant);

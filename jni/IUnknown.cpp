@@ -30,6 +30,16 @@
 
 extern "C" {
 
+    JNIEXPORT jlong JNICALL Java_org_racob_com_IUnknown_getReferenceCount
+    (JNIEnv *, jclass, jint pointer) {
+        IDispatch *dispatch = (IDispatch *) pointer;
+
+        if (dispatch == NULL) return 0;
+
+        dispatch->AddRef();
+        return dispatch->Release();
+    }
+
 JNIEXPORT jint JNICALL Java_org_racob_com_IUnknown_toEnumVariant
   (JNIEnv *env, jobject obj, jint pointer) {
     IDispatch *dispatch = (IDispatch *) pointer;

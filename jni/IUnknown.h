@@ -26,21 +26,29 @@
 extern "C" {
 #endif
 
-/*
- * Class:     IUnknown
- * Method:    toEnumVariant
- * Signature: (I)I;
- */
-JNIEXPORT jint JNICALL Java_org_racob_com_IUnknown_toEnumVariant
-  (JNIEnv *, jobject, jint);
+    /*
+     * Class:     IUnknown
+     * Method:    getReferenceCount
+     * Signature: (I)L;
+     */
+    JNIEXPORT jint JNICALL Java_org_racob_com_IUnknown_getReferenceCount
+    (JNIEnv *, jclass, jlong);
 
-/*
- * Class:     IUnknown
- * Method:    release
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_org_racob_com_IUnknown_release
-  (JNIEnv *, jclass, jint);
+    /*
+     * Class:     IUnknown
+     * Method:    toEnumVariant
+     * Signature: (I)I;
+     */
+    JNIEXPORT jint JNICALL Java_org_racob_com_IUnknown_toEnumVariant
+    (JNIEnv *, jobject, jint);
+
+    /*
+     * Class:     IUnknown
+     * Method:    release
+     * Signature: (I)V
+     */
+    JNIEXPORT void JNICALL Java_org_racob_com_IUnknown_release
+    (JNIEnv *, jclass, jint);
 
 #ifdef __cplusplus
 }

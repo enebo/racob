@@ -54,6 +54,15 @@ public class IUnknown {
         }
     }
 
+    /**
+     * Returns current number of references holding onto this object.
+     * @return the count
+     */
+    public int getReferenceCount() {
+        return getReferenceCount(pointer.get());
+    }
+
+    public static native int getReferenceCount(int pointer);
     private native int toEnumVariant(int pointer);
     
     public EnumVariant toEnumVariant() {
