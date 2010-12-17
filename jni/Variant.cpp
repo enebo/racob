@@ -173,34 +173,17 @@ jobject createDispatch(JNIEnv *env, IDispatch* value) {
   return env->NewObject(DISPATCH_CLASS, DISPATCH_CONSTRUCTOR, (jint) value);
 }
 
-jobject createSafeArray(JNIEnv *env, SAFEARRAY *array) {
-    VARTYPE vt;
-    SafeArrayGetVartype(array, &vt);
+jobject createSafeArray(JNIEnv *env, VARIANT *vt, SAFEARRAY *array) {
+    VARTYPE varType;
+    SafeArrayGetVartype(array, &varType);
 
     jobject newArray = env->NewObject(SAFEARRAY_CLASS, SAFEARRAY_CONSTRUCTOR, (jint) vt);
-
     int dimensions = SafeArrayGetDim(array);
-
-    printf("DIM = %d\n", dimensions); fflush(stdout);
-    if (dimensions != 1) {
-        return NULL;
-    }
-
-    for (int i = 0; i < dimensions; i++) {
-        VARIANT variant;
-        long li = i;
-        SafeArrayGetElement(array, &li, (void*) &variant);
-        printf("I = %d, %d\n", i, li); fflush(stdout);
-        env->CallBooleanMethod(newArray, SAFEARRAY_ADD, createVariant(env, &variant));
-        VariantClear(&variant);
-    }
-    /*
     unsigned int i = 0;
-    
     long *lowerBounds, *upperBounds, *indexes;    
-    lowerBounds = ALLOC_N(long, dimensions);
-    upperBounds = ALLOC_N(long, dimensions);
-    indexes = ALLOC_N(long, dimensions);
+    lowerBounds = (long *) malloc(sizeof(long) * dimensions);
+    upperBounds = (long *) malloc(sizeof(long) * dimensions);
+    indexes = (long *) malloc(sizeof(long) * dimensions);
     
     if (!lowerBounds || !upperBounds || !indexes) {
         if (lowerBounds) free(lowerBounds);
@@ -210,21 +193,30 @@ jobject createSafeArray(JNIEnv *env, SAFEARRAY *array) {
         return NULL; //TODO: An error or ok?
     }
 
-    for(i = 0; i < dim; ++i) {
-        SafeArrayGetLBound(value, i+1, &lowerBounds[i]);
-        SafeArrayGetLBound(value, i+1, &indexes[i]);
-        SafeArrayGetUBound(value, i+1, &upperBounds[i]);
+    for(i = 0; i < dimensions; ++i) {
+        SafeArrayGetLBound(array, i+1, &lowerBounds[i]);
+        SafeArrayGetLBound(array, i+1, &indexes[i]);
+        SafeArrayGetUBound(array, i+1, &upperBounds[i]);
     }
     
-    HRESULT hr = SafeArrayLock(value);
-    if (!SUCCEEDED) return NULL; //TODO: An error or ok?
-   
+    HRESULT hr = SafeArrayLock(array);
+
     i = 0;
+    VARIANT variant;
+    VariantInit(&variant);
+    V_VT(&variant) = (V_VT(vt) & ~VT_ARRAY) | VT_BYREF;
     while (i < dimensions) {
+        hr = SafeArrayPtrOfIndex(array, indexes, &V_BYREF(&variant));
 
+        // TODO: Add multi-dim support
+        env->CallBooleanMethod(newArray, SAFEARRAY_ADD, createVariant(env, &variant));
 
+        for (i = 0; i < dimensions; ++i) {
+            if (++indexes[i] <= upperBounds[i]) break;
+            indexes[i] = lowerBounds[i];
+        }
     }
-     */
+    SafeArrayUnlock(array);
 
     return newArray;
 }
@@ -245,7 +237,7 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
 //  printf("variantToObject: %d\n", V_VT(v)); fflush(stdout);
 
   if (V_VT(v) & VT_ARRAY) {
-      return createSafeArray(env, (SAFEARRAY *) V_ARRAY(v));
+      return createSafeArray(env, v, (SAFEARRAY *) V_ARRAY(v));
   }
 
   switch (V_VT(v)) {
@@ -310,7 +302,6 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
 }
 
 jobject createVariant(JNIEnv *env, VARIANT* v) {
-   printf("VT = %d\n", V_VT(v)); fflush(stdout);
 //    printf("createVariant: %d\n", V_VT(v)); fflush(stdout);
     switch (V_VT(v)) {
       case VT_BOOL:
