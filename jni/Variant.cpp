@@ -50,6 +50,7 @@ jmethodID VARIANT_GETSHORT = 0;
 jmethodID VARIANT_GETINT = 0;
 jmethodID VARIANT_GETFLOAT = 0;
 jmethodID VARIANT_GETDOUBLE = 0;
+jmethodID VARIANT_GETLONG = 0;
 jmethodID VARIANT_GETDISPATCH = 0;
 jmethodID VARIANT_GETDATEASDOUBLE = 0;
 jmethodID VARIANT_GETCURRENCYASLONG = 0;
@@ -87,6 +88,7 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Variant_initializeNative
     VARIANT_GETINT = env->GetMethodID(clazz, "getInt", "()I");
     VARIANT_GETFLOAT = env->GetMethodID(clazz, "getFloat", "()F");
     VARIANT_GETDOUBLE = env->GetMethodID(clazz, "getDouble", "()D");
+    VARIANT_GETLONG = env->GetMethodID(clazz, "getLong", "()J");
     VARIANT_GETDISPATCH = env->GetMethodID(clazz, "getDispatchPointer", "()I");
     VARIANT_GETDATEASDOUBLE = env->GetMethodID(clazz, "getDateAsDouble", "()D");
     VARIANT_GETCURRENCYASLONG = env->GetMethodID(clazz, "getCurrencyAsLong", "()J");
@@ -144,6 +146,12 @@ jobject createBoxedFloat(JNIEnv *env, jfloat value) {
 jobject createBoxedInt(JNIEnv *env, jint value) {
   jclass clazz = env->FindClass("java/lang/Integer");
   jmethodID constructor = env->GetMethodID(clazz, "<init>", "(I)V");
+  return env->NewObject(clazz, constructor, value);
+}
+
+jobject createBoxedLong(JNIEnv *env, jlong value) {
+  jclass clazz = env->FindClass("java/lang/Long");
+  jmethodID constructor = env->GetMethodID(clazz, "<init>", "(J)V");
   return env->NewObject(clazz, constructor, value);
 }
 
@@ -255,8 +263,12 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
         return createBoxedShort(env, (jshort) V_I2(v));
      case VT_I2|VT_BYREF:
         return createBoxedShort(env, (jshort) *V_I2REF(v));
+     case VT_UI8:
+        return createBoxedInt(env, (jint) V_UI8(v));
      case VT_I4:
         return createBoxedInt(env, (jint) V_I4(v));
+     case VT_UI8|VT_BYREF:
+        return createBoxedInt(env, (jint) *V_UI8REF(v));
      case VT_I4|VT_BYREF:
         return createBoxedInt(env, (jint) *V_I4REF(v));
      case VT_R4:
@@ -267,6 +279,14 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
         return createBoxedDouble(env, (jdouble) V_R8(v));
      case VT_R8|VT_BYREF:
         return createBoxedDouble(env, (jdouble) *V_R8REF(v));
+     case VT_I8:
+        return createBoxedLong(env, (jdouble) V_I8(v));
+     case VT_UI4:
+        return createBoxedLong(env, (jdouble) V_UI4(v));
+     case VT_I8|VT_BYREF:
+        return createBoxedLong(env, (jdouble) *V_I8REF(v));
+     case VT_UI4|VT_BYREF:
+        return createBoxedLong(env, (jdouble) *V_UI4REF(v));
       case VT_BOOL:
          return createBoxedBoolean(env, (jboolean) V_BOOL(v));
       case VT_BOOL|VT_BYREF:
@@ -369,6 +389,9 @@ float getValueAsFloat(JNIEnv *env, jobject obj) {
 int getValueAsInt(JNIEnv *env, jobject obj) {
   return (int) env->CallIntMethod(obj, VARIANT_GETINT);
 }
+jlong getValueAsLong(JNIEnv *env, jobject obj) {
+  return (jlong) env->CallLongMethod(obj, VARIANT_GETLONG);
+}
 
 short getValueAsShort(JNIEnv *env, jobject obj) {
   return (short) env->CallShortMethod(obj, VARIANT_GETSHORT);
@@ -392,12 +415,18 @@ void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* v) {
   switch(variantType) {
      case VT_I2:
           V_I2(v) = getValueAsShort(env, javaVariant); break;
+     case VT_UI8:
+         V_UI8(v) = getValueAsInt(env, javaVariant); break;
      case VT_I4:
           V_I4(v) = getValueAsInt(env, javaVariant); break;
      case VT_R4:
           V_R4(v) = getValueAsFloat(env, javaVariant); break;
      case VT_R8:
           V_R8(v) = getValueAsDouble(env, javaVariant); break;
+     case VT_I8:
+          V_I8(v) = getValueAsLong(env, javaVariant); break;
+     case VT_UI4:
+          V_UI4(v) = getValueAsLong(env, javaVariant); break;
      case VT_CY:
           CY pf;
           pf.int64 = (LONGLONG) getValueAsCurrency(env, javaVariant);

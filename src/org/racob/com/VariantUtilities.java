@@ -177,6 +177,7 @@ public final class VariantUtilities {
                 return null;
             case Variant.VariantShort: // 2
                 return sourceData.getShort();
+            case Variant.VariantUnsignedInt: // 21
             case Variant.VariantInt: // 3
                 return sourceData.getInt();
             case Variant.VariantFloat: // 4

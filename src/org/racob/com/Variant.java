@@ -91,6 +91,7 @@ public class Variant {
      */
     public final static short VariantLongInt = 20;
     // VT_UI8 = 21
+    public final static short VariantUnsignedInt = 21;
     // VT_INT = 22
     // VT_UNIT = 23
     // VT_VOID = 24
@@ -467,6 +468,7 @@ public class Variant {
      *             if variant is not of the requested type
      */
     public int getInt() {
+        if (isA(VariantUnsignedInt)) return ((Integer) value).intValue();
         if (isA(VariantInt)) return ((Integer) value).intValue();
         if (isA(VariantShort)) return ((Short) value).shortValue();
         illegal("getInt", "VariantInt");
@@ -496,7 +498,7 @@ public class Variant {
      * @throws IllegalStateException if variant is not of the requested type
      */
     public long getLong() {
-        if (!isA(VariantLongInt)) illegal("getLong", "VariantLongInt");
+        if (!isA(VariantLongInt) && !(isA(VariantUnsignedLong))) illegal("getLong", "VariantLongInt");
         return ((Long) value).longValue();
     }
 
