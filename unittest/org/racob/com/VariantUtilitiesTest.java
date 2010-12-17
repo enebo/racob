@@ -1,6 +1,5 @@
 package org.racob.com;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import org.racob.test.BaseTestCase;
@@ -41,12 +40,11 @@ public class VariantUtilitiesTest extends BaseTestCase {
 		assertNotNull(sa);
 
 		assertEquals(Variant.VariantByte, sa.getvt());
+		assertEquals(3, sa.size());
 
-		assertEquals(0, sa.getLBound());
-		assertEquals(2, sa.getUBound());
-
-		byte[] bytes = sa.toByteArray();
-		assertTrue(Arrays.equals(bytes, arr));
+                for (int i = 0; i < arr.length; i++) {
+                    assertEquals(arr[i], sa.getVariant(i).getByte());
+                }
 	}
 
 	public void testPrimitiveIntArray() {
@@ -58,12 +56,11 @@ public class VariantUtilitiesTest extends BaseTestCase {
 		assertNotNull(sa);
 
 		assertEquals(Variant.VariantInt, sa.getvt());
+                assertEquals(3, sa.size());
 
-		assertEquals(0, sa.getLBound());
-		assertEquals(2, sa.getUBound());
-
-		int[] ints = sa.toIntArray();
-		assertTrue(Arrays.equals(ints, arr));
+                for (int i = 0; i < arr.length; i++) {
+                    assertEquals(arr[i], sa.getVariant(i).getInt());
+                }
 	}
 
 	public void testPrimitiveDoubleArray() {
@@ -75,12 +72,11 @@ public class VariantUtilitiesTest extends BaseTestCase {
 		assertNotNull(sa);
 
 		assertEquals(Variant.VariantDouble, sa.getvt());
+                assertEquals(3, sa.size());
 
-		assertEquals(0, sa.getLBound());
-		assertEquals(2, sa.getUBound());
-
-		double[] doubles = sa.toDoubleArray();
-		assertTrue(Arrays.equals(doubles, arr));
+                for (int i = 0; i < arr.length; i++) {
+                    assertEquals(arr[i], sa.getVariant(i).getDouble());
+                }
 	}
 
 	public void testPrimitiveLongArray() {
@@ -92,12 +88,11 @@ public class VariantUtilitiesTest extends BaseTestCase {
 		assertNotNull(sa);
 
 		assertEquals(Variant.VariantLongInt, sa.getvt());
+                assertEquals(3, sa.size());
 
-		assertEquals(0, sa.getLBound());
-		assertEquals(2, sa.getUBound());
-
-		long[] longs = sa.toLongArray();
-		assertTrue(Arrays.equals(longs, arr));
+                for (int i = 0; i < arr.length; i++) {
+                    assertEquals(arr[i], sa.getVariant(i).getLong());
+                }
 	}
 
 }

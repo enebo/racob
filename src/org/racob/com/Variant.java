@@ -288,6 +288,10 @@ public class Variant {
         return type == testType || type == (testType | VariantByref);
     }
 
+    public boolean isArray() {
+        return (type & VariantArray) != 0;
+    }
+
     public boolean isByref() {
         return (type & VariantByref) != 0;
     }
@@ -336,7 +340,7 @@ public class Variant {
     }
 
     public SafeArray getArray() {
-        if (!isA(VariantArray)) illegal("getArray", "VariantArray");
+        if (!isArray()) illegal("getArray", "VariantArray");
         return (SafeArray) value;
     }
 

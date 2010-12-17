@@ -76,47 +76,38 @@ public final class VariantUtilities {
             Class componentType = value.getClass().getComponentType();
 
             if (componentType.isArray()) { // array of arrays
-                int max = 0;
+                sa = new SafeArray(Variant.VariantVariant);
 
                 for (int i = 0; i < len1; i++) {
-                    Object e1 = Array.get(value, i);
-                    int len2 = Array.getLength(e1);
-
-                    if (max < len2) max = len2;
-                }
-                sa = new SafeArray(Variant.VariantVariant, len1, max);
-
-                for (int i = 0; i < len1; i++) {
+                    SafeArray subArray = new SafeArray(Variant.VariantVariant);
                     Object e1 = Array.get(value, i);
 
                     for (int j = 0; j < Array.getLength(e1); j++) {
-                        sa.setVariant(i, j, objectToVariant(Array.get(e1, j)));
+                        subArray.add(objectToVariant(Array.get(e1, j)));
                     }
+                    sa.add(subArray);
                 }
             } else if (byte.class.equals(componentType)) {
                 byte[] arr = (byte[]) value;
-                sa = new SafeArray(Variant.VariantByte, len1);
-                for (int i = 0; i < len1; i++) sa.setByte(i, arr[i]);
+                sa = new SafeArray(Variant.VariantByte);
+                for (int i = 0; i < len1; i++) sa.add(i, arr[i]);
             } else if (int.class.equals(componentType)) {
                 int[] arr = (int[]) value;
-                sa = new SafeArray(Variant.VariantInt, len1);
-                for (int i = 0; i < len1; i++) sa.setInt(i, arr[i]);
+                sa = new SafeArray(Variant.VariantInt);
+                for (int i = 0; i < len1; i++) sa.add(i, arr[i]);
             } else if (double.class.equals(componentType)) {
                 double[] arr = (double[]) value;
-                sa = new SafeArray(Variant.VariantDouble, len1);
-                for (int i = 0; i < len1; i++) sa.setDouble(i, arr[i]);
+                sa = new SafeArray(Variant.VariantDouble);
+                for (int i = 0; i < len1; i++) sa.add(i, arr[i]);
             } else if (long.class.equals(componentType)) {
                 long[] arr = (long[]) value;
-                sa = new SafeArray(Variant.VariantLongInt, len1);
-                for (int i = 0; i < len1; i++) sa.setLong(i, arr[i]);
-            } else {
-                // array of object
-                sa = new SafeArray(Variant.VariantVariant, len1);
-
-                for (int i = 0; i < len1; i++) {
-                    sa.setVariant(i, objectToVariant(Array.get(value, i)));
-                }
+                sa = new SafeArray(Variant.VariantLongInt);
+                for (int i = 0; i < len1; i++) sa.add(i, arr[i]);
+            } else { // array of objects
+                sa = new SafeArray(Variant.VariantVariant);
+                for (int i = 0; i < len1; i++) sa.add(i, objectToVariant(Array.get(value, i)));
             }
+            
             return createVariant(sa, false);
         } else {
             // rely on createVariant to throw an exception if its an

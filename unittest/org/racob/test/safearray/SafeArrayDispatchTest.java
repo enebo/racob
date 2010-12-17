@@ -25,13 +25,13 @@ public class SafeArrayDispatchTest extends BaseTestCase {
 			Variant v = new Variant(sControl);
 
 			// create a safe array of type dispatch
-			SafeArray sa = new SafeArray(Variant.VariantDispatch, 1);
+			SafeArray sa = new SafeArray(Variant.VariantDispatch);
 
 			// put the variant in the array
-			sa.setVariant(0, v);
+			sa.add(v);
 
 			// take it back out
-			Variant v2 = sa.getVariant(0);
+			Variant v2 = (Variant) sa.get(0);
 			Dispatch d = v2.toDispatch();
 
 			// make sure you can call eval on it
