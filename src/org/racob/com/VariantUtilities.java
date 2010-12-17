@@ -203,6 +203,7 @@ public final class VariantUtilities {
                 return sourceData.getDecimal();
             case Variant.VariantByte: // 17
                 return new Byte(sourceData.getByte());
+            case Variant.VariantUnsignedLong: // 19
             case Variant.VariantLongInt: // 20
                 return sourceData.getLong();
             case Variant.VariantTypeMask: // 4095

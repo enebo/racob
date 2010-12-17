@@ -81,7 +81,9 @@ public class Variant {
     /** variant's type is byte VT_UI1 */
     public final static short VariantByte = 17;
     // VT_UI2 = 18
-    // VT_UI4 = 19
+    //    VT_UI4 = 19;
+    public final static short VariantUnsignedLong = 19;
+
     /**
      * variant's type is 64 bit long integer VT_I8 - not yet implemented in
      * Jacob because we have to decide what to do with Currency and because its
