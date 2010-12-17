@@ -107,7 +107,7 @@ jobject createDateVariant(JNIEnv *env, jdouble value) {
 
 jobject createDispatchVariant(JNIEnv *env, IDispatch* pointer) {
   if (pointer) pointer->AddRef();
-  
+
   return env->CallStaticObjectMethod(VARIANT_CLASS, VARIANT_CREATEDISPATCH, (jint) pointer);
 }
 
@@ -198,18 +198,24 @@ jobject createSafeArray(JNIEnv *env, VARIANT *vt, SAFEARRAY *array) {
         SafeArrayGetLBound(array, i+1, &indexes[i]);
         SafeArrayGetUBound(array, i+1, &upperBounds[i]);
     }
-    
+
     HRESULT hr = SafeArrayLock(array);
 
     i = 0;
     VARIANT variant;
     VariantInit(&variant);
     V_VT(&variant) = (V_VT(vt) & ~VT_ARRAY) | VT_BYREF;
+
     while (i < dimensions) {
         hr = SafeArrayPtrOfIndex(array, indexes, &V_BYREF(&variant));
+        if (!SUCCEEDED(hr)) {
+            printf("FDAILED\n");
+        } else {
+//        hr = SafeArrayGetElement(array, indexes, V_BYREF(&variant);
 
         // TODO: Add multi-dim support
         env->CallBooleanMethod(newArray, SAFEARRAY_ADD, createVariant(env, &variant));
+        }
 
         for (i = 0; i < dimensions; ++i) {
             if (++indexes[i] <= upperBounds[i]) break;
@@ -237,7 +243,11 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
 //  printf("variantToObject: %d\n", V_VT(v)); fflush(stdout);
 
   if (V_VT(v) & VT_ARRAY) {
-      return createSafeArray(env, v, (SAFEARRAY *) V_ARRAY(v));
+      if (V_ISBYREF(v)) {
+         return createSafeArray(env, v, (SAFEARRAY *) *V_ARRAYREF(v));
+      } else {
+         return createSafeArray(env, v, (SAFEARRAY *) V_ARRAY(v));
+      }
   }
 
   switch (V_VT(v)) {
@@ -274,7 +284,7 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
      case VT_DISPATCH:
         return createDispatch(env, (IDispatch *) V_DISPATCH(v));
      case VT_DISPATCH|VT_BYREF:
-        return createDispatch(env, (IDispatch *) V_DISPATCHREF(v));
+        return createDispatch(env, (IDispatch *) *V_DISPATCHREF(v));
      case VT_EMPTY:
      case VT_NULL:
         return NULL;
