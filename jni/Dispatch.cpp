@@ -474,6 +474,8 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev0
   return result;
 }
 
+#define DISPATCH_DEBUG 0
+
 JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
   (JNIEnv *env, jclass clazz,
   jint dispPointer, jstring name, jint dispid,
@@ -481,9 +483,11 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
   DISPPARAMS  dispparams;
   EXCEPINFO   excepInfo;
 
+  if (DISPATCH_DEBUG) { printf("Before dispatch\n"); fflush(stdout); }
   IDispatch *pIDispatch = (IDispatch *) dispPointer;
   if (!pIDispatch) return NULL;
 
+  if (DISPATCH_DEBUG) { printf("Before name\n"); fflush(stdout); }
   int dispID = dispid;
   if (name != NULL) {
     const char *nm = env->GetStringUTFChars(name, NULL);
@@ -497,6 +501,7 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
     env->ReleaseStringUTFChars(name, nm);
   }
 
+  if (DISPATCH_DEBUG) { printf("Before args handling\n"); fflush(stdout); }
   int num_args = env->GetArrayLength(vArg);
   int i, j;
   VARIANT *varr = NULL;
@@ -513,10 +518,12 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
     }
   }
 
+  if (DISPATCH_DEBUG) { printf("Before return setup\n"); fflush(stdout); }
   VARIANT returnValue;
   DISPID  dispidPropertyPut = DISPID_PROPERTYPUT;
   VariantInit(&returnValue);
 
+  if (DISPATCH_DEBUG) { printf("Before dispatch type logic\n"); fflush(stdout); }
   // determine how to dispatch
   switch (wFlags) {
     case DISPATCH_PROPERTYGET: // GET
@@ -532,6 +539,7 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
     }
   }
 
+  if (DISPATCH_DEBUG) { printf("Before invoke\n"); fflush(stdout); }
   HRESULT hr = 0;
   jint count = env->GetArrayLength(uArgErr);
   if ( count != 0 ) {
@@ -544,6 +552,7 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
                lcid, (WORD) wFlags, &dispparams, &returnValue, &excepInfo, NULL); // SF 1689061
   }
 
+  if (DISPATCH_DEBUG) { printf("Before in/outs\n"); fflush(stdout); }
   if (num_args) {
     // to account for inouts, I need to copy the inputs back to
     // the java array after the method returns
@@ -556,6 +565,7 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
 
   if (varr) CoTaskMemFree(varr);
 
+  if (DISPATCH_DEBUG) { printf("Before error check\n"); fflush(stdout); }
   // check for error and display a somewhat verbose error message
   if (!SUCCEEDED(hr)) {
     // two buffers that may have to be freed later
@@ -594,6 +604,7 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
     return NULL;
   }
 
+  if (DISPATCH_DEBUG) { printf("Before return to variant\n"); fflush(stdout); }
   jobject result = createVariant(env, &returnValue);
   VariantClear(&returnValue);
   return result;
