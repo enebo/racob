@@ -433,8 +433,8 @@ void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* v) {
           V_CY(v) = pf;
           break;
      case VT_DATE:
-//        printf("VT_DATE\n");
           V_DATE(v) = getValueAsDate(env, javaVariant); break;
+     case VT_BSTR|VT_BYREF:
      case VT_BSTR: {
           jstring s = getValueAsString(env, javaVariant);
           const jchar *cStr = env->GetStringChars(s, NULL);
