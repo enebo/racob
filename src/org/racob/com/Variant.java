@@ -81,7 +81,8 @@ public class Variant {
     /** variant's type is byte VT_UI1 */
     public final static short VariantByte = 17;
     // VT_UI2 = 18
-    //    VT_UI4 = 19;
+    public final static short VariantUnsignedShort = 18;
+    // VT_UI4 = 19;
     public final static short VariantUnsignedLong = 19;
 
     /**
@@ -517,7 +518,7 @@ public class Variant {
      * @throws IllegalStateException if variant is not of the requested type
      */
     public short getShort() {
-        if (!isA(VariantShort)) illegal("getShort", "VariantShort");
+        if (!isA(VariantShort) && !isA(VariantUnsignedShort)) illegal("getShort", "VariantShort");
         return ((Short) value).shortValue();
     }
 

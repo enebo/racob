@@ -181,12 +181,22 @@ jobject createDispatch(JNIEnv *env, IDispatch* value) {
   return env->NewObject(DISPATCH_CLASS, DISPATCH_CONSTRUCTOR, (jint) value);
 }
 
+void printIndex(long *bounds, int dims) {
+    int i;
+    printf("dims = %d - [", dims);
+    for (i = 0; i < dims - 1; i++) {
+        printf("%d ", bounds[i]);
+    }
+    printf("%d]\n", bounds[i]);
+    fflush(stdout);
+}
+
 jobject createSafeArray(JNIEnv *env, VARIANT *vt, SAFEARRAY *array) {
     VARTYPE varType;
     SafeArrayGetVartype(array, &varType);
 
     jobject newArray = env->NewObject(SAFEARRAY_CLASS, SAFEARRAY_CONSTRUCTOR, (jint) varType);
-    int dimensions = SafeArrayGetDim(array);
+    unsigned int dimensions = SafeArrayGetDim(array);
     unsigned int i = 0;
     long *lowerBounds, *upperBounds, *indexes;    
     lowerBounds = (long *) malloc(sizeof(long) * dimensions);
@@ -215,11 +225,16 @@ jobject createSafeArray(JNIEnv *env, VARIANT *vt, SAFEARRAY *array) {
     V_VT(&variant) = (V_VT(vt) & ~VT_ARRAY) | VT_BYREF;
 
     while (i < dimensions) {
+        //printIndex(indexes, dimensions);
+//        if (V_ISBYREF(&variant)) {
+//            printf("BYREF\n");
+//        }
         hr = SafeArrayPtrOfIndex(array, indexes, &V_BYREF(&variant));
+//        hr = SafeArrayGetElement(array, indexes, &variant);
         if (!SUCCEEDED(hr)) {
-            printf("FDAILED\n");
+            //printf("FDAILED\n");
         } else {
-//        hr = SafeArrayGetElement(array, indexes, V_BYREF(&variant);
+
 
         // TODO: Add multi-dim support
         env->CallBooleanMethod(newArray, SAFEARRAY_ADD, createVariant(env, &variant));
@@ -259,8 +274,12 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
   }
 
   switch (V_VT(v)) {
+     case VT_UI2:
+        return createBoxedShort(env, (jshort) V_UI2(v));
      case VT_I2:
         return createBoxedShort(env, (jshort) V_I2(v));
+     case VT_UI2|VT_BYREF:
+        return createBoxedShort(env, (jshort) *V_UI2REF(v));
      case VT_I2|VT_BYREF:
         return createBoxedShort(env, (jshort) *V_I2REF(v));
      case VT_UI8:
@@ -280,13 +299,13 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
      case VT_R8|VT_BYREF:
         return createBoxedDouble(env, (jdouble) *V_R8REF(v));
      case VT_I8:
-        return createBoxedLong(env, (jdouble) V_I8(v));
+        return createBoxedLong(env, (jlong) V_I8(v));
      case VT_UI4:
-        return createBoxedLong(env, (jdouble) V_UI4(v));
+        return createBoxedLong(env, (jlong) V_UI4(v));
      case VT_I8|VT_BYREF:
-        return createBoxedLong(env, (jdouble) *V_I8REF(v));
+        return createBoxedLong(env, (jlong) *V_I8REF(v));
      case VT_UI4|VT_BYREF:
-        return createBoxedLong(env, (jdouble) *V_UI4REF(v));
+        return createBoxedLong(env, (jlong) *V_UI4REF(v));
       case VT_BOOL:
          return createBoxedBoolean(env, (jboolean) V_BOOL(v));
       case VT_BOOL|VT_BYREF:
@@ -413,6 +432,8 @@ void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* v) {
   VariantClear(v);
   V_VT(v) = (VARTYPE) variantType;
   switch(variantType) {
+     case VT_UI2:
+          V_UI2(v) = getValueAsShort(env, javaVariant); break;
      case VT_I2:
           V_I2(v) = getValueAsShort(env, javaVariant); break;
      case VT_UI8:
