@@ -185,7 +185,7 @@ jobject createSafeArray(JNIEnv *env, VARIANT *vt, SAFEARRAY *array) {
     VARTYPE varType;
     SafeArrayGetVartype(array, &varType);
 
-    jobject newArray = env->NewObject(SAFEARRAY_CLASS, SAFEARRAY_CONSTRUCTOR, (jint) vt);
+    jobject newArray = env->NewObject(SAFEARRAY_CLASS, SAFEARRAY_CONSTRUCTOR, (jint) varType);
     int dimensions = SafeArrayGetDim(array);
     unsigned int i = 0;
     long *lowerBounds, *upperBounds, *indexes;    
