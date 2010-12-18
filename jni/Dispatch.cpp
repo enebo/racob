@@ -498,6 +498,7 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
       ThrowComFail(env, buf, -1);
       return NULL;
     }
+    if (DISPATCH_DEBUG) { printf("name setup: %s\n", nm); }
     env->ReleaseStringUTFChars(name, nm);
   }
 
@@ -552,19 +553,6 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
                lcid, (WORD) wFlags, &dispparams, &returnValue, &excepInfo, NULL); // SF 1689061
   }
 
-  if (DISPATCH_DEBUG) { printf("Before in/outs\n"); fflush(stdout); }
-  if (num_args) {
-    // to account for inouts, I need to copy the inputs back to
-    // the java array after the method returns
-    // this occurs, for example, in the ADO wrappers
-    for(i=num_args-1,j=0;0<=i;i--,j++) {
-       env->SetObjectArrayElement(vArg, i, createVariant(env, &varr[j]));
-       VariantClear(&varr[j]); // clear out the temporary variant
-    }
-  }
-
-  if (varr) CoTaskMemFree(varr);
-
   if (DISPATCH_DEBUG) { printf("Before error check\n"); fflush(stdout); }
   // check for error and display a somewhat verbose error message
   if (!SUCCEEDED(hr)) {
@@ -599,10 +587,23 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
 	}
 	
     ThrowComFailUnicode(env, buf, hr);
+    if (varr) CoTaskMemFree(varr);
     if (buf) delete buf;
     if (dispIdAsName) delete dispIdAsName;
     return NULL;
   }
+
+  if (DISPATCH_DEBUG) { printf("Before in/outs\n"); fflush(stdout); }
+  if (num_args) {
+    // to account for inouts, I need to copy the inputs back to
+    // the java array after the method returns
+    // this occurs, for example, in the ADO wrappers
+    for(i=num_args-1,j=0;0<=i;i--,j++) {
+       env->SetObjectArrayElement(vArg, i, createVariant(env, &varr[j]));
+       VariantClear(&varr[j]); // clear out the temporary variant
+    }
+  }
+  if (varr) CoTaskMemFree(varr);
 
   if (DISPATCH_DEBUG) { printf("Before return to variant\n"); fflush(stdout); }
   jobject result = createVariant(env, &returnValue);
