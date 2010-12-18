@@ -165,30 +165,32 @@
 	</condition>
 	<echo message="shouldBuild.x64= ${shouldBuild.x64}" />
 	
+        <condition property="compile.flags" value="/Zi /D DEBUG">
+            <or><isset property="debug"/><isset property="DEBUG"/></or>
+        </condition>
+        <condition property="compile.flags" value="/D NDEBUG">
+            <not><or><isset property="debug"/><isset property="DEBUG"/></or></not>
+        </condition>
+        <echo message="compile.flags= ${compile.flags}"/>
+        <condition property="link.flags" value="/DLL /DEBUG /DEFAULTLIB:libcmtd.lib /NODEFAULTLIB:libcmt.lib">
+            <or><isset property="debug"/><isset property="DEBUG"/></or>
+        </condition>
+        <condition property="link.flags" value="/DLL">
+            <not><or><isset property="debug"/><isset property="DEBUG"/></or></not>
+        </condition>
+        <echo message="link.flags= ${link.flags}"/>
 	
 	<!--=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v=v
 			START of TASKS
 		=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^=^ -->
 
-	<!-- ================================= 
-          target: default              
-         ================================= -->
-	<target name="default" 
-			depends="javaJarBin,makeDll.x86,makeDll.x64">
-		<echo message="${application.title} ${version} build ${build.iteration} : finished on ${build.date}" />
-	</target>
+  <target name="default" depends="javaJarBin,makeDll.x86,makeDll.x64">
+    <echo message="${application.title} ${version} build ${build.iteration} : finished on ${build.date}" />
+  </target>
 
-	<!-- ======================================================================
-		      Target (still in development) that removes all bin directories        
-		 ================================================================== -->
-	<target name="clean">
-		<delete>
-			<fileset dir="${release.dir.java}"/>
-			<fileset dir="${release.dir.x86.cpp}"/>
-			<fileset dir="${release.dir.x64.cpp}"/>
-			<fileset dir="${release.dir}"/>
-		</delete>
-	</target>
+  <target name="clean">
+    <delete dir="release" verbose="true"/>
+  </target>
 	<!-- ======================================================================
 		      Compare the date/time of the JAR against that 
 		      of the java source          
@@ -263,7 +265,7 @@
 			<arg value="/nologo"/>
 			<arg value="/c"/>
 			<arg value="/D WIN32"/>
-			<arg value="/D NDEBUG"/>
+                        <arg line="${compile.flags}"/>
 			<arg value="/D _WINDOWS"/>
 			<arg value="/D _USRDLL"/>
 			<arg value="/D _WINDLL" />
@@ -295,7 +297,7 @@
 			<arg value="/nologo"/>
 			<arg value="/c"/>
 			<arg value="/D WIN64"/>
-			<arg value="/D NDEBUG"/>
+                        <arg line="${compile.flags}"/>
 			<arg value="/D _WINDOWS"/>
 			<arg value="/D _USRDLL"/>
 			<arg value="/D _WINDLL" />
@@ -334,8 +336,8 @@
 			<env key="Path" value="${MSDEV_IDE_DIR}"/>
 			<arg value="/nologo" />
 			<arg value="/MANIFEST" />
+                        <arg line="${link.flags}"/>
 			<arg value="/MANIFESTFILE:${release.dir.x86.cpp}/racob.dll.manifest" />
-			<arg value="/dll" />
 			<arg value="/version:${version}" />
 			<arg value="/out:${release.file.x86.dll}" />
 			<arg value="/libpath:${library.x86}" />
@@ -360,8 +362,8 @@
 			<env key="Path" value="${MSDEV_IDE_DIR}"/>
 			<arg value="/nologo" />
 			<arg value="/MANIFEST" />
+                        <arg line="${link.flags}"/>
 			<arg value="/MANIFESTFILE:${release.dir.x64.cpp}/racob.dll.manifest" />
-			<arg value="/dll" />
 			<arg value="/version:${version}" />
 			<arg value="/out:${release.file.x64.dll}" />
 			<arg value="/libpath:${library.x64}" />
