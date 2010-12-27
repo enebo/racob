@@ -22,9 +22,9 @@ public class ScriptTest extends BaseTestCase {
 		String lang = "VBScript";
 		ActiveXComponent sC = new ActiveXComponent("ScriptControl");
 		Dispatch sControl = sC.getObject();
-		Dispatch.put(sControl, "Language", lang);
+		sControl.put("Language", lang);
 		for (int i = 0; i < 10000; i++) {
-			Dispatch.call(sControl, "Eval", "1+1");
+			sControl.call("Eval", "1+1");
 		}
 	}
 
@@ -38,18 +38,18 @@ public class ScriptTest extends BaseTestCase {
 			String lang = "VBScript";
 			ActiveXComponent sC = new ActiveXComponent("ScriptControl");
 			sControl = sC.getObject();
-			Dispatch.put(sControl, "Language", lang);
+			sControl.put("Language", lang);
 			ScriptTestErrEvents te = new ScriptTestErrEvents();
 			de = new DispatchEvents(sControl, te);
 			if (de == null) {
 				System.out
 						.println("Received null when trying to create new DispatchEvents");
 			}
-			Variant result = Dispatch.call(sControl, "Eval", scriptCommand);
+			Variant result = sControl.call("Eval", scriptCommand);
 			// call it twice to see the objects reused
-			result = Dispatch.call(sControl, "Eval", scriptCommand);
+			result = sControl.call("Eval", scriptCommand);
 			// call it 3 times to see the objects reused
-			result = Dispatch.call(sControl, "Eval", scriptCommand);
+			result = sControl.call("Eval", scriptCommand);
 			System.out.println("eval(" + scriptCommand + ") = " + result);
 		} catch (ComException e) {
 			e.printStackTrace();

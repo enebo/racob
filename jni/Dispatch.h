@@ -60,10 +60,10 @@ JNIEXPORT jint JNICALL Java_org_racob_com_Dispatch_coCreateInstanceNative
 /*
  * Class:     Dispatch
  * Method:    getIDsOfNames
- * Signature: (ILjava/lang/Object;I[Ljava/lang/String;)[I
+ * Signature: (II[Ljava/lang/String;)[I
  */
 JNIEXPORT jintArray JNICALL Java_org_racob_com_Dispatch_getIDsOfNames
-  (JNIEnv *, jclass, jint, jobject, jint, jobjectArray);
+  (JNIEnv *, jclass, jint, jint, jobjectArray);
 
 /*
  * Class:     Dispatch

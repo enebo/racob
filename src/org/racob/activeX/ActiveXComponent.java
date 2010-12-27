@@ -161,7 +161,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return variant value of property
 	 */
 	public Variant getProperty(String propertyName) {
-		return Dispatch.get(this, propertyName);
+		return get(propertyName);
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return Dispatch representing the object under the property name
 	 */
 	public ActiveXComponent getPropertyAsComponent(String propertyName) {
-		return new ActiveXComponent(Dispatch.get(this, propertyName).getDispatch());
+		return new ActiveXComponent(get(propertyName).getDispatch());
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return boolean value of property
 	 */
 	public boolean getPropertyAsBoolean(String propertyName) {
-		return Dispatch.get(this, propertyName).getBoolean();
+		return get(propertyName).getBoolean();
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return byte value of property
 	 */
 	public byte getPropertyAsByte(String propertyName) {
-		return Dispatch.get(this, propertyName).getByte();
+		return get(propertyName).getByte();
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return String value of property
 	 */
 	public String getPropertyAsString(String propertyName) {
-		return Dispatch.get(this, propertyName).getString();
+		return get(propertyName).getString();
 
 	}
 
@@ -214,7 +214,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return the property value as an int
 	 */
 	public int getPropertyAsInt(String propertyName) {
-		return Dispatch.get(this, propertyName).getInt();
+		return get(propertyName).getInt();
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class ActiveXComponent extends Dispatch {
 	 *            variant value to be set
 	 */
 	public void setProperty(String propertyName, Variant arg) {
-		Dispatch.put(this, propertyName, arg);
+		put(propertyName, arg);
 	}
 
 	/**
@@ -238,7 +238,7 @@ public class ActiveXComponent extends Dispatch {
 	 *            variant value to be set
 	 */
 	public void setProperty(String propertyName, Dispatch arg) {
-		Dispatch.put(this, propertyName, arg);
+		put(propertyName, arg);
 	}
 
 	/**
@@ -434,7 +434,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return a Variant but that may be null for some calls
 	 */
 	public Variant invoke(String actionCommand, String parameter) {
-		return Dispatch.call(this, actionCommand, parameter);
+		return call(actionCommand, parameter);
 	}
 
 	/**
@@ -446,7 +446,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return Variant result
 	 */
 	public Variant invoke(String actionCommand, boolean parameter) {
-		return Dispatch.call(this, actionCommand, new Variant(parameter));
+		return call(actionCommand, new Variant(parameter));
 	}
 
 	/**
@@ -457,7 +457,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return Variant result of the invoke (Dispatch.call)
 	 */
 	public Variant invoke(String actionCommand, int parameter) {
-		return Dispatch.call(this, actionCommand, new Variant(parameter));
+		return call(actionCommand, new Variant(parameter));
 	}
 
 	/**
@@ -471,8 +471,7 @@ public class ActiveXComponent extends Dispatch {
 	 */
 	public Variant invoke(String actionCommand, String parameter1,
 			int parameter2) {
-		return Dispatch.call(this, actionCommand, parameter1, new Variant(
-				parameter2));
+		return call(actionCommand, parameter1, new Variant(parameter2));
 	}
 
 	/**
@@ -485,8 +484,8 @@ public class ActiveXComponent extends Dispatch {
 	 * @return a Variant but that may be null for some calls
 	 */
 	public Variant invoke(String actionCommand, int parameter1, int parameter2) {
-		return Dispatch.call(this, actionCommand, new Variant(parameter1),
-				new Variant(parameter2));
+		return call(actionCommand, 
+                        new Variant(parameter1), new Variant(parameter2));
 	}
 
 	/**
@@ -497,7 +496,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return a Variant but that may be null for some calls
 	 */
 	public Variant invoke(String callAction, Variant parameter) {
-		return Dispatch.call(this, callAction, parameter);
+		return call(callAction, parameter);
 	}
 
 	/**
@@ -510,7 +509,7 @@ public class ActiveXComponent extends Dispatch {
 	 */
 	public Variant invoke(String callAction, Variant parameter1,
 			Variant parameter2) {
-		return Dispatch.call(this, callAction, parameter1, parameter2);
+		return call(callAction, parameter1, parameter2);
 	}
 
 	/**
@@ -524,8 +523,7 @@ public class ActiveXComponent extends Dispatch {
 	 */
 	public Variant invoke(String callAction, Variant parameter1,
 			Variant parameter2, Variant parameter3) {
-		return Dispatch.call(this, callAction, parameter1, parameter2,
-				parameter3);
+		return call(callAction, parameter1, parameter2, parameter3);
 	}
 
 	/**
@@ -540,8 +538,7 @@ public class ActiveXComponent extends Dispatch {
 	 */
 	public Variant invoke(String callAction, Variant parameter1,
 			Variant parameter2, Variant parameter3, Variant parameter4) {
-		return Dispatch.call(this, callAction, parameter1, parameter2,
-				parameter3, parameter4);
+		return call(callAction, parameter1, parameter2,	parameter3, parameter4);
 	}
 
 	/**
@@ -551,7 +548,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return a Variant but that may be null for some calls
 	 */
 	public Variant invoke(String callAction) {
-		return Dispatch.call(this, callAction);
+		return call(callAction);
 	}
 
 	/**
@@ -563,7 +560,7 @@ public class ActiveXComponent extends Dispatch {
 	 * @return Variant returned by the invoke (Dispatch.callN)
 	 */
 	public Variant invoke(String name, Variant[] args) {
-		return Dispatch.callN(this, name, args);
+		return callN(name, args);
 	}
 
 }

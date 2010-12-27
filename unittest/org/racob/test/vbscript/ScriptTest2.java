@@ -51,7 +51,7 @@ public class ScriptTest2 extends BaseTestCase {
 			// from the DispatchProxy. If you try to make the same
 			// method call on the sControl object - you will get a
 			// ComException.
-			Variant result = Dispatch.call(sc, "Eval", scriptCommand);
+			Variant result = sc.call("Eval", scriptCommand);
 			System.out.println("eval(" + scriptCommand + ") = " + result);
 			script.quit();
 			System.out.println("called quit");
@@ -76,6 +76,7 @@ public class ScriptTest2 extends BaseTestCase {
 
 		public DispatchProxy sCon = null;
 
+        @Override
 		public boolean OnInit() {
 			try {
 				System.out.println("OnInit");
@@ -86,7 +87,7 @@ public class ScriptTest2 extends BaseTestCase {
 				// sCon can be called from another thread
 				sCon = new DispatchProxy(sControl);
 
-				Dispatch.put(sControl, "Language", lang);
+				sControl.put("Language", lang);
 				ScriptTestErrEvents te = new ScriptTestErrEvents();
 				de = new DispatchEvents(sControl, te);
 				return true;
@@ -96,6 +97,7 @@ public class ScriptTest2 extends BaseTestCase {
 			}
 		}
 
+        @Override
 		public void OnQuit() {
 			System.out.println("OnQuit");
 		}

@@ -69,10 +69,10 @@ class IETestActiveProxyThread extends Thread {
         ComThread.InitMTA();
         ActiveXComponent ie = new ActiveXComponent("InternetExplorer.Application");
         try {
-            Dispatch.put(ie, "Visible", true);
-            Dispatch.put(ie, "AddressBar", true);
-            System.out.println("IETestActiveProxyThread: " + Dispatch.get(ie, "Path"));
-            Dispatch.put(ie, "StatusText", "My Status Text");
+            ie.put("Visible", true);
+            ie.put("AddressBar", true);
+            System.out.println("IETestActiveProxyThread: " + ie.get("Path"));
+            ie.put("StatusText", "My Status Text");
 
             System.out.println("IETestActiveProxyThread: About to hookup event listener");
             IEEventsActiveProxy ieE = new IEEventsActiveProxy();
@@ -80,14 +80,14 @@ class IETestActiveProxyThread extends Thread {
             System.out.println("IETestActiveProxyThread: Did hookup event listener");
 
             System.out.println("IETestActiveProxyThread: About to call navigate to sourceforge");
-            Dispatch.call(ie, "Navigate", WEBSITE);
+            ie.call("Navigate", WEBSITE);
             System.out.println("IETestActiveProxyThread: Did call navigate to sourceforge");
             try {
                 Thread.sleep(delay);
             } catch (Exception e) {
             }
             System.out.println("IETestActiveProxyThread: About to call navigate to yahoo");
-            Dispatch.call(ie, "Navigate", WEBSITE);
+            ie.call("Navigate", WEBSITE);
             System.out.println("IETestActiveProxyThread: Did call navigate to yahoo");
             try {
                 Thread.sleep(delay);

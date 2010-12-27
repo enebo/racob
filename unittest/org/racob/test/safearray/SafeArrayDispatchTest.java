@@ -16,9 +16,9 @@ public class SafeArrayDispatchTest extends BaseTestCase {
 			String scriptCommand = "1+(2*4)-3";
 			String lang = "VBScript";
 			ActiveXComponent sControl = new ActiveXComponent("ScriptControl");
-			Dispatch.put(sControl, "Language", lang);
+			sControl.put("Language", lang);
 
-			Variant result = Dispatch.call(sControl, "Eval", scriptCommand);
+			Variant result = sControl.call("Eval", scriptCommand);
 			assertTrue(result.toString().equals("6"));
 
 			// wrap the script control in a variant
@@ -32,10 +32,10 @@ public class SafeArrayDispatchTest extends BaseTestCase {
 
 			// take it back out
 			Variant v2 = (Variant) sa.get(0);
-			Dispatch d = v2.toDispatch();
+			Dispatch d = v2.getDispatch();
 
 			// make sure you can call eval on it
-			result = Dispatch.call(d, "Eval", scriptCommand);
+			result = d.call("Eval", scriptCommand);
 			assertTrue(result.toString().equals("6"));
 		} catch (ComException e) {
 			e.printStackTrace();

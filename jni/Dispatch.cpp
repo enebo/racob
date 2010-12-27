@@ -252,7 +252,7 @@ name2ID(IDispatch *pIDispatch, const char *prop, DISPID *dispid, long lcid)
 }
 
 JNIEXPORT jintArray JNICALL Java_org_racob_com_Dispatch_getIDsOfNames
-  (JNIEnv *env, jclass clazz, jint pointer, jobject disp, jint lcid, jobjectArray names)
+  (JNIEnv *env, jclass clazz, jint pointer, jint lcid, jobjectArray names)
 {
   IDispatch *pIDispatch = (IDispatch *) pointer;
   if (!pIDispatch) return NULL;

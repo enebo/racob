@@ -39,8 +39,7 @@ public class ScriptTest3 extends BaseTestCase {
 				// should we get this?
 			}
 
-			Variant result = Dispatch.call(sControl, "Eval",
-					getSampleVPScriptForEval());
+			Variant result = sControl.call("Eval", getSampleVPScriptForEval());
 			System.out.println("eval(" + getSampleVPScriptForEval() + ") = "
 					+ result);
 			System.out.println("setting quit");
@@ -55,6 +54,7 @@ public class ScriptTest3 extends BaseTestCase {
 	}
 
 	class ScriptTest3Inner extends Thread {
+        @Override
 		public void run() {
 			try {
 				ComThread.InitMTA();
@@ -62,7 +62,7 @@ public class ScriptTest3 extends BaseTestCase {
 				String lang = "VBScript";
 				sC = new ActiveXComponent("ScriptControl");
 				sControl = sC.getObject();
-				Dispatch.put(sControl, "Language", lang);
+				sControl.put("Language", lang);
 				ScriptTestErrEvents te = new ScriptTestErrEvents();
 				de = new DispatchEvents(sControl, te);
 				System.out.println("sControl=" + sControl);
