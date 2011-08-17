@@ -258,7 +258,7 @@
 	<target name="compile.x86" if="shouldBuild.x86">
 		<echo>Clean up the (X86) target folders and file, for safety</echo>
 		<delete file="${release.dir.x86.cpp}/**/*.*" />
-		<echo>Compiling (X86) C++ classes with JDK JNI library ${JDK}</echo>
+		<echo>Compiling (X86) C++ classes with JDK JNI library ${JDK} ${compiler.x86}</echo>
 		<exec executable="${compiler.x86}" dir="${release.dir.x86.cpp}" failonerror="true">
 			<env key="Path" value="${MSDEV_IDE_DIR}"/>
 			<env key="include" value="${JDK}\include;${JDK}\include\win32;${include.x86.platformSDK};${include.x86};${include.x86.atl}"/>
