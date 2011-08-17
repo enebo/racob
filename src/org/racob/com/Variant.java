@@ -423,16 +423,6 @@ public class Variant {
         return getDispatch().pointer.get();
     }
 
-    @Deprecated
-    public Dispatch toDispatch() {
-        return getDispatch();
-    }
-
-    @Deprecated
-    public SafeArray toSafeArray() {
-        throw new RuntimeException("CURRENTLY BROKEN");
-    }
-
     /**
      * @return the double value
      * @throws IllegalStateException if variant is not of the requested type
@@ -545,10 +535,7 @@ public class Variant {
     }
 
     /**
-     *
      * @return returns true if the variant is considered null
-     * @throws IllegalStateException
-     *             if there is no underlying windows memory
      */
     public boolean isNull() {
         // ENEBO: This is radically simpler than Jacob's old way and may
@@ -557,91 +544,9 @@ public class Variant {
     }
 
     /**
-     * This actual does all the validating and massaging of the BigDecimalValues
-     * when converting them to MS Decimal types
+     * Convert a Racob Variant value to a Java object.
      *
-     * @param in
-     *            number to be made into VT_DECIMAL
-     * @param byRef
-     *            store by reference or not
-     * @param roundingBehavior
-     *            one of the BigDecimal ROUND_xxx methods. Any method other than
-     *            ROUND_UNECESSARY means that the value will be rounded to fit
-
-    private void putDecimal(BigDecimal in, boolean byRef) {
-        // verify we aren't released
-        getvt();
-        // first validate the min and max
-        VariantUtilities.validateDecimalMinMax(in);
-        BigInteger allWordBigInt;
-        allWordBigInt = in.unscaledValue();
-        // Assume any required rounding has been done.
-        VariantUtilities.validateDecimalScaleAndBits(in);
-        // finally we can do what we actually came here to do
-        int sign = in.signum();
-        // VT_DECIMAL always has positive value with just the sign
-        // flipped
-        if (in.signum() < 0) {
-            in = in.negate();
-        }
-        // ugh, reusing allWordBigInt but now should always be positive
-        // and any round is applied
-        allWordBigInt = in.unscaledValue();
-        byte scale = (byte) in.scale();
-        int lowWord = allWordBigInt.intValue();
-        BigInteger middleWordBigInt = allWordBigInt.shiftRight(32);
-        int middleWord = middleWordBigInt.intValue();
-        BigInteger highWordBigInt = allWordBigInt.shiftRight(64);
-        int highWord = highWordBigInt.intValue();
-        if (byRef) {
-            putVariantDecRef(sign, scale, lowWord, middleWord, highWord);
-        } else {
-            putVariantDec(sign, scale, lowWord, middleWord, highWord);
-        }
-    }*/
-
-
-
-    /**
-     * have no idea...
-     *
-     * @param in
-     */
-    public void putSafeArray(SafeArray in) {
-        // verify we haven't been released yet
-        getvt();
-        putVariantSafeArray(in);
-    }
-
-    /**
-     * have no idea...
-     *
-     * @param in
-     */
-    public void putSafeArrayRef(SafeArray in) {
-        // verify we haven't been released yet
-        getvt();
-        putVariantSafeArrayRef(in);
-    }
-
-    private native void putVariantSafeArray(SafeArray in);
-
-    private native void putVariantSafeArrayRef(SafeArray in);
-
-    /**
-     * Convert a JACOB Variant value to a Java object (type conversions).
-     * provided in Sourceforge feature request 959381. See
-     * JavaVariantConverter..convertVariantTJavaObject(Variant) for more
-     * information.
-     *
-     * @return Corresponding Java object of the type matching the Variant type.
-     * @throws IllegalStateException
-     *             if no underlying windows data structure
-     * @throws NotImplementedException
-     *             if unsupported conversion is requested
-     * @throws JacobException
-     *             if the calculated result was a JacobObject usually as a
-     *             result of error
+     * @return Java equivalent version of Variant value.
      */
     public Object toJavaObject() {
         return VariantUtilities.variantToObject(this);
@@ -704,43 +609,25 @@ public class Variant {
     }
 
     /**
-     * This method now correctly implements java toString() semantics Attempts
-     * to return the content of this variant as a string
-     * <ul>
-     * <li>"not initialized" if not initialized
-     * <li>"null" if VariantEmpty,
-     * <li>"null" if VariantError
-     * <li>"null" if VariantNull
-     * <li>the value if we know how to describe one of that type
-     * <li>three question marks if can't convert
+     * A String representation of the variant if possible.  It will return
+     * "null" if VariantEmpty, VariantError, or VariantNull.
      *
-     * @return String value conversion,
-     * @throws IllegalStateException
-     *             if there is no underlying windows data structure
+     * @return a reasonable string representation
      */
     @Override
     public String toString() {
-        try {
-            // see if we are in a legal state
-            getvt();
-        } catch (IllegalStateException ise) {
-            return "";
-        }
-        if (getvt() == VariantEmpty || getvt() == VariantError
-                || getvt() == VariantNull) {
-            return "null";
-        }
-        if (getvt() == VariantString) {
-            return getString();
-        }
+        int vt = getvt();
+
+        if (vt == VariantEmpty || vt == VariantError || vt == VariantNull) return "null";
+        if (vt == VariantString) return getString();
+
         try {
             Object foo = toJavaObject();
             // rely on java objects to do the right thing
-            if (foo == null) {
-                return "{Java null}";
-            }
+            if (foo == null) return "{Java null}";
+
             return foo.toString();
-        } catch (RuntimeException nie) {
+        } catch (RuntimeException e) {
             // some types do not generate a good description yet
             return "Description not available for type: " + getvt();
         }
