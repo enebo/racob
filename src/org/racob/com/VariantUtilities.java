@@ -1,9 +1,7 @@
 /**
- * 
  */
 package org.racob.com;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
@@ -15,30 +13,18 @@ import java.util.Date;
 public final class VariantUtilities {
     private static Variant[] EMPTY_ARRAY = new Variant[0];
 
-    private VariantUtilities() {
-        // utility class with only static methods don't need constructors
-    }
-
     /**
      * Creates a Variant from the supplied Java object
      *
-     * @param value
-     * @param byRef
+     * @param value to make a Variant from
+     * @param byRef whether this is mean to be passed by reference
      */
     public static Variant createVariant(Object value, boolean byRef) {
         if (value == null) return new Variant();
         if (value instanceof Integer) return new Variant(((Integer) value).intValue(), byRef);
         if (value instanceof Short) return new Variant(((Short) value).shortValue(), byRef);
         if (value instanceof String) return new Variant((String) value, byRef);
-        if (value instanceof Boolean) {
-//            if (!byRef) {
-//                boolean primitiveValue = ((Boolean) value).booleanValue();
-//
-//                return primitiveValue ? Variant.VT_TRUE : Variant.VT_FALSE;
-//            }
-
-            return new Variant((Boolean) value, byRef);
-        }
+        if (value instanceof Boolean) return new Variant((Boolean) value, byRef);
         if (value instanceof Double) return new Variant(((Double) value).doubleValue(), byRef);
         if (value instanceof Float) return new Variant(((Float) value).floatValue(), byRef);
         if (value instanceof BigDecimal) return new Variant(((BigDecimal) value), byRef);
@@ -66,56 +52,9 @@ public final class VariantUtilities {
         if (value == null) return new Variant();
         // if a variant was passed in then be a slacker and just return it
         if (value instanceof Variant) return (Variant) value;
-        if (value.getClass().isArray()) {
-            // automatically convert arrays using reflection
-            // handle it differently based on the type of array
-            // added primitive support sourceforge 2762275
-            SafeArray sa = null;
+        if (value.getClass().isArray()) value = SafeArray.create(value);
 
-            int len1 = Array.getLength(value);
-            Class componentType = value.getClass().getComponentType();
-
-            if (componentType.isArray()) { // array of arrays
-                sa = new SafeArray(Variant.VariantVariant);
-
-                for (int i = 0; i < len1; i++) {
-                    SafeArray subArray = new SafeArray(Variant.VariantVariant);
-                    Object e1 = Array.get(value, i);
-
-                    for (int j = 0; j < Array.getLength(e1); j++) {
-                        subArray.add(objectToVariant(Array.get(e1, j)));
-                    }
-                    sa.add(subArray);
-                }
-            } else if (byte.class.equals(componentType)) {
-                byte[] arr = (byte[]) value;
-                sa = new SafeArray(Variant.VariantByte);
-                for (int i = 0; i < len1; i++) sa.add(i, arr[i]);
-            } else if (int.class.equals(componentType)) {
-                int[] arr = (int[]) value;
-                sa = new SafeArray(Variant.VariantInt);
-                for (int i = 0; i < len1; i++) sa.add(i, arr[i]);
-            } else if (double.class.equals(componentType)) {
-                double[] arr = (double[]) value;
-                sa = new SafeArray(Variant.VariantDouble);
-                for (int i = 0; i < len1; i++) sa.add(i, arr[i]);
-            } else if (long.class.equals(componentType)) {
-                long[] arr = (long[]) value;
-                sa = new SafeArray(Variant.VariantLongInt);
-                for (int i = 0; i < len1; i++) sa.add(i, arr[i]);
-            } else { // array of objects
-                sa = new SafeArray(Variant.VariantVariant);
-                for (int i = 0; i < len1; i++) sa.add(i, objectToVariant(Array.get(value, i)));
-            }
-            
-            return createVariant(sa, false);
-        } else {
-            // rely on createVariant to throw an exception if its an
-            // invalid type
-            Variant variant = createVariant(value, false);
-//            System.out.println("VARIANT: " + variant.toDebugString() + " for value " + value + " of type " + value.getClass().getSimpleName());
-            return variant;
-        }
+        return createVariant(value, false);
     }
 
     /**
@@ -138,40 +77,22 @@ public final class VariantUtilities {
     }
 
     /**
-     * Convert a JACOB Variant value to a Java object (type conversions).
-     * provided in Sourceforge feature request 959381. A fix was done to handle
-     * byRef bug report 1607878.
-     * <p>
-     * Unlike other toXXX() methods, it does not do a type conversion except for
-     * special data types (it shouldn't do any!)
-     * <p>
-     * Converts Variant.VariantArray types to SafeArrays
+     * Convert a Variant object to a Java object.
      *
-     * @return Corresponding Java object of the type matching the Variant type.
-     * @throws IllegalStateException
-     *             if no underlying windows data structure
-     * @throws NotImplementedException
-     *             if unsupported conversion is requested
-     * @throws JacobException
-     *             if the calculated result was a JacobObject usually as a
-     *             result of error
+     * Note: The one somewhat odd exception to this is that we will provide a
+     * pure-Java implementation of SafeArray for the SAFEARRAY Variant type.
+     * This is mostly because SafeArray can hold any type and several types
+     * are primitive arrays.  If it contains multiple dimensions the SafeArray
+     * returned will be a SafeArray of Variants...which means more interaction
+     * with Racob for converting the held values (leaky abstraction).
+     *
+     * @return the Java equivalent value for the Variant provided.
      */
     protected static Object variantToObject(Variant sourceData) {
         if (sourceData == null) return null;
-        
-        short type = sourceData.getType();
-        
-        if ((type & Variant.VariantArray) == Variant.VariantArray) { // array
-            // From SF Bug 1840487
-            // This did call toSafeArray(false) but that meant
-            // this was the only variantToObject() that didn't have its own
-            // copy of the data so you would end up with weird run time
-            // errors after some GC. So now we just get stupid about it and
-            // always make a copy just like toSafeArray() does.
-            return sourceData.getArray();
-        } 
+        if (sourceData.isArray()) return sourceData.getArray();
 
-        switch (type) {
+        switch (sourceData.getType()) {
             case Variant.VariantEmpty: // 0
             case Variant.VariantNull: // 1
                 return null;
@@ -214,11 +135,9 @@ public final class VariantUtilities {
                 throw new RuntimeException("toJavaObject() Not implemented for VariantArray");
             case Variant.VariantByref: // 16384
                 throw new RuntimeException("toJavaObject() Not implemented for VariantByref");
-            default:
-                throw new RuntimeException("Unknown return type: " + type);
-                // there was a "return result" here that caused defect 1602118
-                // so it was removed
         }
+
+        throw new RuntimeException("Unknown return type: " + sourceData.getType());
     }
 
     /**
