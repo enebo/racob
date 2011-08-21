@@ -21,6 +21,13 @@
 extern "C" {
 #define MAX_GUID_LENGTH 80
 
+#ifdef RACOB_DEBUG
+  #define DLOG(fmt, ...) printf("%s:%d(%s) "fmt,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__); fflush(stdout);
+#else
+  #define DLOG(fmt, ...)
+#endif
+
+
   /* Initialized by initializeNative in variant.cpp */
   extern jclass VARIANT_CLASS;
   extern jmethodID VARIANT_CONSTRUCTOR;
@@ -47,4 +54,9 @@ extern "C" {
   jstring makeString(JNIEnv *env, BSTR value);
   BSTR makeBStr(JNIEnv *env, jstring value);
   jobject makeTypeInfo(JNIEnv *env, ITypeInfo *typeInfo);
+
+  /* SafeArray.cpp */
+  SAFEARRAY *makeSingleArray(int vt, long lowerBounds, long size);
+  SAFEARRAY *makeArray(int vt, int dimensions, long *lowerBounds, long *elementSizes);
+  SAFEARRAY *newSingleArray(JNIEnv* env, int vt, jobjectArray data);
 }

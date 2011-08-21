@@ -39,13 +39,12 @@ extern "C" {
 
     void IDispatchAddRef(char* message, IDispatch *obj) {
         if (obj == NULL) {
-            printf("%s: NULL\n", message); fflush(stdout);
+            DLOG("%s: NULL\n", message);
             return;
         }
 
         unsigned long count = obj->AddRef();
-        printf("%s: Adding dispatch reference (count = %d) [%d]\n", message, count, obj);
-        fflush(stdout);
+        DLOG("%s: Adding dispatch reference (count = %d) [%d]\n", message, count, obj);
     }
 
 void ThrowComFail(JNIEnv *env, const char* desc, jint hr)

@@ -161,7 +161,7 @@ JNIEXPORT jint JNICALL Java_org_racob_com_Dispatch_getActiveInstanceNative
     return 0;
   }
   // standard connection
-  //printf("trying to connect to running %ls\n",bsProgId);
+  DLOG("trying to connect to running %ls\n",bsProgId);
   hr = GetActiveObject(clsid,NULL, &punk);
   if (!SUCCEEDED(hr)) {
      ThrowComFail(env, "Can't get active object", hr);
@@ -474,8 +474,6 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev0
   return result;
 }
 
-#define DISPATCH_DEBUG 0
-
 JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
   (JNIEnv *env, jclass clazz,
   jint dispPointer, jstring name, jint dispid,
@@ -483,11 +481,11 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
   DISPPARAMS  dispparams;
   EXCEPINFO   excepInfo;
 
-  if (DISPATCH_DEBUG) { printf("Before dispatch\n"); fflush(stdout); }
+  DLOG("Before dispatch\n");
   IDispatch *pIDispatch = (IDispatch *) dispPointer;
   if (!pIDispatch) return NULL;
 
-  if (DISPATCH_DEBUG) { printf("Before name\n"); fflush(stdout); }
+  DLOG("Before name\n");
   int dispID = dispid;
   if (name != NULL) {
     const char *nm = env->GetStringUTFChars(name, NULL);
@@ -498,11 +496,11 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
       ThrowComFail(env, buf, -1);
       return NULL;
     }
-    if (DISPATCH_DEBUG) { printf("name setup: %s\n", nm); }
+    DLOG("name setup: %s\n", nm);
     env->ReleaseStringUTFChars(name, nm);
   }
 
-  if (DISPATCH_DEBUG) { printf("Before args handling\n"); fflush(stdout); }
+  DLOG("Before args handling\n");
   int num_args = env->GetArrayLength(vArg);
   int i, j;
   VARIANT *varr = NULL;
@@ -519,12 +517,12 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
     }
   }
 
-  if (DISPATCH_DEBUG) { printf("Before return setup\n"); fflush(stdout); }
+  DLOG("Before return setup\n");
   VARIANT returnValue;
   DISPID  dispidPropertyPut = DISPID_PROPERTYPUT;
   VariantInit(&returnValue);
 
-  if (DISPATCH_DEBUG) { printf("Before dispatch type logic\n"); fflush(stdout); }
+  DLOG("Before dispatch type logic\n");
   // determine how to dispatch
   switch (wFlags) {
     case DISPATCH_PROPERTYGET: // GET
@@ -540,7 +538,7 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
     }
   }
 
-  if (DISPATCH_DEBUG) { printf("Before invoke\n"); fflush(stdout); }
+  DLOG("Before invoke\n");
   HRESULT hr = 0;
   jint count = env->GetArrayLength(uArgErr);
   if ( count != 0 ) {
@@ -553,7 +551,7 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
                lcid, (WORD) wFlags, &dispparams, &returnValue, &excepInfo, NULL); // SF 1689061
   }
 
-  if (DISPATCH_DEBUG) { printf("Before error check\n"); fflush(stdout); }
+  DLOG("Before error check\n");
   // check for error and display a somewhat verbose error message
   if (!SUCCEEDED(hr)) {
     // two buffers that may have to be freed later
@@ -593,7 +591,7 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
     return NULL;
   }
 
-  if (DISPATCH_DEBUG) { printf("Before in/outs\n"); fflush(stdout); }
+  DLOG("Before in/outs\n");
   if (num_args) {
     // to account for inouts, I need to copy the inputs back to
     // the java array after the method returns
@@ -605,9 +603,11 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Dispatch_invokev
   }
   if (varr) CoTaskMemFree(varr);
 
-  if (DISPATCH_DEBUG) { printf("Before return to variant\n"); fflush(stdout); }
+  DLOG("Before return to variant\n");
   jobject result = createVariant(env, &returnValue);
+  DLOG("Got result. Clear variant\n");
   VariantClear(&returnValue);
+  DLOG("Variant cleared\n");
   return result;
 }
 

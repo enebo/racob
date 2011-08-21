@@ -19,47 +19,47 @@
  */
 package org.racob.com;
 
-import java.util.ArrayList;
-
 /**
+ * This implementation has two obvious problems:
+ * 1. It only works with a single dimension
+ * 2. It boxes all primitive types in the lists it contains.  Not only that
+ * it double boxes them into Variants.
+ *
+ * These two details may require a re-write if it becomes obvious to anyone
+ * that we are creating so many objects.  A different design would be to support
+ * n SafeArray classes so we can have one for each primitive type and one for
+ * all Object/Variant-based ones.
  */
-public class SafeArray extends ArrayList {
-    private int variantType;
+public class SafeArray {
+    private Variant[] values;
 
-    // ENEBO: getting number of dimensions was here...we could add logic to
-    // track as we add an SafeArray if we actually need it.
-
-    public SafeArray(int variantType) {
-        this.variantType = variantType;
+    public SafeArray(Variant[] values) {
+        this.values = values;
     }
 
-    // So-named based on same name in Variant
-    public int getvt() {
+    public int determinevt() {
+        if (values == null || values.length == 0) return Variant.VariantVariant;
+
+        int variantType = values[0].getvt();
+        for (int i = 1; i < values.length; i++) {
+            if (values[i].getvt() != variantType) return Variant.VariantVariant;
+        }
+
         return variantType;
     }
 
-    // Be damned sure you are really getting a variant...kaboom
-    public Variant getVariant(int i) {
-        return (Variant) get(i);
+    public static SafeArray create(Object value) {
+        Class componentType = value.getClass().getComponentType();
+        Variant[] values;
+        if (Variant.class.isAssignableFrom(componentType)) {
+            values = (Variant[]) value;
+        } else {
+            values = VariantUtilities.objectsToVariants((Object[]) value);
+        }
+        return new SafeArray(values);
     }
 
-    /**
-     * Standard toString() Warning, this creates new Variant objects!
-     *
-     * @return String contents of variant
-     */
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder();
-
-        for (Object elem: this) {
-            if (elem instanceof SafeArray) {
-                s.append("[").append(elem).append("]");
-            } else if (elem instanceof Variant) {
-                s.append(" ").append(elem);
-            }
-        }
-
-        return s.toString();
+    public Variant[] getValues() {
+        return values;
     }
 }

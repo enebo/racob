@@ -60,7 +60,7 @@ JNIEXPORT jint JNICALL Java_org_racob_com_DispatchEvents_init3
 	  typeLib = A2W(typelib);
 	  // should we call env->ReleaseStringUTFChars(,) to free the memory like we do everywhere lese?
 	  
-	  //printf("we have a type lib %ls\n",typeLib);
+	  DLOG("we have a type lib %ls\n",typeLib);
   }
 
   // find progid if any
@@ -70,7 +70,7 @@ JNIEXPORT jint JNICALL Java_org_racob_com_DispatchEvents_init3
     	const char *progid = env->GetStringUTFChars(_progid, NULL);
 		bsProgId = A2W(progid);
 	  // should we call env->ReleaseStringUTFChars(,) to free the memory like we do everywhere lese?
-		//printf("we have an applicaton %ls\n",bsProgId);
+		DLOG("we have an applicaton %ls\n",bsProgId);
   }
   
   // get the IDispatch for the source object
@@ -136,7 +136,7 @@ LoadNameCache(LPTYPEINFO pTypeInfo, LPTYPEATTR pta,
         ids[i] = pfd->memid;
         /*
         USES_CONVERSION;
-        printf("map:%d -> %s\n", ids[i], W2A((OLECHAR *)names[i]));
+        DLOG("map:%d -> %s\n", ids[i], W2A((OLECHAR *)names[i]));
         */
       }
       pTypeInfo->ReleaseFuncDesc(pfd);
@@ -163,7 +163,7 @@ BOOL GetEventIID(IUnknown *m_pObject, IID* piid,
   LPTYPEINFO pClassInfo = NULL;
   if (SUCCEEDED(m_pObject->QueryInterface(IID_IProvideClassInfo, (LPVOID*)&pPCI)))
   {
-    //printf("got IProvideClassInfo\n");
+    DLOG("got IProvideClassInfo\n");
     ATLASSERT(pPCI != NULL);
 		HRESULT hr = pPCI->GetClassInfo(&pClassInfo);
     pPCI->Release();
@@ -172,7 +172,7 @@ BOOL GetEventIID(IUnknown *m_pObject, IID* piid,
   else if (getClassInfoFromProgId(bsProgId,&pClassInfo)) {
 	}
 	else  {
-    printf("GetEventIID: couldn't get IProvideClassInfo\n");
+    DLOG("GetEventIID: couldn't get IProvideClassInfo\n");
 		return false;
   }
 
@@ -183,11 +183,11 @@ BOOL MapEventIIDs(IID* piid,
      CComBSTR **mNames, DISPID **mIDs, int *nmeth, LPOLESTR bsProgId, LPTYPEINFO pClassInfo)
 {
       ATLASSERT(pClassInfo != NULL);
-      //printf("MapEventIIDs: got past ClassInfo assert\n");
+      DLOG("MapEventIIDs: got past ClassInfo assert\n");
       LPTYPEATTR pClassAttr;
       if (SUCCEEDED(pClassInfo->GetTypeAttr(&pClassAttr)))
       {
-        //printf("MapEventIIDs: got TypeAttr\n");
+        DLOG("MapEventIIDs: got TypeAttr\n");
         ATLASSERT(pClassAttr != NULL);
         ATLASSERT(pClassAttr->typekind == TKIND_COCLASS);
 
@@ -195,7 +195,7 @@ BOOL MapEventIIDs(IID* piid,
         int nFlags;
         HREFTYPE hRefType;
 
-		//printf("MapEventIIDs: looking at %d class attribute impl types \n");
+        DLOG("MapEventIIDs: looking at %d class attribute impl types \n");
         for (unsigned int i = 0; i < pClassAttr->cImplTypes; i++)
         {
           if (SUCCEEDED(pClassInfo->GetImplTypeFlags(i, &nFlags)) &&
@@ -305,13 +305,13 @@ BOOL GetEventIIDForTypeLib(BSTR typeLib, IID* piid,
   if(getClassInfoFromProgIdTypeLib(typeLib, bsProgId,&pClassInfo))
   {
   	if (pClassInfo == NULL){
-  		printf("we had a successful return but pClassInfo is null\n");
+  		DLOG("we had a successful return but pClassInfo is null\n");
   	}
     return MapEventIIDs(piid, mNames, mIDs, nmeth, bsProgId, pClassInfo);
   }
   else
   {
-    printf("GetEventIIDForTypeLib: couldn't get IProvideClassInfo\n");
+    DLOG("GetEventIIDForTypeLib: couldn't get IProvideClassInfo\n");
     return false;
   }
 }

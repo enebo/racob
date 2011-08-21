@@ -19,7 +19,6 @@
  */
 #include "stdafx.h"
 #include "Variant.h"
-// Win32 support for Ole Automation
 #include <wchar.h>
 #include <string.h>
 #include <atlbase.h>
@@ -43,7 +42,8 @@ jfieldID VARIANT_TYPE = 0;
 jmethodID BOOLEAN_CONSTRUCTOR = 0;
 jmethodID DISPATCH_CONSTRUCTOR = 0;
 jmethodID SAFEARRAY_CONSTRUCTOR = 0;
-jmethodID SAFEARRAY_ADD = 0;
+jmethodID SAFEARRAY_GETVALUES = 0;
+jmethodID SAFEARRAY_DETERMINEVT = 0;
 jmethodID VARIANT_CONSTRUCTOR = 0;
 jmethodID VARIANT_GETSTRING = 0;
 jmethodID VARIANT_GETSHORT = 0;
@@ -56,10 +56,12 @@ jmethodID VARIANT_GETDATEASDOUBLE = 0;
 jmethodID VARIANT_GETCURRENCYASLONG = 0;
 jmethodID VARIANT_GETBOOLEAN = 0;
 jmethodID VARIANT_GETBYTE = 0;
+jmethodID VARIANT_GETSAFEARRAY = 0;
 jmethodID VARIANT_GETVARIANT = 0;
 jmethodID VARIANT_CREATEDISPATCH = 0;
 jmethodID VARIANT_CREATEDATE = 0;
 jmethodID VARIANT_CREATEINT = 0;
+
 jobject TRUE_VARIANT = 0;
 jobject FALSE_VARIANT = 0;
 
@@ -76,11 +78,11 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Variant_initializeNative
     TRUE_VARIANT =  env->NewGlobalRef(env->GetStaticObjectField(VARIANT_CLASS, trueField));
     FALSE_VARIANT = env->NewGlobalRef(env->GetStaticObjectField(VARIANT_CLASS, falseField));
 
-
     BOOLEAN_CONSTRUCTOR = env->GetMethodID(BOOLEAN_CLASS, "<init>", "(Z)V");
     DISPATCH_CONSTRUCTOR = env->GetMethodID(DISPATCH_CLASS, "<init>", "(I)V");
-    SAFEARRAY_CONSTRUCTOR = env->GetMethodID(SAFEARRAY_CLASS, "<init>", "(I)V");
-    SAFEARRAY_ADD = env->GetMethodID(SAFEARRAY_CLASS, "add", "(Ljava/lang/Object;)Z");
+    SAFEARRAY_CONSTRUCTOR = env->GetMethodID(SAFEARRAY_CLASS, "<init>", "([Lorg/racob/com/Variant;)V");
+    SAFEARRAY_GETVALUES = env->GetMethodID(SAFEARRAY_CLASS, "getValues", "()[Lorg/racob/com/Variant;");
+    SAFEARRAY_DETERMINEVT = env->GetMethodID(SAFEARRAY_CLASS, "determinevt", "()I");
     VARIANT_CONSTRUCTOR = env->GetMethodID(VARIANT_CLASS, "<init>", "(Ljava/lang/Object;S)V");
     VARIANT_TYPE = env->GetFieldID(VARIANT_CLASS, "type", "S");
     VARIANT_GETSTRING = env->GetMethodID(clazz, "getString", "()Ljava/lang/String;");
@@ -94,6 +96,7 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Variant_initializeNative
     VARIANT_GETCURRENCYASLONG = env->GetMethodID(clazz, "getCurrencyAsLong", "()J");
     VARIANT_GETBOOLEAN = env->GetMethodID(clazz, "getBoolean", "()Z");
     VARIANT_GETBYTE = env->GetMethodID(clazz, "getByte", "()B");
+    VARIANT_GETSAFEARRAY = env->GetMethodID(clazz, "getSafeArray", "()Lorg/racob/com/SafeArray;");
     VARIANT_GETVARIANT = env->GetMethodID(clazz, "getVariant", "()Lorg/racob/com/Variant;");
 
     VARIANT_CREATEDISPATCH = env->GetStaticMethodID(clazz, "createDispatchVariant", "(I)Lorg/racob/com/Variant;");
@@ -102,6 +105,101 @@ JNIEXPORT jobject JNICALL Java_org_racob_com_Variant_initializeNative
 
     return NULL;
  }
+
+void printVTDetails(char *message, char *vtName, char *variantName, int byRef, int isArray) {
+    DLOG("%s: %s (%s) %s %s\n", message, vtName, variantName, (byRef ? "byref" : ""), (isArray ? "array" : ""));
+}
+
+void printVT(char *message, VARTYPE v) {
+  int isArray = v & VT_ARRAY;
+  int byRef = v & VT_BYREF;
+  char *vtName = NULL;
+  char *variantName = NULL;
+
+  switch (v & ~VT_BYREF & ~VT_ARRAY) {
+  case VT_UI2:
+      vtName = "VT_UI2";
+      variantName = "VariantUnsignedShort";
+      break;
+  case VT_I2:
+      vtName = "VT_I2";
+      variantName = "VariantShort";
+      break;
+  case VT_UI8:
+      vtName = "VT_UI8";
+      variantName = "VariantUnsignedInt";
+      break;
+  case VT_I4:
+      vtName = "VT_I4";
+      variantName = "VariantInt";
+      break;
+  case VT_R4:
+      vtName = "VT_R4";
+      variantName = "VariantFloat";
+      break;
+  case VT_R8:
+      vtName = "VT_R8";
+      variantName = "VariantDouble";
+      break;
+  case VT_I8:
+      vtName = "VT_I8";
+      variantName = "VariantLongInt";
+      break;
+  case VT_UI4:
+      vtName = "VT_UI4";
+      variantName = "VariantUnsignedLong";
+      break;
+  case VT_BOOL:
+      vtName = "VT_BOOL";
+      variantName = "VariantBoolean";
+      break;
+  case VT_CY:
+      vtName = "VT_CY";
+      variantName = "VariantCurrency";
+      break;
+  case VT_DATE:
+      vtName = "VT_DATE";
+      variantName = "VariantDate";
+      break;
+  case VT_BSTR:
+      vtName = "VT_BSTR";
+      variantName = "VariantString";
+      break;
+  case VT_DISPATCH:
+      vtName = "VT_DISPATCH";
+      variantName = "VariantDispatch";
+      break;
+  case VT_EMPTY:
+      vtName = "VT_EMPTY";
+      variantName = "VariantEmpty";
+      break;
+  case VT_NULL:
+      vtName = "VT_NULL";
+      variantName = "VariantNull";
+      break;
+  case VT_UI1:
+      vtName = "VT_UI1";
+      variantName = "VariantByte";
+      break;
+  case VT_ERROR:
+      vtName = "VT_ERROR";
+      variantName = "VariantError";
+      break;
+  case VT_VARIANT:
+      vtName = "VT_VARIANT";
+      variantName = "VariantVariant";
+      break;
+  case VT_UNKNOWN:
+      vtName = "VT_UNKNOWN";
+      variantName = "VariantObject";
+      break;
+  default:
+      vtName, variantName = "???", "???";
+      DLOG("unknown VT %d\n", v);
+      fflush(stdout);
+  }
+  printVTDetails(message, vtName, variantName, byRef, isArray);
+}
 
 jobject createDateVariant(JNIEnv *env, jdouble value) {
   return env->CallStaticObjectMethod(VARIANT_CLASS, VARIANT_CREATEDATE, value);
@@ -191,23 +289,19 @@ void printIndex(long *bounds, int dims) {
     fflush(stdout);
 }
 
-jobject createSafeArray(JNIEnv *env, VARIANT *vt, SAFEARRAY *array) {
-    VARTYPE varType;
-    SafeArrayGetVartype(array, &varType);
-
-    jobject newArray = env->NewObject(SAFEARRAY_CLASS, SAFEARRAY_CONSTRUCTOR, (jint) varType);
+jobjectArray createVariantArray(JNIEnv *env, SAFEARRAY *array, VARTYPE vt) {
     unsigned int dimensions = SafeArrayGetDim(array);
     unsigned int i = 0;
-    long *lowerBounds, *upperBounds, *indexes;    
+    long *lowerBounds, *upperBounds, *indexes;
     lowerBounds = (long *) malloc(sizeof(long) * dimensions);
     upperBounds = (long *) malloc(sizeof(long) * dimensions);
     indexes = (long *) malloc(sizeof(long) * dimensions);
-    
+
     if (!lowerBounds || !upperBounds || !indexes) {
         if (lowerBounds) free(lowerBounds);
         if (upperBounds) free(upperBounds);
         if (indexes) free(indexes);
-        
+
         return NULL; //TODO: An error or ok?
     }
 
@@ -217,35 +311,54 @@ jobject createSafeArray(JNIEnv *env, VARIANT *vt, SAFEARRAY *array) {
         SafeArrayGetUBound(array, i+1, &upperBounds[i]);
     }
 
+    int numberOfElements = upperBounds[0] - lowerBounds[0] + 1;
+    DLOG("NOELEMS: %d\n", numberOfElements); fflush(stdout);
+    jobjectArray newArray = env->NewObjectArray(numberOfElements, VARIANT_CLASS, NULL);
+
     HRESULT hr = SafeArrayLock(array);
 
     i = 0;
     VARIANT variant;
     VariantInit(&variant);
-    V_VT(&variant) = (V_VT(vt) & ~VT_ARRAY) | VT_BYREF;
+    printVT("", vt);
+    if (vt == VT_UNKNOWN || vt == (VT_UNKNOWN|VT_BYREF)) {
+        DLOG("MUTATING to DISPATCH\n");
+        vt = VT_DISPATCH;
+    }
+    V_VT(&variant) = (vt & ~VT_ARRAY) | VT_BYREF;
 
+    int j = 0;
     while (i < dimensions) {
-        //printIndex(indexes, dimensions);
-//        if (V_ISBYREF(&variant)) {
-//            printf("BYREF\n");
-//        }
+//        printIndex(indexes, dimensions);
         hr = SafeArrayPtrOfIndex(array, indexes, &V_BYREF(&variant));
-//        hr = SafeArrayGetElement(array, indexes, &variant);
-        if (!SUCCEEDED(hr)) {
-            //printf("FDAILED\n");
+        if (SUCCEEDED(hr)) {
+            DLOG("Setting %d\n", j);
+            env->SetObjectArrayElement(newArray, j, createVariant(env, &variant));
         } else {
-
-
-        // TODO: Add multi-dim support
-        env->CallBooleanMethod(newArray, SAFEARRAY_ADD, createVariant(env, &variant));
+            DLOG("failed\n");
         }
 
         for (i = 0; i < dimensions; ++i) {
             if (++indexes[i] <= upperBounds[i]) break;
             indexes[i] = lowerBounds[i];
         }
+        j++;
     }
     SafeArrayUnlock(array);
+
+    return newArray;
+}
+
+jobject createSafeArray(JNIEnv *env, VARIANT *vt, SAFEARRAY *array) {
+    VARTYPE varType;
+    SafeArrayGetVartype(array, &varType);
+    jobject newArray = NULL;
+
+    printVT("", varType);
+
+    jobjectArray objectData = createVariantArray(env, array, varType);
+    newArray = env->NewObject(SAFEARRAY_CLASS, SAFEARRAY_CONSTRUCTOR,
+                (jobjectArray) objectData);
 
     return newArray;
 }
@@ -255,21 +368,34 @@ jobject createString(JNIEnv *env, BSTR value) {
 }
 
 jobject createUnknown(JNIEnv *env, IUnknown *value) {
-  jclass clazz = env->FindClass("org/racob/com/IUnknown");
-  jmethodID constructor = env->GetMethodID(clazz, "<init>", "(I)V");
-  return env->NewObject(clazz, constructor, value);
+    // Since I don't know how to strictly deal with IUnknown usefully I will
+    // always try and make it an iDispatch first.
+    IDispatch *iDispatch = NULL;
+    HRESULT hr = value->QueryInterface(IID_IDispatch, (void **) &iDispatch);
+
+    if (SUCCEEDED(hr)) {
+        DLOG("Found QI\n");
+        return createDispatch(env, iDispatch);
+    }
+    DLOG("No QI...leaving IUnknown\n");
+    jclass clazz = env->FindClass("org/racob/com/IUnknown");
+    jmethodID constructor = env->GetMethodID(clazz, "<init>", "(I)V");
+    return env->NewObject(clazz, constructor, value);
 }
 
 /* Creates a Java object which represents the variant. */
 jobject variantToObject(JNIEnv *env, VARIANT* v) {
+    jobject temp = NULL;
   if (!v) return NULL;
-//  printf("variantToObject: %d\n", V_VT(v)); fflush(stdout);
+  printVT("", V_VT(v));
 
   if (V_VT(v) & VT_ARRAY) {
       if (V_ISBYREF(v)) {
-         return createSafeArray(env, v, (SAFEARRAY *) *V_ARRAYREF(v));
+         temp = createSafeArray(env, v, (SAFEARRAY *) * V_ARRAYREF(v));
+         return temp;
       } else {
-         return createSafeArray(env, v, (SAFEARRAY *) V_ARRAY(v));
+         temp = createSafeArray(env, v, (SAFEARRAY *) V_ARRAY(v));
+         return temp;
       }
   }
 
@@ -345,13 +471,15 @@ jobject variantToObject(JNIEnv *env, VARIANT* v) {
      default:
         char mess[1024];
         sprintf(mess, "variantToObject: unhandled VT %d\n", V_VT(v));
-        printf("variantToObject: unhandled VT %d\n", V_VT(v)); fflush(stdout);
+        printVT("unhandled", V_VT(v));
         ThrowComFail(env, mess, -1);
   }
+  return NULL; // Not reached...make compiler happy
 }
 
 jobject createVariant(JNIEnv *env, VARIANT* v) {
-//    printf("createVariant: %d\n", V_VT(v)); fflush(stdout);
+    jobject temp;
+    printVT("", V_VT(v));
     switch (V_VT(v)) {
       case VT_BOOL:
          return createBooleanVariant(env, (jboolean) V_BOOL(v));
@@ -370,7 +498,8 @@ jobject createVariant(JNIEnv *env, VARIANT* v) {
     }
 
     jobject object = variantToObject(env, v);
-    return env->NewObject(VARIANT_CLASS, VARIANT_CONSTRUCTOR, object, V_VT(v));
+    temp = env->NewObject(VARIANT_CLASS, VARIANT_CONSTRUCTOR, object, V_VT(v));
+    return temp;
 }
 
 jint getVariantType(JNIEnv *env, jobject obj){
@@ -405,6 +534,19 @@ float getValueAsFloat(JNIEnv *env, jobject obj) {
   return (float) env->CallFloatMethod(obj, VARIANT_GETFLOAT);
 }
 
+int getVTFromSafeArray(JNIEnv* env, jobject obj) {
+    return (int) env->CallIntMethod(obj, SAFEARRAY_DETERMINEVT);
+}
+
+jobject getValueAsSafeArray(JNIEnv *env, jobject obj) {
+  return (jobject) env->CallObjectMethod(obj, VARIANT_GETSAFEARRAY);
+}
+
+jobjectArray getValuesAsVariants(JNIEnv *env, jobject safearray) {
+  jobject object = (jobject) env->CallObjectMethod(safearray, SAFEARRAY_GETVALUES);
+  return (jobjectArray) jobjectArray(object);
+}
+
 int getValueAsInt(JNIEnv *env, jobject obj) {
   return (int) env->CallIntMethod(obj, VARIANT_GETINT);
 }
@@ -425,9 +567,9 @@ jobject getValueAsVariant(JNIEnv *env, jobject obj) {
 }
 
 void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* v) {
-  jint variantType = getVariantType(env, javaVariant);
+  int variantType = getVariantType(env, javaVariant);
 
-//  printf("populateVariant: %d\n", variantType); fflush(stdout);
+  printVT("", variantType);
   // Add byRef logic
   VariantClear(v);
   V_VT(v) = (VARTYPE) variantType;
@@ -447,7 +589,7 @@ void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* v) {
      case VT_I8:
           V_I8(v) = getValueAsLong(env, javaVariant); break;
      case VT_UI4:
-          V_UI4(v) = getValueAsLong(env, javaVariant); break;
+          V_UI4(v) = (unsigned long) getValueAsLong(env, javaVariant); break;
      case VT_CY:
           CY pf;
           pf.int64 = (LONGLONG) getValueAsCurrency(env, javaVariant);
@@ -496,8 +638,29 @@ void populateVariant(JNIEnv *env, jobject javaVariant, VARIANT* v) {
      case VT_EMPTY:
      case VT_NULL:
         break;
+     case VT_ARRAY: {
+         jobject safearray = getValueAsSafeArray(env, javaVariant);
+         int vt = getVTFromSafeArray(env, safearray);
+         jobjectArray values = getValuesAsVariants(env, safearray);
+         printVT("SAFEARRAY", vt);
+
+         V_VT(v) = variantType | vt;
+         V_ARRAY(v) = newSingleArray(env, vt, values);
+         break;
+     }
+     case VT_ARRAY|VT_BYREF: {
+         jobject safearray = getValueAsSafeArray(env, javaVariant);
+         int vt = getVTFromSafeArray(env, safearray);
+         jobjectArray values = getValuesAsVariants(env, safearray);
+         printVT("SAFEARRAY", vt);
+
+         V_VT(v) = variantType | vt;
+         SAFEARRAY *array = newSingleArray(env, vt, values);
+         V_ARRAYREF(v) = &array;
+     }
+     break;
      default:
-        printf("DEFAULTING ON POPULATE VARIANT: %d\n", V_VT(v)); fflush(stdout);
+        DLOG("DEFAULTING ON POPULATE VARIANT: %d\n", V_VT(v)); fflush(stdout);
           break;
   }
 }

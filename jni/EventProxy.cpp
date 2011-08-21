@@ -20,8 +20,6 @@
 #include "EventProxy.h"
 #include "Variant.h"
 
-#define EVENT_PROXY_DEBUG 0
-
 #define HANDLE_EXCEPTION if (env->ExceptionOccurred()) { env->ExceptionDescribe(); env->ExceptionClear();}
 
 // hook myself up as a listener for delegate
@@ -58,7 +56,7 @@ EventProxy::~EventProxy() {
    if (env != NULL) { HANDLE_EXCEPTION; }
 
    if (vmConnectionStatus == JNI_EDETACHED){
-       //printf("Unhook: Attaching to current thread using JNI Version 1.2 (%d)\n",vmConnectionStatus);
+       DLOG("Unhook: Attaching to current thread using JNI Version 1.2 (%d)\n",vmConnectionStatus);
        JavaVMAttachArgs attachmentArgs;
        attachmentArgs.version = JNI_VERSION_1_2;
        attachmentArgs.name = NULL;
@@ -68,7 +66,7 @@ EventProxy::~EventProxy() {
    } else {
        // should really look for JNI_OK versus an error because it could have been JNI_EVERSION
        // started method with thread hooked to VM so no need to attach again
-       //printf("Unhook:  No need to attach because already attached %d\n",vmConnectionStatus);
+       DLOG("Unhook:  No need to attach because already attached %d\n",vmConnectionStatus);
    }
 
    // we should always have an env by this point but lets be paranoid and check
@@ -83,9 +81,9 @@ EventProxy::~EventProxy() {
    // detach from thread only if we attached to it in this function
    if (attachReturnStatus == 0) {
        jvm->DetachCurrentThread();
-       //printf("Unhook: Detached\n");
+       DLOG("Unhook: Detached\n");
    } else {
-       //printf("Unhook: No need to detatch because attached prior to method\n");
+       DLOG("Unhook: No need to detatch because attached prior to method\n");
    }
    //fflush(stdout);
 }
@@ -120,7 +118,7 @@ STDMETHODIMP EventProxy::Invoke(DISPID dispID, REFIID riid,
  const char *eventMethodName = NULL; //Sourceforge report 1394001
  JNIEnv *env = NULL;
 
- if (EVENT_PROXY_DEBUG) { printf("In Invoke\n"); fflush(stdout); }
+ DLOG("In Invoke\n");
  // map dispID to jmethodID
  for (int i = 0; i < MethNum; i++) {
     if (MethID[i] == dispID) {
@@ -131,10 +129,7 @@ STDMETHODIMP EventProxy::Invoke(DISPID dispID, REFIID riid,
 
  // added 1.12 - Just bail if can't find signature.  no need to attach
  if (!eventMethodName) return S_OK;
- if (EVENT_PROXY_DEBUG) {
-    printf("In invoke of %s\n", eventMethodName);
-    fflush(stdout);
- }
+ DLOG("In invoke of %s\n", eventMethodName);
 
  if (DISPATCH_METHOD & wFlags) {
     // attach to the current running thread
@@ -153,41 +148,39 @@ STDMETHODIMP EventProxy::Invoke(DISPID dispID, REFIID riid,
     // create the variant parameter array
     // how many params
     int numVariantParams = pDispParams->cArgs;
-    if (EVENT_PROXY_DEBUG) {
-       printf("Setup parm list for event %s(%d)\n", eventMethodName, numVariantParams);
-       fflush(stdout);
-    }
+    DLOG("Setup parm list for event %s(%d)\n", eventMethodName, numVariantParams);
+
     // make an array of them
     jobjectArray varr = env->NewObjectArray(numVariantParams, VARIANT_CLASS, 0); HANDLE_EXCEPTION;
 
     int i,j;
     for (i=numVariantParams-1,j=0; i>=0; i--,j++) {
-       if (EVENT_PROXY_DEBUG) { printf("In invoke of %s (parm %d) start\n", eventMethodName, i); fflush(stdout); }
+       DLOG("In invoke of %s (parm %d) start\n", eventMethodName, i);
        env->SetObjectArrayElement(varr, j, createVariant(env, &pDispParams->rgvarg[i])); HANDLE_EXCEPTION;
        VariantClear(&pDispParams->rgvarg[i]);
-       if (EVENT_PROXY_DEBUG) { printf("In invoke of %s (parm %d) end\n", eventMethodName, i); fflush(stdout); }
+       DLOG("In invoke of %s (parm %d) end\n", eventMethodName, i);
     }
 
-    if (EVENT_PROXY_DEBUG) { printf("Right before sink invoke of %s\n", eventMethodName); fflush(stdout); }
+    DLOG("Right before sink invoke of %s\n", eventMethodName);
     // Set up the return value
     jobject ret = env->CallObjectMethod(javaSinkObj, invokeMethod, eventMethodNameAsString, varr); HANDLE_EXCEPTION;
-    if (EVENT_PROXY_DEBUG) { printf("Right after sink invoke of %s\n", eventMethodName); fflush(stdout); }
+    DLOG("Right after sink invoke of %s\n", eventMethodName);
     if (ret != NULL) { populateVariant(env, ret, pVarResult); }
-    if (EVENT_PROXY_DEBUG) { printf("Right after return variant populate of %s\n", eventMethodName); fflush(stdout); }
+    DLOG("Right after return variant populate of %s\n", eventMethodName);
 
     /*
     // Begin code from Jiffie team that copies parameters back from java to COM
     for(i=numVariantParams-1,j=0;i>=0;i--,j++) {
-       if (EVENT_PROXY_DEBUG) { printf("In invoke of %s (parm swapback %d) start\n", eventMethodName, i); fflush(stdout); }
+       DLOG("In invoke of %s (parm swapback %d) start\n", eventMethodName, i);
        jobject arg = env->GetObjectArrayElement(varr, j);
        populateVariant(env, arg, &pDispParams->rgvarg[i]);
        env->DeleteLocalRef(arg);
-       if (EVENT_PROXY_DEBUG) { printf("In invoke of %s (parm swapback %d) end\n", eventMethodName, i); fflush(stdout); }
+       DLOG("In invoke of %s (parm swapback %d) end\n", eventMethodName, i);
     }
     // End code from Jiffie team that copies parameters back from java to COM
      * */
     
-    if (EVENT_PROXY_DEBUG) { printf("Done with invoke of %s\n", eventMethodName); fflush(stdout); }
+    DLOG("Done with invoke of %s\n", eventMethodName);
     jvm->DetachCurrentThread();     // detach from thread
     
     return S_OK;
